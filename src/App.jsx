@@ -1248,11 +1248,11 @@ function CalligraphyLoader({ onComplete }) {
   const [phase, setPhase] = useState("drawing"); // "drawing" | "glowing" | "done"
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("glowing"), 3200);
+    const t1 = setTimeout(() => setPhase("glowing"), 2800);
     const t2 = setTimeout(() => {
       setPhase("done");
       onComplete();
-    }, 4600);
+    }, 4200);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [onComplete]);
 
@@ -1261,46 +1261,27 @@ function CalligraphyLoader({ onComplete }) {
       <div className="calli-stars" />
       <div className="calli-inner">
         <div className="calli-kicker">for the one who makes everything beautiful</div>
-        <svg className="calli-svg" viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="calliGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#fbe6b4" />
-              <stop offset="50%" stopColor="#e8c46a" />
-              <stop offset="100%" stopColor="#d4af37" />
-            </linearGradient>
-            <filter id="calliGlow">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-          {/* "Nidhi" in flowing calligraphy strokes */}
-          <g fill="none" stroke="url(#calliGrad)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-             className={"calli-text" + (phase === "glowing" ? " calli-glow" : "")}>
-            {/* N */}
-            <path className="calli-letter" style={{ "--i": 0 }}
-              d="M40,140 L40,50 Q40,42 44,40 Q48,38 50,42 L90,120 Q94,128 96,120 L96,50 Q96,40 100,42" />
-            {/* i */}
-            <path className="calli-letter" style={{ "--i": 1 }}
-              d="M130,65 Q130,58 134,56 Q138,58 138,65 L136,140 Q136,146 132,144" />
-            <circle className="calli-dot" style={{ "--i": 1 }} cx="134" cy="40" r="4" fill="url(#calliGrad)" stroke="none" />
-            {/* d */}
-            <path className="calli-letter" style={{ "--i": 2 }}
-              d="M180,100 Q168,68 172,60 Q176,56 184,58 Q196,62 198,80 L198,38 Q198,32 202,34 L202,140 Q202,148 196,144 Q186,136 176,128 Q168,118 180,100Z" />
-            {/* h */}
-            <path className="calli-letter" style={{ "--i": 3 }}
-              d="M232,38 Q232,32 236,34 L236,90 Q244,60 260,58 Q272,58 274,72 L274,140 Q274,148 270,144" />
-            {/* i */}
-            <path className="calli-letter" style={{ "--i": 4 }}
-              d="M304,65 Q304,58 308,56 Q312,58 312,65 L310,140 Q310,146 306,144" />
-            <circle className="calli-dot" style={{ "--i": 4 }} cx="308" cy="40" r="4" fill="url(#calliGrad)" stroke="none" />
-            {/* decorative swirl */}
-            <path className="calli-swirl" style={{ "--i": 5 }}
-              d="M340,90 Q360,60 380,70 Q400,80 390,100 Q380,120 350,130 Q420,130 440,100 Q460,70 440,50" />
-          </g>
-        </svg>
+        <div className={"calli-name-wrap" + (phase === "glowing" ? " calli-glow-on" : "")}>
+          <span className="calli-name">Nidhi</span>
+          <span className="calli-mask" />
+        </div>
+        <div className="calli-swirl-wrap">
+          <svg viewBox="0 0 200 30" className="calli-swirl-svg">
+            <path
+              d="M10,15 Q30,2 50,15 T90,15 T130,15 Q150,8 160,15 Q170,22 180,15 L190,15"
+              fill="none" stroke="url(#calliSwirl)" strokeWidth="1.8" strokeLinecap="round"
+              className="calli-swirl-path"
+            />
+            <defs>
+              <linearGradient id="calliSwirl" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#d4af37" stopOpacity="0" />
+                <stop offset="20%" stopColor="#e8c46a" />
+                <stop offset="80%" stopColor="#e8c46a" />
+                <stop offset="100%" stopColor="#d4af37" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
         <div className={"calli-sub" + (phase === "glowing" ? " calli-sub-show" : "")}>
           <span className="calli-heart">{"💛"}</span>
         </div>
@@ -1372,7 +1353,6 @@ export default function App() {
   const hearts = Object.values(answered).filter((v) => v === "correct").length;
   const unlocked = hearts >= QUIZ_TOTAL;
   const totalPhotos = MEMORIES.reduce((n, m) => n + (m.photos ? m.photos.length : 0), 0);
-  const totalFood = MEMORIES.reduce((n, m) => n + (m.food ? m.food.length : 0), 0);
   const openMem = openId ? MEMORIES.find((m) => m.id === openId) : null;
   const daysSinceMet = Math.floor((Date.now() - FIRST_MET_DATE.getTime()) / 86400000);
 
@@ -1518,25 +1498,21 @@ export default function App() {
           </div>
 
           <div className="stats">
+            <div className="stat stat-bday">
+              <span className="stat-num">{"🎂"}</span>
+              <span className="stat-label">Happy Birthday</span>
+            </div>
             <div className="stat stat-love">
               <span className="stat-num">{daysSinceMet}</span>
-              <span className="stat-label">Days Since We Met</span>
-            </div>
-            <div className="stat">
-              <span className="stat-num">{MEMORIES.length}</span>
-              <span className="stat-label">Journeys</span>
-            </div>
-            <div className="stat">
-              <span className="stat-num">3</span>
-              <span className="stat-label">Countries</span>
+              <span className="stat-label">Days Together</span>
             </div>
             <div className="stat">
               <span className="stat-num">{totalPhotos}</span>
               <span className="stat-label">Memories</span>
             </div>
-            <div className="stat">
-              <span className="stat-num">{totalFood}</span>
-              <span className="stat-label">Flavours</span>
+            <div className="stat stat-infinite">
+              <span className="stat-num">{"∞"}</span>
+              <span className="stat-label">Reasons I Love You</span>
             </div>
             <div className="stat stat-hearts">
               <span className="stat-num">
@@ -1592,7 +1568,7 @@ export default function App() {
 
 /* ───────────────────────────── STYLES ───────────────────────────── */
 const STYLES = `
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Marcellus&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Marcellus&display=swap');
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -2594,73 +2570,106 @@ const STYLES = `
   position: fixed; inset: 0; z-index: 200;
   display: flex; align-items: center; justify-content: center;
   background:
-    radial-gradient(800px 500px at 50% 40%, rgba(30,22,50,.98), rgba(6,4,18,1));
-  transition: opacity .8s ease;
+    radial-gradient(600px 400px at 50% 42%, rgba(40,28,60,.95), transparent),
+    linear-gradient(160deg, #060414 0%, #0a0820 50%, #060414 100%);
+  transition: opacity .9s ease;
 }
 .calli-fadeout { opacity: 0; pointer-events: none; }
 .calli-stars {
   position: absolute; inset: 0;
   background-image:
-    radial-gradient(1.4px 1.4px at 20% 30%, rgba(255,245,210,.8), transparent),
-    radial-gradient(1.2px 1.2px at 75% 20%, rgba(255,245,210,.7), transparent),
-    radial-gradient(1.1px 1.1px at 50% 70%, rgba(255,245,210,.6), transparent),
-    radial-gradient(1.3px 1.3px at 85% 60%, rgba(255,245,210,.75), transparent);
+    radial-gradient(1.4px 1.4px at 18% 28%, rgba(255,245,210,.85), transparent),
+    radial-gradient(1.2px 1.2px at 72% 18%, rgba(255,245,210,.7), transparent),
+    radial-gradient(1.1px 1.1px at 48% 68%, rgba(255,245,210,.6), transparent),
+    radial-gradient(1.3px 1.3px at 88% 58%, rgba(255,245,210,.75), transparent),
+    radial-gradient(1px 1px at 35% 85%, rgba(255,245,210,.5), transparent),
+    radial-gradient(1.5px 1.5px at 60% 12%, rgba(255,245,210,.6), transparent);
   pointer-events: none;
   animation: twinkle 5s ease-in-out infinite alternate;
 }
 .calli-inner {
-  position: relative; z-index: 2; text-align: center; max-width: 520px; width: 100%;
-  padding: 0 20px;
+  position: relative; z-index: 2; text-align: center; max-width: 560px; width: 100%;
+  padding: 0 24px;
 }
 .calli-kicker {
-  font-family: 'Marcellus', serif; font-size: 11px; letter-spacing: .35em;
-  text-transform: uppercase; color: #e7b9c4; margin-bottom: 24px;
-  opacity: 0; animation: fadeUp .8s ease .2s both;
-}
-.calli-svg {
-  width: 100%; max-width: 460px; height: auto;
-  filter: drop-shadow(0 0 8px rgba(212,175,55,.2));
+  font-family: 'Marcellus', serif; font-size: 11.5px; letter-spacing: .35em;
+  text-transform: uppercase; color: #e7b9c4; margin-bottom: 18px;
+  opacity: 0; animation: fadeUp .9s ease .15s both;
 }
 
-/* stroke-draw animation for each letter */
-.calli-letter {
-  stroke-dasharray: 600;
-  stroke-dashoffset: 600;
-  animation: calliDraw 2.2s cubic-bezier(.4,.0,.2,1) both;
-  animation-delay: calc(var(--i) * 0.35s + 0.5s);
+/* name with font + gradient reveal mask */
+.calli-name-wrap {
+  position: relative; display: inline-block;
+  opacity: 0; animation: calliNameIn 1s ease .5s both;
 }
-.calli-dot {
-  opacity: 0;
-  animation: calliDotPop .4s cubic-bezier(.2,1.2,.4,1) both;
-  animation-delay: calc(var(--i) * 0.35s + 1.6s);
+@keyframes calliNameIn {
+  from { opacity: 0; transform: scale(.88) translateY(10px); }
+  to { opacity: 1; transform: none; }
 }
-.calli-swirl {
-  stroke-dasharray: 400;
-  stroke-dashoffset: 400;
-  animation: calliDraw 1.5s cubic-bezier(.4,.0,.2,1) both;
-  animation-delay: calc(var(--i) * 0.35s + 0.5s);
+.calli-name {
+  font-family: 'Great Vibes', cursive; font-size: clamp(72px, 24vw, 130px);
+  line-height: 1.1;
+  background: linear-gradient(135deg, #fbe6b4 0%, #e8c46a 35%, #d4af37 60%, #f0d98a 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 60px rgba(212,175,55,.3);
+  animation: calliShimmer 4s ease-in-out 1.5s infinite;
 }
-@keyframes calliDraw {
+@keyframes calliShimmer {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+/* gradient wipe mask that reveals the text left-to-right */
+.calli-mask {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #060414 0%, #0a0820 50%, #060414 100%);
+  animation: calliReveal 2s cubic-bezier(.4,.0,.2,1) .6s both;
+}
+@keyframes calliReveal {
+  from { clip-path: inset(0 0 0 0); }
+  to { clip-path: inset(0 0 0 100%); }
+}
+/* soft glow pulse after reveal */
+.calli-glow-on .calli-name {
+  text-shadow: 0 0 40px rgba(212,175,55,.5), 0 0 80px rgba(212,175,55,.2);
+  transition: text-shadow .8s ease;
+}
+
+/* decorative swirl underline */
+.calli-swirl-wrap {
+  margin-top: -4px;
+  opacity: 0; animation: fadeUp .6s ease 2.2s both;
+}
+.calli-swirl-svg {
+  width: 180px; height: auto;
+}
+.calli-swirl-path {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: calliSwirl 1.4s cubic-bezier(.4,.0,.2,1) 2.3s both;
+}
+@keyframes calliSwirl {
   to { stroke-dashoffset: 0; }
 }
-@keyframes calliDotPop {
-  from { opacity: 0; transform: scale(0); }
-  to { opacity: 1; transform: scale(1); }
-}
 
-/* glow after drawing */
-.calli-glow {
-  filter: url(#calliGlow);
-  transition: filter .8s ease;
-}
 .calli-sub {
-  margin-top: 20px; font-size: 28px;
-  opacity: 0; transition: opacity .6s ease;
+  margin-top: 22px; font-size: 30px;
+  opacity: 0; transition: opacity .7s ease;
 }
 .calli-sub-show { opacity: 1; }
 .calli-heart {
   display: inline-block;
   animation: prHeartPulse 1.2s ease-in-out infinite;
+}
+
+/* ——— BIRTHDAY STATS ——— */
+.stat-bday .stat-num { font-size: 30px; line-height: 1; }
+.stat-bday { border-color: rgba(240,180,80,.3); background: linear-gradient(180deg, rgba(240,180,80,.1), rgba(240,180,80,.02)); }
+.stat-infinite .stat-num {
+  font-size: 34px; font-weight: 300;
+  background: linear-gradient(180deg, #f7c3cd, #e89fb0);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none;
 }
 
 /* ——— ENHANCED BURST (drift) ——— */
