@@ -283,30 +283,29 @@ const MEMORIES = [
   },
   {
     id: "flat",
-    name: "Our New Flat",
-    short: "Home ★",
-    when: "The beginning of forever",
-    teaser: "The beginning of forever.",
+    name: "A Birthday Promise",
+    short: "Forever ★",
+    when: "Happy Birthday, my love",
+    teaser: "A promise for the year ahead — and every year after.",
     isFinale: true,
-    /* >>> 📍 REPLACE WITH YOUR NEW FLAT'S REAL COORDINATES */
     lat: 22.776,
     lng: 75.901,
     message:
-      "My Nidhi,\n\nEvery pin on this map is a place we've loved each other. This last one is where we get to love each other from now on.\n\nYou are the bravest person I know — a brilliant lawyer and computer scientist who chose, with both eyes wide open, to bet on us and build something of our very own. Watching you dream up our business, fuss over paint swatches and corners and the exact morning light for our new home — I fall a little more in love with you every single day.\n\nRight now this flat is just walls and floors. But with you, it's already becoming the warmest place in the world. I can picture all of it: the kitchen where we'll cook the food we love, the corner that will be yours, the door we'll walk through tired and happy for the rest of our lives.\n\nThank you for being my home, my partner, my forever adventure.\n\nHere's to every place we've been — and every place we've yet to go.\n\nHappy birthday, Nidhi. I love you, today and in every chapter still to come.\n— Always yours.",
-    /* >>> ✍️ The hidden P.S. surprise (revealed only after she completes the quiz). */
+      "My dearest Nidhi,\n\nEvery pin on this map is a chapter of us — but this last one isn't a place. It's a promise.\n\nOn this birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a computer scientist, a dreamer who chose to bet on us and build something beautiful together. Watching you light up every room, every plan, every corner of our life — I fall deeper in love with you every single day.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
     ps:
-      "P.S. You just proved you know our story by heart. But here's a secret only I know: every single day with you has been my favourite day — right up until the next one. Now come find me. 🥂",
-    /* >>> 🎬 You could drop a special video here for the finale too. */
+      "P.S. You just proved you know our story by heart. But here's a secret only I know: every single day with you has been my favourite day — right up until the next one. Now close your eyes, make a wish… and come find me. 🥂",
+    birthdayNote:
+      "This year, I wish for you: a thousand more sunsets together, every flavour you've ever craved, and the kind of happiness that makes your heart feel too full to hold. You deserve the whole world, Nidhi — and I'm going to spend my life making sure you feel it. Happy birthday, my love. 💛",
     video: "",
     photos: [
       { url: "", caption: "Where forever begins" },
-      { url: "", caption: "Dreaming up our home" },
-      { url: "", caption: "Our four walls (soon)" },
+      { url: "", caption: "Dreaming up our future" },
+      { url: "", caption: "Us, always" },
     ],
     food: [
       { url: "", caption: "Our first home-cooked dinner (soon)" },
     ],
-    quiz: null, // the finale has no question — it's the reward
+    quiz: null,
   },
 ];
 
@@ -325,6 +324,32 @@ const LOVE_QUOTES = [
   "Wherever you are is my home.",
   "I loved you yesterday. I love you still. I always have, I always will.",
   "You are my sun, my moon, and all my stars.",
+];
+
+const REASONS_I_LOVE_YOU = [
+  { reason: "The way you laugh — really laugh — with your whole heart", icon: "😂" },
+  { reason: "How you make every meal feel like a celebration", icon: "🍽️" },
+  { reason: "Your courage to chase every dream, no matter how big", icon: "🦋" },
+  { reason: "The way you light up when you talk about something you love", icon: "✨" },
+  { reason: "How you always know exactly what to say to make everything okay", icon: "💬" },
+  { reason: "Your strength — you are the bravest person I know", icon: "💪" },
+  { reason: "The way you look at me like I'm your favourite person in any room", icon: "👀" },
+  { reason: "How you turn every trip into the best adventure of my life", icon: "🗺️" },
+  { reason: "Your kindness — the way you treat everyone with so much warmth", icon: "🤗" },
+  { reason: "The little notes, the little touches, the little ways you love me", icon: "💌" },
+  { reason: "How you challenge me to be a better version of myself every day", icon: "🌟" },
+  { reason: "The fact that you chose me — and keep choosing me", icon: "💍" },
+  { reason: "Your smile first thing in the morning", icon: "🌅" },
+  { reason: "The way you make our house feel like home", icon: "🏠" },
+  { reason: "How you never give up on anything — especially us", icon: "💛" },
+  { reason: "Your voice when you call my name", icon: "🎵" },
+  { reason: "The way you steal all the blankets and I don't even mind", icon: "🛏️" },
+  { reason: "How every photo of us is my new favourite photo", icon: "📸" },
+  { reason: "Your passion for food — and for sharing it with me", icon: "🍕" },
+  { reason: "The way you make even ordinary days feel extraordinary", icon: "🌈" },
+  { reason: "How safe I feel when I'm with you", icon: "🫂" },
+  { reason: "Your determination — lawyer, tech wizard, dreamer, all at once", icon: "⚡" },
+  { reason: "Because you are my today, my tomorrow, and every day after", icon: "♾️" },
 ];
 
 /* Build a custom golden Leaflet pin (teardrop). Answered = rose heart, finale = star. */
@@ -436,32 +461,55 @@ function MapView({ answered, unlocked, onOpen }) {
   );
 }
 
-/* ───────────────────────────── TIMELINE VIEW ───────────────────────────── */
-function Timeline({ answered, unlocked, onOpen }) {
+/* ───────────────────────────── FOR YOU — REASONS I LOVE YOU ───────────────────────────── */
+function ReasonsILoveYou() {
+  const [revealed, setRevealed] = useState(3);
+  const bottomRef = useRef(null);
+
+  function showMore() {
+    setRevealed((r) => Math.min(r + 5, REASONS_I_LOVE_YOU.length));
+  }
+
+  useEffect(() => {
+    if (revealed > 3 && bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [revealed]);
+
   return (
-    <div className="timeline">
-      <div className="tl-spine" />
-      {MEMORIES.map((m) => {
-        const done = answered[m.id] === "correct";
-        const locked = m.isFinale && !unlocked;
-        return (
-          <button
-            key={m.id}
-            className={"tl-item" + (m.isFinale ? " tl-finale" : "")}
-            onClick={() => onOpen(m.id)}
+    <div className="reasons">
+      <div className="reasons-head">
+        <div className="reasons-kicker">A birthday list, just for you</div>
+        <h2 className="reasons-title">Reasons I Love You</h2>
+        <p className="reasons-sub">I could write a thousand more, but let's start here.</p>
+      </div>
+
+      <div className="reasons-list">
+        {REASONS_I_LOVE_YOU.slice(0, revealed).map((r, i) => (
+          <div
+            key={i}
+            className="reason-card"
+            style={{ animationDelay: (i % 5) * 0.12 + "s" }}
           >
-            <span className={"tl-node" + (done ? " tl-node-done" : "") + (m.isFinale ? " tl-node-finale" : "")}>
-              {m.isFinale ? (unlocked ? "★" : "🔒") : done ? "♥" : ""}
-            </span>
-            <span className="tl-body">
-              <span className="tl-when">{m.when}</span>
-              <span className="tl-name">{m.name}</span>
-              <span className="tl-teaser">{locked ? "Answer our little questions to unlock…" : m.teaser}</span>
-            </span>
-            <span className="tl-arrow">{"›"}</span>
-          </button>
-        );
-      })}
+            <span className="reason-num">{i + 1}</span>
+            <span className="reason-icon">{r.icon}</span>
+            <span className="reason-text">{r.reason}</span>
+          </div>
+        ))}
+      </div>
+
+      {revealed < REASONS_I_LOVE_YOU.length ? (
+        <button className="reasons-more" onClick={showMore}>
+          Show me more {"💛"}
+        </button>
+      ) : (
+        <div className="reasons-end">
+          <span className="reasons-end-heart">{"💛"}</span>
+          <p>…and a million reasons more.</p>
+          <p className="reasons-end-sign">Happy Birthday, Nidhi.</p>
+        </div>
+      )}
+      <div ref={bottomRef} />
     </div>
   );
 }
@@ -807,6 +855,15 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
               </div>
             )}
             {stage === "full" && <MediaTabs photos={mem.photos} food={mem.food} />}
+          </div>
+        )}
+
+        {mem.isFinale && mem.birthdayNote && (
+          <div className="bday-note">
+            <div className="bday-note-label">A birthday wish, handwritten from my heart</div>
+            <div className="bday-note-paper">
+              <p className="bday-note-text">{mem.birthdayNote}</p>
+            </div>
           </div>
         )}
 
@@ -1290,6 +1347,79 @@ function CalligraphyLoader({ onComplete }) {
   );
 }
 
+/* ───────────────────────────── BIRTHDAY LETTER (between intro & main app) ───────────────────────────── */
+function BirthdayLetter({ onContinue }) {
+  const [scrolled, setScrolled] = useState(false);
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 60) setScrolled(true);
+    };
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div className="bday-letter">
+      <div className="bday-letter-stars" />
+      <div className="bday-letter-content" ref={contentRef}>
+        <div className="bday-letter-inner">
+          <div className="bday-letter-seal">{"💌"}</div>
+          <div className="bday-letter-date">22nd June, 2026</div>
+          <h2 className="bday-letter-greeting">My dearest Nidhi,</h2>
+          <div className="bday-letter-body">
+            <p>
+              Before I show you everything I've made, I need you to know something.
+            </p>
+            <p>
+              From the moment we met on 7th March 2022, my world changed colour.
+              Every day since then has been a little more beautiful, a little more
+              full, a little more ours. And now, on your birthday, I want to pause
+              everything — just for a moment — and tell you what you mean to me.
+            </p>
+            <p>
+              You are the reason I believe in forever. Not the forever in stories,
+              but the real kind — the one made of small moments: your laugh over
+              morning chai, your hand reaching for mine in a crowd, the way you
+              look at a sunset like it's performing just for you.
+            </p>
+            <p>
+              I've built you a little world tonight. Every pin on the map ahead is
+              a memory of us. Every quiz is a question only you and I would know.
+              And at the end of it all, there's something waiting just for you.
+            </p>
+            <p>
+              So take your time. Explore. Remember. Smile.
+            </p>
+            <p>
+              This is my love letter to you, Nidhi — not in words alone,
+              but in every place we've ever been, every plate we've shared,
+              every moment that made us <em>us</em>.
+            </p>
+            <p className="bday-letter-closing">
+              Happy birthday, my love.
+              <br />
+              — Always yours, Sagar
+            </p>
+          </div>
+          <div className="bday-letter-hearts">
+            {"💛 🌹 💛"}
+          </div>
+          <button
+            className={"bday-letter-btn" + (scrolled ? " bday-letter-btn-show" : "")}
+            onClick={onContinue}
+          >
+            Take me to our story {"→"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ───────────────────────────── INTRO SCREEN ───────────────────────────── */
 function Intro({ onBegin }) {
   return (
@@ -1333,7 +1463,8 @@ function Intro({ onBegin }) {
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [started, setStarted] = useState(false);
-  const [view, setView] = useState("map"); // 'map' | 'timeline' | 'feast'
+  const [showLetter, setShowLetter] = useState(false);
+  const [view, setView] = useState("map"); // 'map' | 'foryou' | 'feast'
   const [openId, setOpenId] = useState(null);
   const [lightbox, setLightbox] = useState(null);
   const [answered, setAnswered] = useState({}); // id -> 'correct'
@@ -1375,8 +1506,12 @@ export default function App() {
   }, [unlocked]);
 
   function begin() {
+    setShowLetter(true);
+  }
+
+  function enterApp() {
+    setShowLetter(false);
     setStarted(true);
-    // try to start the music (only works once a song URL is added)
     if (SONG_URL && audioRef.current) {
       audioRef.current.volume = 0.55;
       audioRef.current
@@ -1452,9 +1587,11 @@ export default function App() {
         />
       )}
 
-      {!loading && !started ? (
+      {!loading && showLetter && <BirthdayLetter onContinue={enterApp} />}
+
+      {!loading && !started && !showLetter ? (
         <Intro onBegin={begin} />
-      ) : (
+      ) : started ? (
         <>
           <GoldenSparkles />
           <header className="header">
@@ -1480,19 +1617,19 @@ export default function App() {
                 className={"tg" + (view === "map" ? " tg-on" : "")}
                 onClick={() => setView("map")}
               >
-                Map
+                Our Story
               </button>
               <button
-                className={"tg" + (view === "timeline" ? " tg-on" : "")}
-                onClick={() => setView("timeline")}
+                className={"tg" + (view === "foryou" ? " tg-on" : "")}
+                onClick={() => setView("foryou")}
               >
-                Timeline
+                For You
               </button>
               <button
                 className={"tg" + (view === "feast" ? " tg-on" : "")}
                 onClick={() => setView("feast")}
               >
-                Feast
+                Our Feast
               </button>
             </div>
           </div>
@@ -1526,8 +1663,8 @@ export default function App() {
           <main className="content">
             {view === "map" ? (
               <MapView answered={answered} unlocked={unlocked} onOpen={openPin} />
-            ) : view === "timeline" ? (
-              <Timeline answered={answered} unlocked={unlocked} onOpen={openPin} />
+            ) : view === "foryou" ? (
+              <ReasonsILoveYou />
             ) : (
               <Feast onLightbox={setLightbox} />
             )}
@@ -1561,7 +1698,7 @@ export default function App() {
 
           {toast && <div className="toast">{toast}</div>}
         </>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -1746,7 +1883,7 @@ const STYLES = `
   box-shadow: 0 0 16px rgba(212,175,55,.5); animation: glowPulse 2.4s ease-in-out infinite, musicBounce .8s ease; }
 @keyframes musicBounce { 0% { transform: scale(1); } 30% { transform: scale(1.2); } 60% { transform: scale(.95); } 100% { transform: scale(1); } }
 
-/* ——— VIEW BAR (Map / Timeline / Feast) ——— */
+/* ——— VIEW BAR (Our Story / For You / Our Feast) ——— */
 .viewbar {
   position: relative; z-index: 5; display: flex; justify-content: center;
   padding: 10px 12px 2px; background: rgba(8,12,30,.45);
@@ -1851,56 +1988,6 @@ const STYLES = `
 }
 @keyframes pinDrop { from { opacity: 0; transform: rotate(-45deg) translateY(-30px) scale(.4); } to { opacity: 1; } }
 @keyframes labelFadeIn { from { opacity: 0; transform: translateX(-50%) translateY(6px); } to { opacity: 1; transform: translateX(-50%); } }
-
-/* ——— TIMELINE ——— */
-.timeline {
-  position: relative; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  padding: 26px 18px 60px; max-width: 720px; margin: 0 auto;
-}
-.tl-spine {
-  position: absolute; left: 31px; top: 30px; bottom: 30px; width: 2px;
-  background: repeating-linear-gradient(to bottom, #d4af37 0 3px, transparent 3px 11px);
-  opacity: .5; animation: spineGrow .8s ease both;
-}
-@keyframes spineGrow { from { transform: scaleY(0); transform-origin: top; } to { transform: scaleY(1); } }
-.tl-item {
-  position: relative; display: flex; align-items: center; gap: 14px;
-  width: 100%; text-align: left; cursor: pointer;
-  background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
-  border: 1px solid rgba(212,175,55,.16); border-radius: 16px;
-  padding: 16px 16px 16px 14px; margin: 0 0 16px 0; color: inherit;
-  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-  animation: tlSlideIn .5s cubic-bezier(.2,1,.3,1) both;
-}
-.tl-item:nth-child(2) { animation-delay: .08s; }
-.tl-item:nth-child(3) { animation-delay: .16s; }
-.tl-item:nth-child(4) { animation-delay: .24s; }
-.tl-item:nth-child(5) { animation-delay: .32s; }
-.tl-item:nth-child(6) { animation-delay: .40s; }
-.tl-item:nth-child(7) { animation-delay: .48s; }
-.tl-item:nth-child(8) { animation-delay: .56s; }
-.tl-item:nth-child(9) { animation-delay: .64s; }
-@keyframes tlSlideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: none; } }
-.tl-item:hover { transform: translateY(-2px); border-color: rgba(212,175,55,.4);
-  box-shadow: 0 10px 30px rgba(0,0,0,.35); }
-.tl-finale { border-color: rgba(240,217,138,.45);
-  background: linear-gradient(180deg, rgba(232,196,106,.12), rgba(232,196,106,.03)); }
-.tl-node {
-  flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-size: 12px;
-  background: rgba(12,18,42,.95); border: 2px solid #d4af37; color: #f0d98a;
-  box-shadow: 0 0 10px rgba(212,175,55,.5); z-index: 1;
-}
-.tl-node-done { border-color: #d98695; color: #f7c3cd; box-shadow: 0 0 12px rgba(217,134,149,.7); }
-.tl-node-finale { border-color: #f0d98a; box-shadow: 0 0 14px rgba(240,217,138,.8); }
-.tl-body { flex: 1; min-width: 0; }
-.tl-when {
-  display: block; font-family: 'Marcellus', serif; font-size: 10.5px;
-  letter-spacing: .14em; text-transform: uppercase; color: #9aa6cf;
-}
-.tl-name { display: block; font-size: 23px; color: #f3ead3; line-height: 1.15; margin: 2px 0; }
-.tl-teaser { display: block; font-style: italic; font-size: 15px; color: #cdbf9a; }
-.tl-arrow { flex: 0 0 auto; color: #d4af37; font-size: 22px; opacity: .7; }
 
 /* ——— FEAST VIEW ——— */
 .feast {
@@ -2679,8 +2766,207 @@ const STYLES = `
   100% { opacity: 0; transform: translateY(-110vh) translateX(var(--drift, 0px)) scale(1.1) rotate(40deg); }
 }
 
+/* ——— BIRTHDAY LETTER ——— */
+.bday-letter {
+  position: fixed; inset: 0; z-index: 35;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(800px 500px at 50% 30%, rgba(30,18,50,.97), transparent),
+    linear-gradient(160deg, #060414 0%, #0a0820 50%, #060414 100%);
+  animation: fadeIn .8s ease both;
+}
+.bday-letter-stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.4px 1.4px at 18% 28%, rgba(255,245,210,.85), transparent),
+    radial-gradient(1.2px 1.2px at 72% 18%, rgba(255,245,210,.7), transparent),
+    radial-gradient(1.1px 1.1px at 48% 68%, rgba(255,245,210,.6), transparent),
+    radial-gradient(1.3px 1.3px at 88% 58%, rgba(255,245,210,.75), transparent),
+    radial-gradient(1px 1px at 35% 85%, rgba(255,245,210,.5), transparent);
+  pointer-events: none;
+  animation: twinkle 5s ease-in-out infinite alternate;
+}
+.bday-letter-content {
+  position: relative; z-index: 2; width: 100%; max-width: 560px; max-height: 88vh;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 20px;
+}
+.bday-letter-inner {
+  text-align: center; padding: 36px 28px 40px;
+  border-radius: 24px;
+  background:
+    radial-gradient(600px 200px at 50% -10%, rgba(212,175,55,.1), transparent 60%),
+    linear-gradient(170deg, rgba(20,26,58,.95) 0%, rgba(15,20,48,.97) 60%, rgba(20,15,41,.95) 100%);
+  border: 1px solid rgba(212,175,55,.3);
+  box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
+  animation: cardIn .7s cubic-bezier(.2,1,.3,1) both;
+}
+.bday-letter-seal {
+  font-size: 48px; margin-bottom: 12px;
+  animation: envFloat 2.5s ease-in-out infinite, fadeUp .8s ease .2s both;
+}
+.bday-letter-date {
+  font-family: 'Marcellus', serif; font-size: 11px; letter-spacing: .3em;
+  text-transform: uppercase; color: #9aa6cf;
+  opacity: 0; animation: fadeUp .8s ease .35s both;
+}
+.bday-letter-greeting {
+  font-family: 'Great Vibes', cursive; font-size: clamp(36px, 10vw, 52px);
+  line-height: 1.2; margin: 16px 0 20px;
+  background: linear-gradient(180deg, #fbe6b4, #e8c46a, #d4af37);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 40px rgba(212,175,55,.3);
+  opacity: 0; animation: fadeUp 1s ease .5s both;
+}
+.bday-letter-body {
+  text-align: left;
+  opacity: 0; animation: fadeUp 1s ease .8s both;
+}
+.bday-letter-body p {
+  font-size: 17.5px; line-height: 1.7; color: #efe4cb; margin: 0 0 16px;
+  font-style: italic;
+}
+.bday-letter-body p:first-child::first-letter {
+  font-size: 1.6em; color: #f0d98a; font-style: italic; line-height: 1; padding-right: 2px;
+}
+.bday-letter-closing {
+  text-align: right; color: #f0d98a !important; margin-top: 24px !important;
+  font-size: 19px !important;
+}
+.bday-letter-hearts {
+  margin: 24px 0 20px; font-size: 22px; letter-spacing: 8px;
+  opacity: 0; animation: fadeUp .8s ease 1.2s both;
+}
+.bday-letter-btn {
+  display: inline-block; cursor: pointer;
+  font-family: 'Marcellus', serif; font-size: 15px; letter-spacing: .1em;
+  color: #1a1206; border: none; border-radius: 999px; padding: 14px 34px;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  box-shadow: 0 10px 34px rgba(212,175,55,.4), inset 0 1px 0 rgba(255,255,255,.6);
+  opacity: 0; animation: fadeUp 1s ease 1.5s both, glowPulse 3s ease-in-out 2.5s infinite;
+  transition: transform .2s ease;
+}
+.bday-letter-btn:hover { transform: translateY(-2px) scale(1.04); }
+
+/* ——— REASONS I LOVE YOU ——— */
+.reasons {
+  height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 28px 16px 80px; max-width: 640px; margin: 0 auto;
+}
+.reasons-head { text-align: center; margin-bottom: 28px; }
+.reasons-kicker {
+  font-family: 'Marcellus', serif; font-size: 11px; letter-spacing: .3em;
+  text-transform: uppercase; color: #e7b9c4;
+}
+.reasons-title {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600;
+  font-size: clamp(32px, 9vw, 48px); margin: 6px 0 6px;
+  background: linear-gradient(180deg, #fbe6b4, #d8b052);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.reasons-sub {
+  font-style: italic; font-size: 16px; color: #cdbf9a; margin: 0;
+}
+.reasons-list { display: flex; flex-direction: column; gap: 12px; }
+.reason-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 18px; border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+  border: 1px solid rgba(212,175,55,.18);
+  animation: reasonSlide .5s cubic-bezier(.2,1,.3,1) both;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.reason-card:hover {
+  transform: translateX(4px);
+  border-color: rgba(212,175,55,.45);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 16px rgba(212,175,55,.12);
+}
+@keyframes reasonSlide {
+  from { opacity: 0; transform: translateX(-24px) scale(.96); }
+  to { opacity: 1; transform: none; }
+}
+.reason-num {
+  flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Marcellus', serif; font-size: 12px; font-weight: 600;
+  color: #1a1206;
+  background: linear-gradient(180deg, #f0d98a, #caa13c);
+  box-shadow: 0 0 10px rgba(212,175,55,.4);
+}
+.reason-icon { font-size: 22px; flex: 0 0 auto; }
+.reason-text {
+  font-size: 17.5px; line-height: 1.45; color: #efe4cb; font-style: italic;
+}
+.reasons-more {
+  display: block; margin: 28px auto 0; cursor: pointer;
+  font-family: 'Marcellus', serif; font-size: 14px; letter-spacing: .1em;
+  color: #1a1206; border: none; border-radius: 999px; padding: 12px 30px;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  box-shadow: 0 8px 24px rgba(212,175,55,.35);
+  transition: transform .2s ease;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+.reasons-more:hover { transform: translateY(-2px) scale(1.04); }
+.reasons-end {
+  text-align: center; margin-top: 32px; padding: 24px 16px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(212,175,55,.1), rgba(212,175,55,.03));
+  border: 1px solid rgba(212,175,55,.25);
+  animation: fadeUp .6s ease both;
+}
+.reasons-end-heart {
+  font-size: 36px; display: block; margin-bottom: 12px;
+  animation: prHeartPulse 1.2s ease-in-out infinite;
+}
+.reasons-end p {
+  font-style: italic; font-size: 18px; color: #efe4cb; margin: 0 0 8px;
+  line-height: 1.5;
+}
+.reasons-end-sign {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: 24px !important; margin-top: 8px !important;
+  background: linear-gradient(180deg, #fbe6b4, #d8b052);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ——— BIRTHDAY NOTE (handwritten style in finale) ——— */
+.bday-note {
+  margin-top: 20px;
+  animation: fadeUp .7s ease .3s both;
+}
+.bday-note-label {
+  font-family: 'Marcellus', serif; font-size: 10.5px; letter-spacing: .2em;
+  text-transform: uppercase; color: #e7b9c4; text-align: center; margin-bottom: 10px;
+}
+.bday-note-paper {
+  padding: 22px 24px; border-radius: 16px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 31px,
+      rgba(212,175,55,.08) 31px,
+      rgba(212,175,55,.08) 32px
+    ),
+    linear-gradient(170deg, rgba(255,248,220,.06) 0%, rgba(255,248,220,.02) 100%);
+  border: 1px solid rgba(212,175,55,.3);
+  box-shadow: 0 8px 30px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.04);
+  position: relative;
+}
+.bday-note-paper::before {
+  content: ""; position: absolute; left: 24px; top: 0; bottom: 0; width: 1px;
+  background: rgba(217,134,149,.2);
+}
+.bday-note-text {
+  font-family: 'Great Vibes', cursive; font-size: clamp(20px, 5vw, 26px);
+  line-height: 1.8; color: #f0d98a; margin: 0; padding-left: 12px;
+  text-shadow: 0 0 20px rgba(212,175,55,.15);
+}
+
 @media (min-width: 700px) {
   .stat { min-width: 96px; }
   .card-message p { font-size: 19.5px; }
+  .bday-letter-body p { font-size: 18.5px; }
+  .reason-text { font-size: 18.5px; }
 }
 `;
