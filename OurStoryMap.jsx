@@ -181,9 +181,20 @@ const MEMORIES = [
       "The Pink City, hand in hand. We climbed the fort, stood small and quiet beneath ancient temples, and you looked at every carving with that wonder I adore. Walking those golden walls beside you, I kept thinking how lucky I am that I get to explore this entire life with you.",
     /* >>> 📸 ADD JAIPUR PHOTOS BELOW */
     photos: [
-      { url: "", caption: "Walking the fort walls" },
-      { url: "", caption: "Temple bells and you" },
-      { url: "", caption: "The Pink City glow" },
+      { url: "/media/jaipur/jaipur-01-amber-fort.jpg", caption: "Together at Amber Fort" },
+      { url: "/media/jaipur/jaipur-02-hawa-mahal.jpg", caption: "Hawa Mahal lit up at night" },
+      { url: "/media/jaipur/jaipur-03-jal-mahal.jpg", caption: "Dreaming by Jal Mahal" },
+      { url: "/media/jaipur/jaipur-04-night-view.jpg", caption: "The Pink City sparkling below" },
+      { url: "/media/jaipur/jaipur-05-palace-throne.jpg", caption: "Our royal palace moment" },
+      { url: "/media/jaipur/jaipur-06-hotel-mirror.jpg", caption: "Mirror selfie at our Rajasthani haveli" },
+      { url: "/media/jaipur/jaipur-07-dinner-date.jpg", caption: "Dinner date — the prettiest view was across the table" },
+      { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Wine and tiny bites to start the feast" },
+      { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf" },
+      { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried" },
+      { url: "/media/jaipur/jaipur-11-naan-curry.jpg", caption: "Naan, curry, and no regrets" },
+      { url: "/media/jaipur/jaipur-12-thali.jpg", caption: "The Rajasthani thali of dreams" },
+      { url: "/media/jaipur/jaipur-13-thali-lassi.jpg", caption: "Thali round two with lassi" },
+      { url: "/media/jaipur/jaipur-14-poori-kachori.jpg", caption: "Poori-kachori breakfast — the real Pink City gold" },
     ],
     quiz: {
       q: "In the Pink City, what did we wander through together?",
