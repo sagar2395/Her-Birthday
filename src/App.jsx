@@ -1404,8 +1404,12 @@ const STYLES = `
 
 /* ——— AVATAR ON INTRO ——— */
 .intro-avatar {
-  position: relative; width: 180px; height: 240px; margin: 0 auto 12px;
-  opacity: 0; animation: avatarIn 1.4s cubic-bezier(.2,1,.3,1) .1s both;
+  position: relative; width: 210px; height: 256px; margin: 0 auto 10px;
+  opacity: 0; animation: avatarIn 1.4s cubic-bezier(.2,1,.3,1) .1s both, avatarBreathe 6s ease-in-out 1.5s infinite;
+}
+@keyframes avatarBreathe {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.012); }
 }
 @keyframes avatarIn {
   from { opacity: 0; transform: translateY(20px) scale(.88); }

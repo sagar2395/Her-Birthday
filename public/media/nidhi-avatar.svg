@@ -1,194 +1,299 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" width="300" height="400">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 440" width="360" height="440">
   <defs>
-    <radialGradient id="bgGlow" cx="50%" cy="40%" r="55%">
-      <stop offset="0%" stop-color="#d4af37" stop-opacity=".15"/>
+    <!-- ambient backdrop -->
+    <radialGradient id="backdrop" cx="50%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#5a3a52" stop-opacity=".55"/>
+      <stop offset="45%" stop-color="#2a1d3a" stop-opacity=".25"/>
       <stop offset="100%" stop-color="#0a0e22" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#e8c49a"/>
-      <stop offset="100%" stop-color="#d4a574"/>
+    <radialGradient id="haloGlow" cx="50%" cy="42%" r="50%">
+      <stop offset="0%" stop-color="#f0d98a" stop-opacity=".22"/>
+      <stop offset="60%" stop-color="#d98695" stop-opacity=".10"/>
+      <stop offset="100%" stop-color="#d98695" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- skin -->
+    <linearGradient id="skin" x1="0.25" y1="0" x2="0.75" y2="1">
+      <stop offset="0%" stop-color="#f0cfa6"/>
+      <stop offset="45%" stop-color="#e3b483"/>
+      <stop offset="100%" stop-color="#cf9a6a"/>
     </linearGradient>
-    <linearGradient id="hairGrad" x1="0" y1="0" x2=".3" y2="1">
-      <stop offset="0%" stop-color="#1a1a2e"/>
-      <stop offset="50%" stop-color="#0d0d1a"/>
-      <stop offset="100%" stop-color="#1a1020"/>
+    <radialGradient id="cheekLight" cx="38%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#ffe6c4" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="#ffe6c4" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="skinShade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#b07d4e" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#a06d44" stop-opacity=".55"/>
     </linearGradient>
-    <linearGradient id="dressGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#2a1a3a"/>
-      <stop offset="100%" stop-color="#1a0f28"/>
+
+    <!-- hair -->
+    <linearGradient id="hair" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#2c2233"/>
+      <stop offset="40%" stop-color="#1a131f"/>
+      <stop offset="100%" stop-color="#0c0810"/>
     </linearGradient>
-    <linearGradient id="bangleGold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#fbe6b4"/>
-      <stop offset="50%" stop-color="#e8c46a"/>
-      <stop offset="100%" stop-color="#c79a36"/>
+    <linearGradient id="hairSheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6e4a5a" stop-opacity=".7"/>
+      <stop offset="100%" stop-color="#6e4a5a" stop-opacity="0"/>
     </linearGradient>
-    <linearGradient id="bangleRose" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#e8a090"/>
-      <stop offset="100%" stop-color="#c47060"/>
+
+    <!-- lips -->
+    <linearGradient id="lips" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#bb6f63"/>
+      <stop offset="100%" stop-color="#9c4f47"/>
     </linearGradient>
-    <filter id="softGlow">
-      <feGaussianBlur stdDeviation="3" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+
+    <!-- iris -->
+    <radialGradient id="iris" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#7a5230"/>
+      <stop offset="60%" stop-color="#3d2614"/>
+      <stop offset="100%" stop-color="#1a0f08"/>
+    </radialGradient>
+
+    <!-- sheer top -->
+    <linearGradient id="top" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#4a3340"/>
+      <stop offset="100%" stop-color="#2a1c26"/>
+    </linearGradient>
+
+    <!-- bangles -->
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff0c4"/>
+      <stop offset="45%" stop-color="#eac254"/>
+      <stop offset="100%" stop-color="#b6862c"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c08050"/>
+      <stop offset="50%" stop-color="#a9663f"/>
+      <stop offset="100%" stop-color="#6e3a22"/>
+    </linearGradient>
+
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.4"/>
     </filter>
-    <filter id="warmGlow">
-      <feGaussianBlur stdDeviation="6"/>
+    <filter id="dropSoft" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity=".35"/>
     </filter>
+
+    <clipPath id="faceClip">
+      <path d="M120,150 Q116,108 150,90 Q172,80 196,90 Q230,108 226,152 Q224,196 206,224 Q190,248 173,250 Q156,248 140,224 Q122,196 120,150Z"/>
+    </clipPath>
   </defs>
 
-  <!-- background glow -->
-  <circle cx="150" cy="160" r="160" fill="url(#bgGlow)"/>
+  <!-- backdrop -->
+  <rect width="360" height="440" fill="url(#backdrop)"/>
+  <ellipse cx="178" cy="180" rx="150" ry="160" fill="url(#haloGlow)"/>
 
-  <!-- hair back (long flowing) -->
-  <g class="hair-back">
-    <path d="M90,130 Q80,180 75,250 Q72,300 85,360 Q90,380 100,390 L105,380 Q92,320 90,260 Q88,200 100,140Z" fill="url(#hairGrad)" opacity=".9">
-      <animate attributeName="d" dur="4s" repeatCount="indefinite" values="
-        M90,130 Q80,180 75,250 Q72,300 85,360 Q90,380 100,390 L105,380 Q92,320 90,260 Q88,200 100,140Z;
-        M90,130 Q78,185 73,255 Q70,305 82,365 Q88,385 98,392 L103,382 Q90,325 88,265 Q86,205 100,140Z;
-        M90,130 Q80,180 75,250 Q72,300 85,360 Q90,380 100,390 L105,380 Q92,320 90,260 Q88,200 100,140Z
-      "/>
+  <!-- ============ HAIR (back layer) ============ -->
+  <g filter="url(#dropSoft)">
+    <path d="M118,150 Q100,120 112,86 Q128,44 178,40 Q228,44 244,86 Q256,120 240,152
+             Q258,210 252,280 Q248,340 232,392 Q224,414 212,424 L196,410
+             Q210,360 214,300 Q216,250 206,212 L150,212 Q140,250 142,300
+             Q146,360 160,410 L144,424 Q132,414 124,392 Q108,340 104,280
+             Q98,210 118,150Z" fill="url(#hair)"/>
+    <!-- wavy outer strands left -->
+    <path d="M108,170 Q92,230 96,300 Q99,356 116,402 Q104,360 104,300 Q104,232 116,176Z"
+          fill="#0c0810" opacity=".8">
+      <animate attributeName="d" dur="6s" repeatCount="indefinite" values="
+        M108,170 Q92,230 96,300 Q99,356 116,402 Q104,360 104,300 Q104,232 116,176Z;
+        M108,170 Q88,232 92,304 Q95,360 112,406 Q100,362 100,302 Q100,234 116,176Z;
+        M108,170 Q92,230 96,300 Q99,356 116,402 Q104,360 104,300 Q104,232 116,176Z"/>
     </path>
-    <path d="M210,130 Q220,180 225,250 Q228,300 215,360 Q210,380 200,390 L195,380 Q208,320 210,260 Q212,200 200,140Z" fill="url(#hairGrad)" opacity=".9">
-      <animate attributeName="d" dur="4.5s" repeatCount="indefinite" values="
-        M210,130 Q220,180 225,250 Q228,300 215,360 Q210,380 200,390 L195,380 Q208,320 210,260 Q212,200 200,140Z;
-        M210,130 Q222,185 227,255 Q230,305 218,365 Q212,385 202,392 L197,382 Q210,325 212,265 Q214,205 200,140Z;
-        M210,130 Q220,180 225,250 Q228,300 215,360 Q210,380 200,390 L195,380 Q208,320 210,260 Q212,200 200,140Z
-      "/>
+    <!-- wavy outer strands right -->
+    <path d="M250,170 Q266,230 262,300 Q259,356 242,402 Q254,360 254,300 Q254,232 242,176Z"
+          fill="#0c0810" opacity=".8">
+      <animate attributeName="d" dur="6.6s" repeatCount="indefinite" values="
+        M250,170 Q266,230 262,300 Q259,356 242,402 Q254,360 254,300 Q254,232 242,176Z;
+        M250,170 Q270,232 266,304 Q263,360 246,406 Q258,362 258,302 Q258,234 242,176Z;
+        M250,170 Q266,230 262,300 Q259,356 242,402 Q254,360 254,300 Q254,232 242,176Z"/>
     </path>
-    <!-- center back hair -->
-    <path d="M105,120 Q100,200 105,300 Q108,350 115,385 L125,380 Q115,340 112,290 Q108,220 115,130Z" fill="url(#hairGrad)" opacity=".7"/>
-    <path d="M195,120 Q200,200 195,300 Q192,350 185,385 L175,380 Q185,340 188,290 Q192,220 185,130Z" fill="url(#hairGrad)" opacity=".7"/>
   </g>
 
-  <!-- neck -->
-  <path d="M130,210 Q132,235 133,255 L167,255 Q168,235 170,210" fill="url(#skinGrad)"/>
+  <!-- ============ NECK & SHOULDERS ============ -->
+  <path d="M158,236 Q160,262 160,282 L196,282 Q196,262 198,236Z" fill="url(#skin)"/>
+  <path d="M160,268 Q178,286 196,268 L196,284 Q178,298 160,284Z" fill="#b07d4e" opacity=".35"/>
+  <!-- top / dress -->
+  <path d="M158,278 Q120,288 92,312 Q70,332 64,372 L64,440 L300,440 L300,360
+           Q294,320 270,300 Q236,280 198,278 Q178,300 158,278Z"
+        fill="url(#top)"/>
+  <path d="M158,278 Q178,300 198,278 Q186,296 178,298 Q170,296 158,278Z" fill="#1a0f16" opacity=".6"/>
+  <!-- sheer shoulder hint -->
+  <path d="M120,300 Q108,330 110,372" fill="none" stroke="#5a3f4e" stroke-width="2" opacity=".35"/>
+  <path d="M238,298 Q252,328 250,372" fill="none" stroke="#5a3f4e" stroke-width="2" opacity=".35"/>
 
-  <!-- shoulders & dress -->
-  <path d="M133,252 Q110,258 80,275 Q60,288 55,310 L55,400 L245,400 L245,310 Q240,288 220,275 Q190,258 167,252Z" fill="url(#dressGrad)" stroke="#3a2050" stroke-width=".5"/>
-  <!-- dress neckline detail -->
-  <path d="M133,252 Q140,260 150,262 Q160,260 167,252" fill="none" stroke="#d4af37" stroke-width="1" opacity=".5"/>
+  <!-- ============ FACE ============ -->
+  <g>
+    <path d="M120,150 Q116,108 150,90 Q172,80 196,90 Q230,108 226,152
+             Q224,196 206,224 Q190,248 173,250 Q156,248 140,224 Q122,196 120,150Z"
+          fill="url(#skin)"/>
+    <!-- shading inside face -->
+    <g clip-path="url(#faceClip)">
+      <ellipse cx="173" cy="166" rx="56" ry="60" fill="url(#cheekLight)"/>
+      <rect x="196" y="90" width="44" height="170" fill="url(#skinShade)" opacity=".5"/>
+      <!-- soft temple contour, left -->
+      <path d="M124,150 Q120,178 132,206 Q126,182 129,156Z" fill="#c08a58" opacity=".22" filter="url(#soft)"/>
+    </g>
 
-  <!-- face -->
-  <ellipse cx="150" cy="170" rx="52" ry="62" fill="url(#skinGrad)"/>
+    <!-- ears -->
+    <ellipse cx="121" cy="172" rx="8" ry="13" fill="url(#skin)"/>
+    <ellipse cx="225" cy="172" rx="8" ry="13" fill="url(#skin)"/>
+    <!-- earring -->
+    <circle cx="121" cy="188" r="3" fill="url(#gold)"/>
 
-  <!-- eyes -->
-  <g class="eyes">
-    <!-- left eye -->
-    <ellipse cx="132" cy="165" rx="8" ry="5.5" fill="#fff" opacity=".95"/>
-    <circle cx="133" cy="165" r="3.5" fill="#1a0f0a"/>
-    <circle cx="134" cy="163.5" r="1.2" fill="#fff" opacity=".8"/>
-    <!-- right eye -->
-    <ellipse cx="168" cy="165" rx="8" ry="5.5" fill="#fff" opacity=".95"/>
-    <circle cx="167" cy="165" r="3.5" fill="#1a0f0a"/>
-    <circle cx="168" cy="163.5" r="1.2" fill="#fff" opacity=".8"/>
-    <!-- eyelashes -->
-    <path d="M124,162 Q128,158 132,161" fill="none" stroke="#1a0f0a" stroke-width="1.2"/>
-    <path d="M168,161 Q172,158 176,162" fill="none" stroke="#1a0f0a" stroke-width="1.2"/>
     <!-- eyebrows -->
-    <path d="M122,155 Q132,149 142,154" fill="none" stroke="#2a1a10" stroke-width="1.8" stroke-linecap="round"/>
-    <path d="M158,154 Q168,149 178,155" fill="none" stroke="#2a1a10" stroke-width="1.8" stroke-linecap="round"/>
-    <!-- blink animation -->
-    <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="1;1;1;0;1;1;1;1;1;1" keyTimes="0;0.43;0.45;0.47;0.49;0.5;0.93;0.95;0.97;1"/>
-  </g>
+    <path d="M130,148 Q144,140 158,146" fill="none" stroke="#2a1a12" stroke-width="3" stroke-linecap="round"/>
+    <path d="M188,146 Q202,140 216,149" fill="none" stroke="#2a1a12" stroke-width="3" stroke-linecap="round"/>
 
-  <!-- nose -->
-  <path d="M148,170 Q150,180 148,185 Q150,187 153,185" fill="none" stroke="#c49070" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- eyes -->
+    <g class="eyes">
+      <!-- left -->
+      <path d="M132,162 Q144,153 156,162 Q144,172 132,162Z" fill="#fff8ef"/>
+      <circle cx="144" cy="163" r="6.4" fill="url(#iris)"/>
+      <circle cx="144" cy="163" r="2.6" fill="#0a0604"/>
+      <circle cx="146.4" cy="160.6" r="1.8" fill="#fff" opacity=".9"/>
+      <path d="M131,161 Q144,151 157,161" fill="none" stroke="#1a0f08" stroke-width="2" stroke-linecap="round"/>
+      <path d="M131,162 Q130,159 133,157" fill="none" stroke="#1a0f08" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M134,167 Q144,171 154,167" fill="none" stroke="#c08a58" stroke-width="1.1" opacity=".55"/>
+      <!-- right -->
+      <path d="M190,162 Q202,153 214,162 Q202,172 190,162Z" fill="#fff8ef"/>
+      <circle cx="202" cy="163" r="6.4" fill="url(#iris)"/>
+      <circle cx="202" cy="163" r="2.6" fill="#0a0604"/>
+      <circle cx="204.4" cy="160.6" r="1.8" fill="#fff" opacity=".9"/>
+      <path d="M189,161 Q202,151 215,161" fill="none" stroke="#1a0f08" stroke-width="2" stroke-linecap="round"/>
+      <path d="M213,162 Q214,159 211,157" fill="none" stroke="#1a0f08" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M192,167 Q202,171 212,167" fill="none" stroke="#c08a58" stroke-width="1.1" opacity=".55"/>
+      <!-- blink -->
+      <rect x="128" y="152" width="92" height="22" fill="url(#skin)" opacity="0">
+        <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+                 values="0;0;0;1;0;0;0;0;0;1;0;0" keyTimes="0;0.32;0.34;0.355;0.37;0.5;0.66;0.68;0.695;0.71;0.73;1"/>
+      </rect>
+    </g>
 
-  <!-- smile -->
-  <path d="M135,192 Q142,202 150,204 Q158,202 165,192" fill="none" stroke="#b07060" stroke-width="1.8" stroke-linecap="round">
-    <animate attributeName="d" dur="6s" repeatCount="indefinite" values="
-      M135,192 Q142,202 150,204 Q158,202 165,192;
-      M136,193 Q143,204 150,206 Q157,204 164,193;
-      M135,192 Q142,202 150,204 Q158,202 165,192
-    "/>
-  </path>
-  <!-- lower lip hint -->
-  <path d="M140,197 Q150,208 160,197" fill="#c48070" opacity=".3"/>
+    <!-- nose -->
+    <path d="M173,165 Q176,182 171,192 Q167,196 173,198 Q179,196 175,192" fill="none"
+          stroke="#bf8d5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <ellipse cx="173" cy="194" rx="6" ry="3.4" fill="#b07d4e" opacity=".25"/>
 
-  <!-- blush -->
-  <circle cx="125" cy="188" r="10" fill="#e8a090" opacity=".2">
-    <animate attributeName="opacity" dur="3s" repeatCount="indefinite" values=".15;.25;.15"/>
-  </circle>
-  <circle cx="175" cy="188" r="10" fill="#e8a090" opacity=".2">
-    <animate attributeName="opacity" dur="3s" repeatCount="indefinite" values=".15;.25;.15"/>
-  </circle>
-
-  <!-- bindi -->
-  <circle cx="150" cy="148" r="2.5" fill="#c41030">
-    <animate attributeName="r" dur="3s" repeatCount="indefinite" values="2.5;2.8;2.5"/>
-  </circle>
-
-  <!-- hair front -->
-  <g class="hair-front">
-    <!-- top hair volume -->
-    <path d="M98,140 Q95,115 105,95 Q120,72 150,68 Q180,72 195,95 Q205,115 202,140 Q195,120 180,110 Q165,105 150,104 Q135,105 120,110 Q105,120 98,140Z" fill="url(#hairGrad)"/>
-    <!-- left side hair -->
-    <path d="M98,140 Q92,155 88,175 Q86,190 88,200 Q92,190 95,175 Q98,160 102,145Z" fill="url(#hairGrad)">
-      <animate attributeName="d" dur="5s" repeatCount="indefinite" values="
-        M98,140 Q92,155 88,175 Q86,190 88,200 Q92,190 95,175 Q98,160 102,145Z;
-        M98,140 Q90,157 86,178 Q84,193 86,203 Q90,193 93,178 Q96,163 102,145Z;
-        M98,140 Q92,155 88,175 Q86,190 88,200 Q92,190 95,175 Q98,160 102,145Z
-      "/>
-    </path>
-    <!-- right side hair -->
-    <path d="M202,140 Q208,155 212,175 Q214,190 212,200 Q208,190 205,175 Q202,160 198,145Z" fill="url(#hairGrad)">
-      <animate attributeName="d" dur="4.8s" repeatCount="indefinite" values="
-        M202,140 Q208,155 212,175 Q214,190 212,200 Q208,190 205,175 Q202,160 198,145Z;
-        M202,140 Q210,157 214,178 Q216,193 214,203 Q210,193 207,178 Q204,163 198,145Z;
-        M202,140 Q208,155 212,175 Q214,190 212,200 Q208,190 205,175 Q202,160 198,145Z
-      "/>
-    </path>
-    <!-- hair parting highlight -->
-    <path d="M142,70 Q150,68 155,70 Q152,85 150,100 Q148,85 142,70Z" fill="#2a2040" opacity=".4"/>
-    <!-- hair sheen -->
-    <path d="M120,85 Q135,78 145,80 Q140,95 135,105 Q130,95 120,85Z" fill="#fff" opacity=".06"/>
-  </g>
-
-  <!-- left arm resting (chin on hand pose) -->
-  <g class="left-arm">
-    <path d="M80,275 Q75,290 78,310 Q80,330 85,340 L95,335 Q90,320 88,305 Q86,290 90,275Z" fill="url(#dressGrad)"/>
-    <!-- hand near chin -->
-    <path d="M108,200 Q100,208 98,218 Q97,225 100,230 Q104,228 106,222 Q108,215 112,208Z" fill="url(#skinGrad)"/>
-  </g>
-
-  <!-- bangles on left wrist with sparkle -->
-  <g class="bangles" filter="url(#softGlow)">
-    <ellipse cx="100" cy="232" rx="10" ry="4" fill="none" stroke="url(#bangleGold)" stroke-width="2.5">
-      <animate attributeName="stroke-opacity" dur="2s" repeatCount="indefinite" values=".8;1;.8"/>
+    <!-- blush -->
+    <ellipse cx="139" cy="190" rx="13" ry="9" fill="#e89a86" opacity=".25">
+      <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values=".18;.3;.18"/>
     </ellipse>
-    <ellipse cx="100" cy="238" rx="10" ry="4" fill="none" stroke="url(#bangleRose)" stroke-width="2.2"/>
-    <ellipse cx="100" cy="244" rx="10" ry="4" fill="none" stroke="url(#bangleGold)" stroke-width="2">
-      <animate attributeName="stroke-opacity" dur="2.5s" repeatCount="indefinite" values=".7;1;.7"/>
+    <ellipse cx="200" cy="190" rx="13" ry="9" fill="#e89a86" opacity=".25">
+      <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values=".18;.3;.18"/>
     </ellipse>
-    <!-- sparkle on bangle -->
-    <circle cx="110" cy="232" r="2" fill="#fbe6b4" opacity="0">
-      <animate attributeName="opacity" dur="3s" repeatCount="indefinite" values="0;0;.9;0;0"/>
-      <animate attributeName="r" dur="3s" repeatCount="indefinite" values="1;1;3;1;1"/>
-    </circle>
-    <circle cx="91" cy="244" r="2" fill="#fbe6b4" opacity="0">
-      <animate attributeName="opacity" dur="3.5s" repeatCount="indefinite" values="0;.8;0;0;.6;0"/>
-      <animate attributeName="r" dur="3.5s" repeatCount="indefinite" values="1;3;1;1;2.5;1"/>
+
+    <!-- smile (gently upturned) -->
+    <path d="M151,207 Q173,225 197,206 Q187,201 173,203 Q160,201 151,207Z" fill="url(#lips)">
+      <animate attributeName="d" dur="7s" repeatCount="indefinite" values="
+        M151,207 Q173,225 197,206 Q187,201 173,203 Q160,201 151,207Z;
+        M150,205 Q173,229 198,205 Q187,200 173,202 Q160,200 150,205Z;
+        M151,207 Q173,225 197,206 Q187,201 173,203 Q160,201 151,207Z"/>
+    </path>
+    <path d="M156,208 Q173,215 192,207" fill="none" stroke="#fff" stroke-width="1.5" opacity=".55"/>
+    <path d="M158,206 Q173,203 190,206" fill="none" stroke="#7a3a34" stroke-width="1.1" opacity=".45"/>
+    <!-- smile corner dimples -->
+    <circle cx="151" cy="207" r="1.6" fill="#b07d4e" opacity=".4"/>
+    <circle cx="197" cy="206" r="1.6" fill="#b07d4e" opacity=".4"/>
+
+    <!-- bindi -->
+    <circle cx="173" cy="135" r="3.4" fill="#c4102e">
+      <animate attributeName="r" dur="3s" repeatCount="indefinite" values="3.2;3.8;3.2"/>
     </circle>
   </g>
 
-  <!-- floating hearts around her -->
-  <g class="floating-decor" opacity=".6">
-    <text x="55" y="100" font-size="14" fill="#f7c3cd">
-      &#x2764;
-      <animateTransform attributeName="transform" type="translate" dur="4s" repeatCount="indefinite" values="0,0; 5,-15; 0,0"/>
-      <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values=".4;.8;.4"/>
+  <!-- ============ HAIR (front layer, parted) ============ -->
+  <g>
+    <!-- crown volume -->
+    <path d="M118,154 Q104,116 120,84 Q140,46 178,44 Q216,46 236,84 Q252,116 238,154
+             Q230,128 210,116 Q224,140 220,160 Q214,134 196,124
+             Q186,118 178,117 Q170,118 160,124 Q142,134 136,160
+             Q132,140 146,116 Q126,128 118,154Z" fill="url(#hair)"/>
+    <!-- center part -->
+    <path d="M170,48 Q178,46 186,48 Q182,70 178,96 Q174,70 170,48Z" fill="#241a2a"/>
+    <!-- left sweep -->
+    <path d="M120,150 Q108,128 126,108 Q116,140 130,158 Q138,150 150,146
+             Q132,152 124,172 Q116,158 120,150Z" fill="url(#hair)">
+      <animate attributeName="d" dur="6.5s" repeatCount="indefinite" values="
+        M120,150 Q108,128 126,108 Q116,140 130,158 Q138,150 150,146 Q132,152 124,172 Q116,158 120,150Z;
+        M120,150 Q106,126 126,106 Q114,140 128,158 Q138,150 150,146 Q130,152 122,174 Q114,158 120,150Z;
+        M120,150 Q108,128 126,108 Q116,140 130,158 Q138,150 150,146 Q132,152 124,172 Q116,158 120,150Z"/>
+    </path>
+    <!-- right sweep -->
+    <path d="M236,150 Q248,128 230,108 Q240,140 226,158 Q218,150 206,146
+             Q224,152 232,172 Q240,158 236,150Z" fill="url(#hair)">
+      <animate attributeName="d" dur="7s" repeatCount="indefinite" values="
+        M236,150 Q248,128 230,108 Q240,140 226,158 Q218,150 206,146 Q224,152 232,172 Q240,158 236,150Z;
+        M236,150 Q250,126 230,106 Q242,140 228,158 Q218,150 206,146 Q226,152 234,174 Q242,158 236,150Z;
+        M236,150 Q248,128 230,108 Q240,140 226,158 Q218,150 206,146 Q224,152 232,172 Q240,158 236,150Z"/>
+    </path>
+    <!-- sheen highlights -->
+    <path d="M150,70 Q166,58 180,62 Q170,84 162,104 Q156,86 150,70Z" fill="url(#hairSheen)" opacity=".5"/>
+    <path d="M200,76 Q214,68 224,80 Q214,98 208,116 Q204,96 200,76Z" fill="url(#hairSheen)" opacity=".4"/>
+  </g>
+
+  <!-- ============ ARM + HAND ON CHEEK + BANGLES ============ -->
+  <g>
+    <!-- forearm rising from the table to the cheek -->
+    <path d="M212,302 Q236,298 256,278 Q272,262 272,238 Q272,216 254,208
+             Q240,204 230,212 Q248,214 252,234 Q254,256 236,272
+             Q220,284 210,298Z" fill="url(#skin)" filter="url(#dropSoft)"/>
+    <!-- forearm inner shadow -->
+    <path d="M252,214 Q266,224 262,244 Q256,262 240,274 Q254,258 254,238 Q254,220 240,212Z"
+          fill="#b07d4e" opacity=".28" filter="url(#soft)"/>
+
+    <!-- back of hand resting along the jaw -->
+    <path d="M212,196 Q224,188 236,192 Q248,196 250,212 L250,232
+             Q248,244 236,246 Q222,247 214,238 Q208,224 210,206Z"
+          fill="url(#skin)"/>
+    <!-- four soft fingers curving up against the cheek -->
+    <path d="M214,200 Q220,186 226,184 Q231,184 230,194 Q228,202 224,208Z" fill="url(#skin)"/>
+    <path d="M222,196 Q229,182 235,181 Q240,182 238,192 Q236,200 231,206Z" fill="url(#skin)"/>
+    <path d="M230,195 Q238,183 244,183 Q249,185 246,195 Q243,202 238,207Z" fill="url(#skin)"/>
+    <path d="M238,197 Q246,188 251,189 Q255,192 252,201 Q249,208 244,211Z" fill="url(#skin)"/>
+    <!-- gentle separations between fingers -->
+    <path d="M222,190 Q224,198 222,206" fill="none" stroke="#bf8d5e" stroke-width="1.1" opacity=".45"/>
+    <path d="M230,189 Q232,197 230,205" fill="none" stroke="#bf8d5e" stroke-width="1.1" opacity=".45"/>
+    <path d="M238,191 Q240,199 238,206" fill="none" stroke="#bf8d5e" stroke-width="1.1" opacity=".45"/>
+    <!-- knuckle highlight -->
+    <ellipse cx="232" cy="214" rx="14" ry="9" fill="#ffe6c4" opacity=".22" filter="url(#soft)"/>
+
+    <!-- stacked bangles on the wrist -->
+    <g filter="url(#dropSoft)">
+      <ellipse cx="244" cy="250" rx="21" ry="8.5" fill="none" stroke="url(#gold)" stroke-width="5" transform="rotate(-38 244 250)"/>
+      <ellipse cx="250" cy="260" rx="21" ry="8.5" fill="none" stroke="url(#wood)" stroke-width="5" transform="rotate(-38 250 260)"/>
+      <ellipse cx="256" cy="270" rx="20.5" ry="8" fill="none" stroke="url(#gold)" stroke-width="4.5" transform="rotate(-38 256 270)"/>
+      <ellipse cx="262" cy="280" rx="20" ry="8" fill="none" stroke="url(#wood)" stroke-width="4.5" transform="rotate(-38 262 280)"/>
+      <!-- bangle sparkles -->
+      <circle cx="230" cy="242" r="2" fill="#fff6d8" opacity="0">
+        <animate attributeName="opacity" dur="3.2s" repeatCount="indefinite" values="0;0;1;0;0"/>
+        <animate attributeName="r" dur="3.2s" repeatCount="indefinite" values="1;1;3.4;1;1"/>
+      </circle>
+      <circle cx="242" cy="264" r="2" fill="#fff6d8" opacity="0">
+        <animate attributeName="opacity" dur="4s" repeatCount="indefinite" values="0;1;0;0;.7;0"/>
+        <animate attributeName="r" dur="4s" repeatCount="indefinite" values="1;3;1;1;2.6;1"/>
+      </circle>
+    </g>
+  </g>
+
+  <!-- ============ FLOATING DECOR ============ -->
+  <g opacity=".75">
+    <text x="74" y="120" font-size="17" fill="#f7c3cd">&#x2764;
+      <animateTransform attributeName="transform" type="translate" dur="5s" repeatCount="indefinite" values="0,0; 6,-18; 0,0"/>
+      <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values=".4;.85;.4"/>
     </text>
-    <text x="235" y="120" font-size="12" fill="#e8c46a">
-      &#x2764;
-      <animateTransform attributeName="transform" type="translate" dur="3.5s" repeatCount="indefinite" values="0,0; -5,-12; 0,0"/>
-      <animate attributeName="opacity" dur="3.5s" repeatCount="indefinite" values=".3;.7;.3"/>
+    <text x="286" y="150" font-size="14" fill="#e8c46a">&#x2764;
+      <animateTransform attributeName="transform" type="translate" dur="4.4s" repeatCount="indefinite" values="0,0; -6,-14; 0,0"/>
+      <animate attributeName="opacity" dur="4.4s" repeatCount="indefinite" values=".3;.75;.3"/>
     </text>
-    <text x="40" y="300" font-size="10" fill="#f0d98a">
-      &#10022;
-      <animate attributeName="opacity" dur="2.5s" repeatCount="indefinite" values=".2;.8;.2"/>
+    <text x="60" y="330" font-size="13" fill="#f0d98a">&#10022;
+      <animate attributeName="opacity" dur="3s" repeatCount="indefinite" values=".2;.9;.2"/>
     </text>
-    <text x="250" y="280" font-size="11" fill="#f0d98a">
-      &#10022;
-      <animate attributeName="opacity" dur="3s" repeatCount="indefinite" values=".3;.9;.3"/>
+    <text x="300" y="300" font-size="15" fill="#f0d98a">&#10022;
+      <animate attributeName="opacity" dur="3.6s" repeatCount="indefinite" values=".3;.95;.3"/>
+    </text>
+    <text x="44" y="210" font-size="11" fill="#f7c3cd">&#10022;
+      <animate attributeName="opacity" dur="4.2s" repeatCount="indefinite" values=".25;.8;.25"/>
     </text>
   </g>
 </svg>
