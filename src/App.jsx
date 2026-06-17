@@ -54,6 +54,13 @@ import "leaflet/dist/leaflet.css";
 /* >>> 🎵 PASTE YOUR SONG'S DIRECT AUDIO URL HERE (leave '' for none) */
 const SONG_URL = ""; // e.g. "/media/ilahi.mp3" or "https://example.com/ilahi.mp3"
 
+/* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
+const BIRTHDAY_SONG_URL = ""; // e.g. "/media/happy-birthday.mp3"
+
+/* >>> 🎂 HER BIRTHDAY — month is 0-indexed (5 = June) */
+const BIRTHDAY_MONTH = 5; // June
+const BIRTHDAY_DAY = 22;
+
 /* ────────────────────────────────────────────────────────────────────────────
    THE MEMORIES  —  placed by real latitude / longitude, in the order we lived them.
    Each one has:  photos (moments)  •  food (everything we ate)  •  video (optional)
@@ -306,6 +313,19 @@ const MEMORIES = [
 /* ──────────────────────────────────────────────────────────────────────────── */
 
 const QUIZ_TOTAL = MEMORIES.filter((m) => m.quiz).length;
+
+/* >>> 💕 THE DAY YOU MET (for the "days since we met" counter) */
+const FIRST_MET_DATE = new Date("2022-03-07");
+
+const LOVE_QUOTES = [
+  "In all the world, there is no heart for me like yours.",
+  "Every love story is beautiful, but ours is my favourite.",
+  "I choose you. And I'll choose you over and over.",
+  "You are my today and all of my tomorrows.",
+  "Wherever you are is my home.",
+  "I loved you yesterday. I love you still. I always have, I always will.",
+  "You are my sun, my moon, and all my stars.",
+];
 
 /* Build a custom golden Leaflet pin (teardrop). Answered = rose heart, finale = star. */
 function makeIcon(m, answered, unlocked, index) {
@@ -654,17 +674,18 @@ function Quiz({ mem, state, wrongPicks, onAnswer }) {
   );
 }
 
-/* Floating-heart burst (plays on a correct answer / celebration). */
+/* Floating-heart + rose-petal burst (plays on a correct answer / celebration). */
 function HeartBurst({ trigger, full }) {
   if (!trigger) return null;
-  const hearts = ["💛", "❤️", "🤍", "💗", "🤍"];
+  const petals = ["💛", "❤️", "🌹", "💗", "🌸", "🤍", "💐", "🥀", "✨"];
   return (
     <div className={"burst" + (full ? " burst-full" : "")} key={trigger}>
-      {Array.from({ length: full ? 28 : 16 }).map((_, i) => {
+      {Array.from({ length: full ? 36 : 20 }).map((_, i) => {
         const left = Math.random() * 100;
         const delay = Math.random() * (full ? 0.8 : 0.3);
         const dur = 1 + Math.random() * (full ? 1.6 : 1);
         const size = 14 + Math.random() * 22;
+        const drift = (Math.random() - 0.5) * 60;
         return (
           <span
             key={i}
@@ -674,9 +695,10 @@ function HeartBurst({ trigger, full }) {
               animationDelay: delay + "s",
               animationDuration: dur + "s",
               fontSize: size + "px",
+              "--drift": drift + "px",
             }}
           >
-            {hearts[i % hearts.length]}
+            {petals[i % petals.length]}
           </span>
         );
       })}
@@ -686,24 +708,31 @@ function HeartBurst({ trigger, full }) {
 
 /* ───────────────────────────── MEMORY MODAL ─────────────────────────────
    Reveal flow she'll experience:
-     1) read the love note + answer the quiz
-     2) the trip's VIDEO plays (if you added one)
-     3) the moment the video ends → the PHOTOS (Moments / Food) are revealed
+     1) read the love note (envelope she taps open) + answer the quiz
+     2) ✨ PHOTO REVEAL POPUP — a hero photo slides in as her reward (dismissable with ×)
+     3) the trip's VIDEO plays (if you added one)
+     4) the moment the video ends → the PHOTOS (Moments / Food) are revealed
    (Already-answered memories open fully unlocked when revisited.)                */
 function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAnswer }) {
   const alreadyDone = !mem.quiz || answered[mem.id] === "correct";
   const hasVideo = !!mem.video;
-  const [stage, setStage] = useState(alreadyDone ? "full" : "quiz"); // "quiz" | "video" | "full"
+  const [stage, setStage] = useState(alreadyDone ? "full" : "quiz");
+  const [showReveal, setShowReveal] = useState(false);
   const videoRef = useRef(null);
+  const prevAnswered = useRef(answered[mem.id]);
 
-  // When she gets the answer right, advance the reveal.
   useEffect(() => {
-    if (answered[mem.id] === "correct" && stage === "quiz") {
-      setStage(hasVideo ? "video" : "full");
+    if (prevAnswered.current !== "correct" && answered[mem.id] === "correct" && stage === "quiz") {
+      setShowReveal(true);
     }
-  }, [answered, mem.id, stage, hasVideo]);
+    prevAnswered.current = answered[mem.id];
+  }, [answered, mem.id, stage]);
 
-  // Try to autoplay + scroll the video into view when it's its moment.
+  function dismissReveal() {
+    setShowReveal(false);
+    setStage(hasVideo ? "video" : "full");
+  }
+
   useEffect(() => {
     if (stage === "video" && videoRef.current) {
       videoRef.current.play().catch(() => {});
@@ -724,11 +753,19 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
         <div className="card-when">{mem.when}</div>
         <h2 className="card-title">{mem.name}</h2>
 
-        <div className="card-message">
-          {mem.message.split("\n\n").map((para, idx) => (
-            <p key={idx}>{para}</p>
-          ))}
-        </div>
+        <Envelope name={mem.name}>
+          <div className="card-message">
+            {mem.isFinale ? (
+              mem.message.split("\n\n").map((para, idx) => <p key={idx}>{para}</p>)
+            ) : (
+              mem.message.split("\n\n").map((para, idx) => (
+                <p key={idx}>
+                  <Typewriter text={para} speed={22} />
+                </p>
+              ))
+            )}
+          </div>
+        </Envelope>
 
         {mem.quiz && (
           <Quiz
@@ -737,6 +774,10 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
             wrongPicks={wrongPicks[mem.id]}
             onAnswer={onAnswer}
           />
+        )}
+
+        {showReveal && (
+          <PhotoReveal mem={mem} onClose={dismissReveal} />
         )}
 
         {mediaLocked ? (
@@ -797,12 +838,275 @@ function GoldenSparkles() {
   );
 }
 
+/* ───────────────────────────── TYPEWRITER TEXT ───────────────────────────── */
+function Typewriter({ text, speed = 28, onDone }) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+  const indexRef = useRef(0);
+
+  useEffect(() => {
+    indexRef.current = 0;
+    setDisplayed("");
+    setDone(false);
+    const id = setInterval(() => {
+      indexRef.current++;
+      if (indexRef.current >= text.length) {
+        setDisplayed(text);
+        setDone(true);
+        clearInterval(id);
+        if (onDone) onDone();
+      } else {
+        setDisplayed(text.slice(0, indexRef.current));
+      }
+    }, speed);
+    return () => clearInterval(id);
+  }, [text, speed]);
+
+  return (
+    <span>
+      {displayed}
+      {!done && <span className="tw-cursor">|</span>}
+    </span>
+  );
+}
+
+/* ───────────────────────────── ENVELOPE (tap to open love note) ───────────────────────────── */
+function Envelope({ children, name }) {
+  const [opened, setOpened] = useState(false);
+
+  return opened ? (
+    <div className="envelope-content" key="content">{children}</div>
+  ) : (
+    <button className="envelope-sealed" onClick={() => setOpened(true)}>
+      <div className="env-flap" />
+      <div className="env-body">
+        <span className="env-icon">💌</span>
+        <span className="env-label">A letter for you</span>
+        <span className="env-hint">tap to open</span>
+      </div>
+    </button>
+  );
+}
+
+/* ───────────────────────────── PHOTO REVEAL POPUP ───────────────────────────── */
+function PhotoReveal({ mem, onClose }) {
+  const photo = (mem.photos || []).find((p) => p.url) || null;
+  const hasVideo = !!mem.video;
+
+  return (
+    <div className="photo-reveal">
+      <button className="pr-close" onClick={onClose} aria-label="Close">{"×"}</button>
+      <div className="pr-inner">
+        {photo && photo.url ? (
+          <div className="pr-photo-wrap">
+            <img className="pr-photo" src={photo.url} alt={photo.caption || ""} />
+            <div className="pr-gradient" />
+          </div>
+        ) : (
+          <div className="pr-placeholder">
+            <span className="pr-ph-icon">{"✨"}</span>
+          </div>
+        )}
+        <div className="pr-overlay">
+          <div className="pr-trip-name">{mem.name}</div>
+          <div className="pr-caption">{photo && photo.caption ? photo.caption : mem.teaser}</div>
+          <div className="pr-heart-divider">{"♥"}</div>
+          <div className="pr-unlocked-text">
+            {hasVideo ? "Your video & photos are unlocked" : "Your photos are unlocked"}
+          </div>
+          <button className="pr-continue" onClick={onClose}>
+            {hasVideo ? "Watch our video →" : "See our photos →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────────── FLOATING LOVE QUOTES ───────────────────────────── */
+function LoveQuotes() {
+  const [idx, setIdx] = useState(0);
+  const [fade, setFade] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setIdx((i) => (i + 1) % LOVE_QUOTES.length);
+        setFade(true);
+      }, 600);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className={"love-quote" + (fade ? " lq-visible" : "")}>
+      <span className="lq-mark">"</span>
+      {LOVE_QUOTES[idx]}
+      <span className="lq-mark">"</span>
+    </div>
+  );
+}
+
+/* ───────────────────────────── BIRTHDAY COUNTDOWN ─────────────────────────
+   Auto-appears 5 minutes before midnight on her birthday eve.
+   At midnight → explodes into celebration + plays birthday music.            */
+function useBirthdayCountdown() {
+  const [phase, setPhase] = useState("idle"); // "idle" | "counting" | "birthday"
+  const [secsLeft, setSecsLeft] = useState(0);
+
+  useEffect(() => {
+    function getTargetMidnight() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const target = new Date(year, BIRTHDAY_MONTH, BIRTHDAY_DAY, 0, 0, 0, 0);
+      if (now > new Date(year, BIRTHDAY_MONTH, BIRTHDAY_DAY, 0, 10, 0, 0)) {
+        target.setFullYear(year + 1);
+      }
+      return target;
+    }
+
+    function tick() {
+      const now = new Date();
+      const target = getTargetMidnight();
+      const diff = (target - now) / 1000;
+
+      if (diff <= 0 && diff > -600) {
+        setPhase("birthday");
+        setSecsLeft(0);
+      } else if (diff > 0 && diff <= 300) {
+        setPhase("counting");
+        setSecsLeft(Math.ceil(diff));
+      } else {
+        setPhase("idle");
+        setSecsLeft(Math.max(0, Math.ceil(diff)));
+      }
+    }
+
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return { phase, secsLeft };
+}
+
+function BirthdayCountdown({ phase, secsLeft, onDismiss }) {
+  const audioRef = useRef(null);
+  const playedRef = useRef(false);
+
+  useEffect(() => {
+    if (phase === "birthday" && BIRTHDAY_SONG_URL && audioRef.current && !playedRef.current) {
+      playedRef.current = true;
+      audioRef.current.volume = 0.7;
+      audioRef.current.play().catch(() => {});
+    }
+  }, [phase]);
+
+  if (phase === "idle") return null;
+
+  const mins = Math.floor(secsLeft / 60);
+  const secs = secsLeft % 60;
+  const pad = (n) => String(n).padStart(2, "0");
+
+  if (phase === "birthday") {
+    return (
+      <div className="cd-overlay cd-birthday">
+        <audio ref={audioRef} src={BIRTHDAY_SONG_URL || undefined} preload="auto" />
+        <div className="cd-stars" />
+        <div className="cd-burst-layer">
+          {Array.from({ length: 40 }).map((_, i) => {
+            const emojis = ["🎂", "🎁", "🎀", "🌹", "💛", "✨", "🎉", "💗", "🌸", "🥂"];
+            return (
+              <span
+                key={i}
+                className="cd-confetti"
+                style={{
+                  left: Math.random() * 100 + "%",
+                  animationDelay: Math.random() * 2 + "s",
+                  animationDuration: 2 + Math.random() * 2 + "s",
+                  fontSize: 16 + Math.random() * 20 + "px",
+                }}
+              >
+                {emojis[i % emojis.length]}
+              </span>
+            );
+          })}
+        </div>
+        <div className="cd-inner cd-inner-bday">
+          <div className="cd-bday-kicker">It's here</div>
+          <h1 className="cd-bday-title">Happy Birthday</h1>
+          <h2 className="cd-bday-name">Nidhi</h2>
+          <div className="cd-bday-heart">{"💛"}</div>
+          <p className="cd-bday-msg">
+            Another year of loving you begins right now.
+            <br />
+            You make every single day feel like magic.
+          </p>
+          <div className="cd-bday-cake">{"🎂"}</div>
+          <button className="cd-bday-continue" onClick={onDismiss}>
+            Open your surprise →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cd-overlay cd-counting">
+      <div className="cd-stars" />
+      <div className="cd-candle-glow" />
+      <div className="cd-inner">
+        <div className="cd-kicker">Something magical is about to happen</div>
+        <div className="cd-timer">
+          <div className="cd-digit-group">
+            <span className="cd-digit" key={"m" + mins}>{pad(mins)}</span>
+            <span className="cd-unit">min</span>
+          </div>
+          <span className="cd-colon">:</span>
+          <div className="cd-digit-group">
+            <span className="cd-digit" key={"s" + secs}>{pad(secs)}</span>
+            <span className="cd-unit">sec</span>
+          </div>
+        </div>
+        <div className="cd-until">until your birthday</div>
+        <div className="cd-hearts-row">
+          {["💛", "🌹", "💛", "🌹", "💛"].map((h, i) => (
+            <span key={i} className="cd-float-heart" style={{ animationDelay: i * 0.4 + "s" }}>
+              {h}
+            </span>
+          ))}
+        </div>
+        <p className="cd-whisper">
+          Close your eyes for a moment… and when you open them,
+          <br />
+          everything changes.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ───────────────────────────── INTRO SCREEN ───────────────────────────── */
 function Intro({ onBegin }) {
   return (
     <div className="intro">
       <div className="intro-stars" />
+
+      {/* portrait background — fills the screen with a cinematic blur */}
+      <div className="intro-bg">
+        <img src="/media/nidhi-portrait.png" alt="" className="intro-bg-img" />
+      </div>
+
       <div className="intro-inner">
+        {/* portrait in a golden frame */}
+        <div className="intro-portrait">
+          <div className="intro-portrait-ring" />
+          <div className="intro-portrait-ring intro-portrait-ring2" />
+          <img src="/media/nidhi-portrait.png" alt="Nidhi" className="intro-portrait-img" />
+          <div className="intro-portrait-shine" />
+        </div>
+
         <div className="intro-kicker">Happy Birthday, my love</div>
         <h1 className="intro-name">Nidhi</h1>
         <div className="intro-rule">
@@ -834,15 +1138,19 @@ export default function App() {
   const [musicOn, setMusicOn] = useState(false);
   const [toast, setToast] = useState("");
   const [celebrate, setCelebrate] = useState(0);
+  const [countdownDismissed, setCountdownDismissed] = useState(false);
 
   const audioRef = useRef(null);
   const unlockFired = useRef(false);
+
+  const { phase: bdayPhase, secsLeft: bdaySecsLeft } = useBirthdayCountdown();
 
   const hearts = Object.values(answered).filter((v) => v === "correct").length;
   const unlocked = hearts >= QUIZ_TOTAL;
   const totalPhotos = MEMORIES.reduce((n, m) => n + (m.photos ? m.photos.length : 0), 0);
   const totalFood = MEMORIES.reduce((n, m) => n + (m.food ? m.food.length : 0), 0);
   const openMem = openId ? MEMORIES.find((m) => m.id === openId) : null;
+  const daysSinceMet = Math.floor((Date.now() - FIRST_MET_DATE.getTime()) / 86400000);
 
   // toast auto-dismiss
   useEffect(() => {
@@ -928,6 +1236,15 @@ export default function App() {
       {/* 🎵 ambient music — set SONG_URL at the top of the file */}
       <audio ref={audioRef} src={SONG_URL || undefined} loop preload="none" />
 
+      {/* 🎂 birthday countdown — auto-appears 5 min before midnight */}
+      {!countdownDismissed && (bdayPhase === "counting" || bdayPhase === "birthday") && (
+        <BirthdayCountdown
+          phase={bdayPhase}
+          secsLeft={bdaySecsLeft}
+          onDismiss={() => setCountdownDismissed(true)}
+        />
+      )}
+
       {!started ? (
         <Intro onBegin={begin} />
       ) : (
@@ -947,6 +1264,8 @@ export default function App() {
               {musicOn ? "♫" : "♪"}
             </button>
           </header>
+
+          <LoveQuotes />
 
           <div className="viewbar">
             <div className="toggle">
@@ -972,6 +1291,10 @@ export default function App() {
           </div>
 
           <div className="stats">
+            <div className="stat stat-love">
+              <span className="stat-num">{daysSinceMet}</span>
+              <span className="stat-label">Days Since We Met</span>
+            </div>
             <div className="stat">
               <span className="stat-num">{MEMORIES.length}</span>
               <span className="stat-label">Journeys</span>
@@ -1088,6 +1411,60 @@ const STYLES = `
   animation: fadeIn 1.4s ease both;
 }
 .intro-inner { position: relative; z-index: 2; max-width: 540px; }
+
+/* ——— CINEMATIC BACKGROUND PORTRAIT ——— */
+.intro-bg {
+  position: absolute; inset: 0; z-index: 0; overflow: hidden;
+}
+.intro-bg-img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center 20%;
+  filter: blur(28px) brightness(.35) saturate(.6);
+  transform: scale(1.15);
+  opacity: .55;
+}
+
+/* ——— PORTRAIT FRAME ——— */
+.intro-portrait {
+  position: relative; width: 172px; height: 172px; margin: 0 auto 18px;
+  border-radius: 50%; opacity: 0;
+  animation: portraitIn 1.3s cubic-bezier(.2,1,.3,1) .15s both;
+}
+@keyframes portraitIn {
+  from { opacity: 0; transform: scale(.75) translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.intro-portrait-ring {
+  position: absolute; inset: -5px; border-radius: 50%;
+  border: 2.5px solid rgba(212,175,55,.6);
+  animation: ringGlow 3.5s ease-in-out infinite;
+}
+.intro-portrait-ring2 {
+  inset: -12px;
+  border: 1.5px solid rgba(212,175,55,.25);
+  animation-delay: 1.2s;
+}
+@keyframes ringGlow {
+  0%,100% { box-shadow: 0 0 12px 2px rgba(212,175,55,.2); border-color: rgba(212,175,55,.5); }
+  50% { box-shadow: 0 0 28px 6px rgba(212,175,55,.45); border-color: rgba(212,175,55,.8); }
+}
+.intro-portrait-img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 15%;
+  border: 3px solid rgba(240,217,138,.5);
+  box-shadow:
+    0 0 30px 8px rgba(212,175,55,.25),
+    0 16px 40px rgba(0,0,0,.45);
+  animation: portraitFloat 6s ease-in-out 1.5s infinite;
+}
+@keyframes portraitFloat {
+  0%,100% { transform: translateY(0); box-shadow: 0 0 30px 8px rgba(212,175,55,.25), 0 16px 40px rgba(0,0,0,.45); }
+  50% { transform: translateY(-7px); box-shadow: 0 0 40px 12px rgba(212,175,55,.35), 0 24px 50px rgba(0,0,0,.35); }
+}
+.intro-portrait-shine {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 50%, transparent 100%);
+  animation: portraitIn 1.3s cubic-bezier(.2,1,.3,1) .15s both;
+}
+
 .intro-kicker {
   font-family: 'Marcellus', serif; letter-spacing: .42em; text-transform: uppercase;
   font-size: 12px; color: #e7b9c4; opacity: 0; animation: fadeUp 1s ease .3s both;
@@ -1588,12 +1965,6 @@ const STYLES = `
   position: absolute; bottom: -10%; opacity: 0;
   animation-name: floatUp; animation-timing-function: ease-out; animation-fill-mode: forwards;
 }
-@keyframes floatUp {
-  0% { opacity: 0; transform: translateY(0) scale(.6) rotate(0deg); }
-  15% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(-110vh) scale(1.1) rotate(40deg); }
-}
-
 /* ——— CELEBRATION BANNER ——— */
 .celebrate {
   position: fixed; inset: 0; z-index: 55; pointer-events: none;
@@ -1654,6 +2025,341 @@ const STYLES = `
 @keyframes glowPulse {
   0%,100% { box-shadow: 0 0 18px rgba(212,175,55,.45); }
   50% { box-shadow: 0 0 32px rgba(240,217,138,.85); }
+}
+
+/* ——— LOVE QUOTES ——— */
+.love-quote {
+  position: relative; z-index: 5; text-align: center;
+  padding: 8px 18px; font-style: italic; font-size: 14.5px; color: #d8cba8;
+  background: rgba(8,12,30,.45);
+  transition: opacity .6s ease;
+  opacity: 0;
+  min-height: 36px; display: flex; align-items: center; justify-content: center;
+}
+.lq-visible { opacity: 1; }
+.lq-mark { color: #d4af37; font-size: 18px; margin: 0 4px; opacity: .7; }
+
+/* ——— DAYS OF LOVE STAT ——— */
+.stat-love .stat-num {
+  background: linear-gradient(180deg, #f7c3cd, #e89fb0);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none;
+}
+.stat-love { border-color: rgba(217,134,149,.3); }
+
+/* ——— TYPEWRITER CURSOR ——— */
+.tw-cursor {
+  color: #e8c46a; font-weight: 300; animation: twBlink .8s step-end infinite;
+}
+@keyframes twBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ——— ENVELOPE ——— */
+.envelope-sealed {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 100%; padding: 28px 16px; margin: 8px 0 4px; cursor: pointer;
+  border-radius: 16px; border: 1px solid rgba(212,175,55,.3);
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(212,175,55,.12), transparent 60%),
+    linear-gradient(170deg, #1a1f3e 0%, #131738 100%);
+  position: relative; overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  animation: envelopePulse 3s ease-in-out infinite;
+}
+.envelope-sealed:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: rgba(212,175,55,.6);
+  box-shadow: 0 12px 36px rgba(212,175,55,.2);
+}
+@keyframes envelopePulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(212,175,55,.15); }
+  50% { box-shadow: 0 8px 32px rgba(212,175,55,.35); }
+}
+.env-flap {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 80px solid transparent; border-right: 80px solid transparent;
+  border-top: 45px solid rgba(212,175,55,.18);
+  pointer-events: none;
+}
+.env-body { position: relative; z-index: 1; text-align: center; }
+.env-icon { display: block; font-size: 38px; margin-bottom: 8px;
+  animation: envFloat 2.5s ease-in-out infinite; }
+@keyframes envFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.env-label {
+  display: block; font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 21px; color: #f0d98a;
+}
+.env-hint {
+  display: block; margin-top: 6px; font-family: 'Marcellus', serif; font-size: 10.5px;
+  letter-spacing: .2em; text-transform: uppercase; color: #9aa6cf;
+}
+.envelope-content { animation: envOpen .6s ease both; }
+@keyframes envOpen {
+  from { opacity: 0; transform: translateY(-8px) scale(.97); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ——— PHOTO REVEAL POPUP ——— */
+.photo-reveal {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(4,6,16,.95); backdrop-filter: blur(12px);
+  animation: prIn .6s cubic-bezier(.2,1,.3,1) both;
+  padding: 16px;
+}
+@keyframes prIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.pr-close {
+  position: absolute; top: 16px; right: 18px; z-index: 5;
+  width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(212,175,55,.4);
+  color: #f0d98a; font-size: 22px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .2s ease, background .2s ease;
+}
+.pr-close:hover { background: rgba(255,255,255,.2); transform: scale(1.1); }
+.pr-inner {
+  position: relative; width: 100%; max-width: 480px;
+  border-radius: 24px; overflow: hidden;
+  border: 1px solid rgba(212,175,55,.4);
+  box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 60px rgba(212,175,55,.15);
+  animation: prSlideUp .7s cubic-bezier(.2,1,.3,1) .15s both;
+}
+@keyframes prSlideUp {
+  from { opacity: 0; transform: translateY(40px) scale(.92); }
+  to { opacity: 1; transform: none; }
+}
+.pr-photo-wrap { position: relative; }
+.pr-photo {
+  width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block;
+  animation: prPhotoZoom 8s ease-out both;
+}
+@keyframes prPhotoZoom {
+  from { transform: scale(1.15); }
+  to { transform: scale(1); }
+}
+.pr-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(4,6,16,.9) 0%, rgba(4,6,16,.3) 40%, transparent 70%);
+}
+.pr-placeholder {
+  aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 50% 40%, rgba(212,175,55,.16), #0c1230);
+}
+.pr-ph-icon { font-size: 56px; }
+.pr-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 20px 28px;
+  text-align: center;
+  animation: prFadeUp .8s ease .4s both;
+}
+@keyframes prFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.pr-trip-name {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: clamp(28px, 7vw, 38px);
+  background: linear-gradient(180deg, #fbe6b4, #d8b052);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.pr-caption {
+  font-style: italic; font-size: 17px; color: #efe4cb; margin-top: 4px;
+}
+.pr-heart-divider {
+  color: #f7c3cd; font-size: 18px; margin: 12px 0 8px;
+  animation: prHeartPulse 1.2s ease-in-out infinite;
+}
+@keyframes prHeartPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+.pr-unlocked-text {
+  font-family: 'Marcellus', serif; font-size: 11px; letter-spacing: .18em;
+  text-transform: uppercase; color: #e7b9c4;
+}
+.pr-continue {
+  display: inline-block; margin-top: 16px; cursor: pointer;
+  font-family: 'Marcellus', serif; font-size: 14px; letter-spacing: .1em;
+  color: #1a1206; border: none; border-radius: 999px; padding: 12px 28px;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  box-shadow: 0 8px 24px rgba(212,175,55,.4);
+  transition: transform .2s ease;
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+.pr-continue:hover { transform: translateY(-2px) scale(1.04); }
+
+/* ——— BIRTHDAY COUNTDOWN OVERLAY ——— */
+.cd-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 28px;
+  animation: fadeIn .8s ease both;
+}
+.cd-counting {
+  background:
+    radial-gradient(800px 500px at 50% 35%, rgba(30,20,60,.95), rgba(6,4,18,.98));
+}
+.cd-birthday {
+  background:
+    radial-gradient(900px 600px at 50% 30%, rgba(60,30,20,.9), rgba(6,4,18,.97));
+}
+.cd-stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.6px 1.6px at 15% 25%, rgba(255,245,210,.9), transparent),
+    radial-gradient(1.3px 1.3px at 70% 15%, rgba(255,245,210,.8), transparent),
+    radial-gradient(1.1px 1.1px at 45% 70%, rgba(255,245,210,.7), transparent),
+    radial-gradient(1.5px 1.5px at 88% 68%, rgba(255,245,210,.85), transparent),
+    radial-gradient(1.2px 1.2px at 30% 90%, rgba(255,245,210,.6), transparent);
+  pointer-events: none;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+.cd-candle-glow {
+  position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,180,80,.15), transparent 70%);
+  animation: candlePulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes candlePulse {
+  0%,100% { opacity: .6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+}
+.cd-inner {
+  position: relative; z-index: 2; max-width: 480px;
+}
+.cd-kicker {
+  font-family: 'Marcellus', serif; font-size: 12px; letter-spacing: .35em;
+  text-transform: uppercase; color: #e7b9c4;
+  animation: fadeUp 1s ease .2s both;
+}
+.cd-timer {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 28px 0 16px;
+  animation: fadeUp 1s ease .5s both;
+}
+.cd-digit-group { text-align: center; }
+.cd-digit {
+  display: block;
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(72px, 22vw, 120px); line-height: 1;
+  background: linear-gradient(180deg, #fbe6b4 0%, #e8c46a 40%, #c79a36 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 60px rgba(212,175,55,.3);
+  animation: digitPop .35s cubic-bezier(.2,1.2,.4,1) both;
+}
+@keyframes digitPop {
+  from { transform: scale(.85) translateY(6px); opacity: .4; }
+  to { transform: none; opacity: 1; }
+}
+.cd-unit {
+  display: block; font-family: 'Marcellus', serif; font-size: 11px;
+  letter-spacing: .2em; text-transform: uppercase; color: #9aa6cf; margin-top: 4px;
+}
+.cd-colon {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(48px, 14vw, 80px); color: #e8c46a;
+  animation: colonBlink 1s step-end infinite;
+  padding-bottom: 20px;
+}
+@keyframes colonBlink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+.cd-until {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500;
+  font-size: clamp(22px, 6vw, 30px); color: #f0d98a;
+  animation: fadeUp 1s ease .7s both;
+}
+.cd-hearts-row {
+  display: flex; justify-content: center; gap: 12px; margin: 22px 0;
+  animation: fadeUp 1s ease .9s both;
+}
+.cd-float-heart {
+  font-size: 20px; animation: cdHeartFloat 2.5s ease-in-out infinite;
+}
+@keyframes cdHeartFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.15); }
+}
+.cd-whisper {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(16px, 4.5vw, 20px); line-height: 1.6; color: #d8cba8;
+  max-width: 380px; margin: 0 auto;
+  animation: fadeUp 1.2s ease 1.2s both;
+}
+
+/* ——— BIRTHDAY CELEBRATION SCREEN ——— */
+.cd-burst-layer {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1;
+}
+.cd-confetti {
+  position: absolute; top: -10%;
+  animation-name: cdConfettiFall; animation-timing-function: ease-in;
+  animation-fill-mode: forwards; animation-iteration-count: infinite;
+}
+@keyframes cdConfettiFall {
+  0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(.7); }
+  10% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(110vh) rotate(360deg) scale(1.1); }
+}
+.cd-inner-bday { position: relative; z-index: 2; }
+.cd-bday-kicker {
+  font-family: 'Marcellus', serif; font-size: 13px; letter-spacing: .4em;
+  text-transform: uppercase; color: #e7b9c4;
+  animation: fadeUp .8s ease .2s both;
+}
+.cd-bday-title {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: clamp(36px, 12vw, 60px); line-height: 1.05; margin: 8px 0 0;
+  background: linear-gradient(180deg, #fbe6b4 0%, #e8c46a 50%, #c79a36 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 50px rgba(212,175,55,.35);
+  animation: fadeUp 1s ease .4s both;
+}
+.cd-bday-name {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: clamp(52px, 18vw, 100px); line-height: .95; margin: 0;
+  background: linear-gradient(180deg, #f7c3cd, #e89fb0, #d98695);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 40px rgba(217,134,149,.3);
+  animation: fadeUp 1.1s ease .6s both;
+}
+.cd-bday-heart {
+  font-size: 36px; margin: 16px 0;
+  animation: fadeUp 1s ease .8s both, prHeartPulse 1.2s ease-in-out 1.8s infinite;
+}
+.cd-bday-msg {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(18px, 5vw, 22px); line-height: 1.65; color: #efe4cb;
+  max-width: 400px; margin: 0 auto;
+  animation: fadeUp 1s ease 1s both;
+}
+.cd-bday-cake {
+  font-size: 48px; margin: 20px 0 8px;
+  animation: fadeUp 1s ease 1.2s both, cdCakeBounce 2s ease-in-out 2.2s infinite;
+}
+@keyframes cdCakeBounce {
+  0%,100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(-5deg); }
+  50% { transform: scale(1.05) rotate(0deg); }
+  75% { transform: scale(1.1) rotate(5deg); }
+}
+.cd-bday-continue {
+  display: inline-block; margin-top: 16px; cursor: pointer;
+  font-family: 'Marcellus', serif; font-size: 15px; letter-spacing: .1em;
+  color: #1a1206; border: none; border-radius: 999px; padding: 14px 34px;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  box-shadow: 0 10px 34px rgba(212,175,55,.45), inset 0 1px 0 rgba(255,255,255,.6);
+  animation: fadeUp 1s ease 1.5s both, glowPulse 3s ease-in-out 2.5s infinite;
+  transition: transform .2s ease;
+}
+.cd-bday-continue:hover { transform: translateY(-2px) scale(1.04); }
+
+/* ——— ENHANCED BURST (drift) ——— */
+@keyframes floatUp {
+  0% { opacity: 0; transform: translateY(0) translateX(0) scale(.6) rotate(0deg); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-110vh) translateX(var(--drift, 0px)) scale(1.1) rotate(40deg); }
 }
 
 @media (min-width: 700px) {
