@@ -1087,6 +1087,209 @@ function BirthdayCountdown({ phase, secsLeft, onDismiss }) {
   );
 }
 
+/* ───────────────────────────── FIREWORKS (canvas) ───────────────────────────── */
+function Fireworks({ active, duration = 6000 }) {
+  const canvasRef = useRef(null);
+  const animRef = useRef(null);
+
+  useEffect(() => {
+    if (!active || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    let w, h;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    const particles = [];
+    const rockets = [];
+    const colors = [
+      "#fbe6b4", "#e8c46a", "#f7c3cd", "#d98695",
+      "#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff",
+      "#ff8fab", "#ffc971", "#a0e7e5", "#e2b0ff",
+    ];
+    const start = Date.now();
+
+    function spawnRocket() {
+      rockets.push({
+        x: w * (0.15 + Math.random() * 0.7),
+        y: h,
+        vx: (Math.random() - 0.5) * 2,
+        vy: -(7 + Math.random() * 5),
+        targetY: h * (0.12 + Math.random() * 0.35),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        trail: [],
+      });
+    }
+
+    function explode(x, y, color) {
+      const count = 60 + Math.floor(Math.random() * 40);
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
+        const speed = 2 + Math.random() * 4;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          decay: 0.012 + Math.random() * 0.016,
+          color,
+          size: 1.5 + Math.random() * 2,
+          sparkle: Math.random() > 0.7,
+        });
+      }
+      for (let i = 0; i < 12; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1 + Math.random() * 2;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          decay: 0.008 + Math.random() * 0.01,
+          color: "#fff",
+          size: 1 + Math.random() * 1.5,
+          sparkle: true,
+        });
+      }
+    }
+
+    let nextRocket = 0;
+    function loop() {
+      const elapsed = Date.now() - start;
+      if (elapsed > duration + 2000) {
+        ctx.clearRect(0, 0, w, h);
+        return;
+      }
+      animRef.current = requestAnimationFrame(loop);
+
+      ctx.fillStyle = "rgba(0,0,0,0.15)";
+      ctx.fillRect(0, 0, w, h);
+
+      if (elapsed < duration && elapsed > nextRocket) {
+        spawnRocket();
+        nextRocket = elapsed + 200 + Math.random() * 400;
+      }
+
+      for (let i = rockets.length - 1; i >= 0; i--) {
+        const r = rockets[i];
+        r.trail.push({ x: r.x, y: r.y });
+        if (r.trail.length > 8) r.trail.shift();
+        r.x += r.vx;
+        r.y += r.vy;
+        r.vy += 0.06;
+
+        for (let t = 0; t < r.trail.length; t++) {
+          const alpha = t / r.trail.length * 0.5;
+          ctx.beginPath();
+          ctx.arc(r.trail[t].x, r.trail[t].y, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = r.color.replace(")", "," + alpha + ")").replace("rgb", "rgba").replace("#", "");
+          ctx.fillStyle = `rgba(255,245,210,${alpha})`;
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+
+        if (r.y <= r.targetY || r.vy >= 0) {
+          explode(r.x, r.y, r.color);
+          rockets.splice(i, 1);
+        }
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.04;
+        p.vx *= 0.985;
+        p.life -= p.decay;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        const alpha = p.life;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        const sz = p.sparkle ? p.size * (0.5 + Math.random()) : p.size;
+        ctx.arc(p.x, p.y, sz * p.life, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    animRef.current = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(animRef.current);
+      window.removeEventListener("resize", resize);
+    };
+  }, [active, duration]);
+
+  if (!active) return null;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fireworks-canvas"
+    />
+  );
+}
+
+/* ───────────────────────────── CALLIGRAPHY LOADING SCREEN ───────────────────────────── */
+function CalligraphyLoader({ onComplete }) {
+  const [phase, setPhase] = useState("drawing"); // "drawing" | "glowing" | "done"
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("glowing"), 2800);
+    const t2 = setTimeout(() => {
+      setPhase("done");
+      onComplete();
+    }, 4200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [onComplete]);
+
+  return (
+    <div className={"calli-loader" + (phase === "done" ? " calli-fadeout" : "")}>
+      <div className="calli-stars" />
+      <div className="calli-inner">
+        <div className="calli-kicker">for the one who makes everything beautiful</div>
+        <div className={"calli-name-wrap" + (phase === "glowing" ? " calli-glow-on" : "")}>
+          <span className="calli-name">Nidhi</span>
+          <span className="calli-mask" />
+        </div>
+        <div className="calli-swirl-wrap">
+          <svg viewBox="0 0 200 30" className="calli-swirl-svg">
+            <path
+              d="M10,15 Q30,2 50,15 T90,15 T130,15 Q150,8 160,15 Q170,22 180,15 L190,15"
+              fill="none" stroke="url(#calliSwirl)" strokeWidth="1.8" strokeLinecap="round"
+              className="calli-swirl-path"
+            />
+            <defs>
+              <linearGradient id="calliSwirl" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#d4af37" stopOpacity="0" />
+                <stop offset="20%" stopColor="#e8c46a" />
+                <stop offset="80%" stopColor="#e8c46a" />
+                <stop offset="100%" stopColor="#d4af37" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div className={"calli-sub" + (phase === "glowing" ? " calli-sub-show" : "")}>
+          <span className="calli-heart">{"💛"}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ───────────────────────────── INTRO SCREEN ───────────────────────────── */
 function Intro({ onBegin }) {
   return (
@@ -1128,6 +1331,7 @@ function Intro({ onBegin }) {
 
 /* ───────────────────────────── ROOT APP ───────────────────────────── */
 export default function App() {
+  const [loading, setLoading] = useState(true);
   const [started, setStarted] = useState(false);
   const [view, setView] = useState("map"); // 'map' | 'timeline' | 'feast'
   const [openId, setOpenId] = useState(null);
@@ -1142,13 +1346,13 @@ export default function App() {
 
   const audioRef = useRef(null);
   const unlockFired = useRef(false);
+  const onCalliDone = useCallback(() => setLoading(false), []);
 
   const { phase: bdayPhase, secsLeft: bdaySecsLeft } = useBirthdayCountdown();
 
   const hearts = Object.values(answered).filter((v) => v === "correct").length;
   const unlocked = hearts >= QUIZ_TOTAL;
   const totalPhotos = MEMORIES.reduce((n, m) => n + (m.photos ? m.photos.length : 0), 0);
-  const totalFood = MEMORIES.reduce((n, m) => n + (m.food ? m.food.length : 0), 0);
   const openMem = openId ? MEMORIES.find((m) => m.id === openId) : null;
   const daysSinceMet = Math.floor((Date.now() - FIRST_MET_DATE.getTime()) / 86400000);
 
@@ -1165,7 +1369,7 @@ export default function App() {
       unlockFired.current = true;
       setCelebrate((c) => c + 1);
       setToast("You know us by heart 💛  Our final memory is unlocked.");
-      const t = setTimeout(() => setCelebrate(0), 4500);
+      const t = setTimeout(() => setCelebrate(0), 8000);
       return () => clearTimeout(t);
     }
   }, [unlocked]);
@@ -1236,8 +1440,11 @@ export default function App() {
       {/* 🎵 ambient music — set SONG_URL at the top of the file */}
       <audio ref={audioRef} src={SONG_URL || undefined} loop preload="none" />
 
+      {/* ✍️ calligraphy loading screen */}
+      {loading && <CalligraphyLoader onComplete={onCalliDone} />}
+
       {/* 🎂 birthday countdown — auto-appears 5 min before midnight */}
-      {!countdownDismissed && (bdayPhase === "counting" || bdayPhase === "birthday") && (
+      {!loading && !countdownDismissed && (bdayPhase === "counting" || bdayPhase === "birthday") && (
         <BirthdayCountdown
           phase={bdayPhase}
           secsLeft={bdaySecsLeft}
@@ -1245,7 +1452,7 @@ export default function App() {
         />
       )}
 
-      {!started ? (
+      {!loading && !started ? (
         <Intro onBegin={begin} />
       ) : (
         <>
@@ -1291,25 +1498,21 @@ export default function App() {
           </div>
 
           <div className="stats">
+            <div className="stat stat-bday">
+              <span className="stat-num">{"🎂"}</span>
+              <span className="stat-label">Happy Birthday</span>
+            </div>
             <div className="stat stat-love">
               <span className="stat-num">{daysSinceMet}</span>
-              <span className="stat-label">Days Since We Met</span>
-            </div>
-            <div className="stat">
-              <span className="stat-num">{MEMORIES.length}</span>
-              <span className="stat-label">Journeys</span>
-            </div>
-            <div className="stat">
-              <span className="stat-num">3</span>
-              <span className="stat-label">Countries</span>
+              <span className="stat-label">Days Together</span>
             </div>
             <div className="stat">
               <span className="stat-num">{totalPhotos}</span>
               <span className="stat-label">Memories</span>
             </div>
-            <div className="stat">
-              <span className="stat-num">{totalFood}</span>
-              <span className="stat-label">Flavours</span>
+            <div className="stat stat-infinite">
+              <span className="stat-num">{"∞"}</span>
+              <span className="stat-label">Reasons I Love You</span>
             </div>
             <div className="stat stat-hearts">
               <span className="stat-num">
@@ -1347,6 +1550,7 @@ export default function App() {
 
           {celebrate > 0 && (
             <div className="celebrate">
+              <Fireworks active={celebrate > 0} duration={7000} />
               <HeartBurst trigger={celebrate} full />
               <div className="celebrate-msg">
                 You know us by heart {"💛"}
@@ -1364,7 +1568,7 @@ export default function App() {
 
 /* ───────────────────────────── STYLES ───────────────────────────── */
 const STYLES = `
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Marcellus&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Marcellus&display=swap');
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -2354,6 +2558,119 @@ const STYLES = `
   transition: transform .2s ease;
 }
 .cd-bday-continue:hover { transform: translateY(-2px) scale(1.04); }
+
+/* ——— FIREWORKS CANVAS ——— */
+.fireworks-canvas {
+  position: fixed; inset: 0; z-index: 58; pointer-events: none;
+  width: 100%; height: 100%;
+}
+
+/* ——— CALLIGRAPHY LOADING SCREEN ——— */
+.calli-loader {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(600px 400px at 50% 42%, rgba(40,28,60,.95), transparent),
+    linear-gradient(160deg, #060414 0%, #0a0820 50%, #060414 100%);
+  transition: opacity .9s ease;
+}
+.calli-fadeout { opacity: 0; pointer-events: none; }
+.calli-stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.4px 1.4px at 18% 28%, rgba(255,245,210,.85), transparent),
+    radial-gradient(1.2px 1.2px at 72% 18%, rgba(255,245,210,.7), transparent),
+    radial-gradient(1.1px 1.1px at 48% 68%, rgba(255,245,210,.6), transparent),
+    radial-gradient(1.3px 1.3px at 88% 58%, rgba(255,245,210,.75), transparent),
+    radial-gradient(1px 1px at 35% 85%, rgba(255,245,210,.5), transparent),
+    radial-gradient(1.5px 1.5px at 60% 12%, rgba(255,245,210,.6), transparent);
+  pointer-events: none;
+  animation: twinkle 5s ease-in-out infinite alternate;
+}
+.calli-inner {
+  position: relative; z-index: 2; text-align: center; max-width: 560px; width: 100%;
+  padding: 0 24px;
+}
+.calli-kicker {
+  font-family: 'Marcellus', serif; font-size: 11.5px; letter-spacing: .35em;
+  text-transform: uppercase; color: #e7b9c4; margin-bottom: 18px;
+  opacity: 0; animation: fadeUp .9s ease .15s both;
+}
+
+/* name with font + gradient reveal mask */
+.calli-name-wrap {
+  position: relative; display: inline-block;
+  opacity: 0; animation: calliNameIn 1s ease .5s both;
+}
+@keyframes calliNameIn {
+  from { opacity: 0; transform: scale(.88) translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.calli-name {
+  font-family: 'Great Vibes', cursive; font-size: clamp(72px, 24vw, 130px);
+  line-height: 1.1;
+  background: linear-gradient(135deg, #fbe6b4 0%, #e8c46a 35%, #d4af37 60%, #f0d98a 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 60px rgba(212,175,55,.3);
+  animation: calliShimmer 4s ease-in-out 1.5s infinite;
+}
+@keyframes calliShimmer {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+/* gradient wipe mask that reveals the text left-to-right */
+.calli-mask {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #060414 0%, #0a0820 50%, #060414 100%);
+  animation: calliReveal 2s cubic-bezier(.4,.0,.2,1) .6s both;
+}
+@keyframes calliReveal {
+  from { clip-path: inset(0 0 0 0); }
+  to { clip-path: inset(0 0 0 100%); }
+}
+/* soft glow pulse after reveal */
+.calli-glow-on .calli-name {
+  text-shadow: 0 0 40px rgba(212,175,55,.5), 0 0 80px rgba(212,175,55,.2);
+  transition: text-shadow .8s ease;
+}
+
+/* decorative swirl underline */
+.calli-swirl-wrap {
+  margin-top: -4px;
+  opacity: 0; animation: fadeUp .6s ease 2.2s both;
+}
+.calli-swirl-svg {
+  width: 180px; height: auto;
+}
+.calli-swirl-path {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: calliSwirl 1.4s cubic-bezier(.4,.0,.2,1) 2.3s both;
+}
+@keyframes calliSwirl {
+  to { stroke-dashoffset: 0; }
+}
+
+.calli-sub {
+  margin-top: 22px; font-size: 30px;
+  opacity: 0; transition: opacity .7s ease;
+}
+.calli-sub-show { opacity: 1; }
+.calli-heart {
+  display: inline-block;
+  animation: prHeartPulse 1.2s ease-in-out infinite;
+}
+
+/* ——— BIRTHDAY STATS ——— */
+.stat-bday .stat-num { font-size: 30px; line-height: 1; }
+.stat-bday { border-color: rgba(240,180,80,.3); background: linear-gradient(180deg, rgba(240,180,80,.1), rgba(240,180,80,.02)); }
+.stat-infinite .stat-num {
+  font-size: 34px; font-weight: 300;
+  background: linear-gradient(180deg, #f7c3cd, #e89fb0);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none;
+}
 
 /* ——— ENHANCED BURST (drift) ——— */
 @keyframes floatUp {
