@@ -1092,7 +1092,21 @@ function Intro({ onBegin }) {
   return (
     <div className="intro">
       <div className="intro-stars" />
+
+      {/* portrait background — fills the screen with a cinematic blur */}
+      <div className="intro-bg">
+        <img src="/media/nidhi-portrait.png" alt="" className="intro-bg-img" />
+      </div>
+
       <div className="intro-inner">
+        {/* portrait in a golden frame */}
+        <div className="intro-portrait">
+          <div className="intro-portrait-ring" />
+          <div className="intro-portrait-ring intro-portrait-ring2" />
+          <img src="/media/nidhi-portrait.png" alt="Nidhi" className="intro-portrait-img" />
+          <div className="intro-portrait-shine" />
+        </div>
+
         <div className="intro-kicker">Happy Birthday, my love</div>
         <h1 className="intro-name">Nidhi</h1>
         <div className="intro-rule">
@@ -1397,6 +1411,59 @@ const STYLES = `
   animation: fadeIn 1.4s ease both;
 }
 .intro-inner { position: relative; z-index: 2; max-width: 540px; }
+
+/* ——— CINEMATIC BACKGROUND PORTRAIT ——— */
+.intro-bg {
+  position: absolute; inset: 0; z-index: 0; overflow: hidden;
+}
+.intro-bg-img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center 20%;
+  filter: blur(28px) brightness(.35) saturate(.6);
+  transform: scale(1.15);
+  opacity: .55;
+}
+
+/* ——— PORTRAIT FRAME ——— */
+.intro-portrait {
+  position: relative; width: 172px; height: 172px; margin: 0 auto 18px;
+  border-radius: 50%; opacity: 0;
+  animation: portraitIn 1.3s cubic-bezier(.2,1,.3,1) .15s both;
+}
+@keyframes portraitIn {
+  from { opacity: 0; transform: scale(.75) translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.intro-portrait-ring {
+  position: absolute; inset: -5px; border-radius: 50%;
+  border: 2.5px solid rgba(212,175,55,.6);
+  animation: ringGlow 3.5s ease-in-out infinite;
+}
+.intro-portrait-ring2 {
+  inset: -12px;
+  border: 1.5px solid rgba(212,175,55,.25);
+  animation-delay: 1.2s;
+}
+@keyframes ringGlow {
+  0%,100% { box-shadow: 0 0 12px 2px rgba(212,175,55,.2); border-color: rgba(212,175,55,.5); }
+  50% { box-shadow: 0 0 28px 6px rgba(212,175,55,.45); border-color: rgba(212,175,55,.8); }
+}
+.intro-portrait-img {
+  width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 15%;
+  border: 3px solid rgba(240,217,138,.5);
+  box-shadow:
+    0 0 30px 8px rgba(212,175,55,.25),
+    0 16px 40px rgba(0,0,0,.45);
+  animation: portraitFloat 6s ease-in-out 1.5s infinite;
+}
+@keyframes portraitFloat {
+  0%,100% { transform: translateY(0); box-shadow: 0 0 30px 8px rgba(212,175,55,.25), 0 16px 40px rgba(0,0,0,.45); }
+  50% { transform: translateY(-7px); box-shadow: 0 0 40px 12px rgba(212,175,55,.35), 0 24px 50px rgba(0,0,0,.35); }
+}
+.intro-portrait-shine {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 50%, transparent 100%);
+  animation: portraitIn 1.3s cubic-bezier(.2,1,.3,1) .15s both;
+}
 
 .intro-kicker {
   font-family: 'Marcellus', serif; letter-spacing: .42em; text-transform: uppercase;
