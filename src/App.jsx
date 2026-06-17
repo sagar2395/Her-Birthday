@@ -307,6 +307,19 @@ const MEMORIES = [
 
 const QUIZ_TOTAL = MEMORIES.filter((m) => m.quiz).length;
 
+/* >>> 💍 YOUR WEDDING DATE (for the "days of love" counter) */
+const WEDDING_DATE = new Date("2024-06-25");
+
+const LOVE_QUOTES = [
+  "In all the world, there is no heart for me like yours.",
+  "Every love story is beautiful, but ours is my favourite.",
+  "I choose you. And I'll choose you over and over.",
+  "You are my today and all of my tomorrows.",
+  "Wherever you are is my home.",
+  "I loved you yesterday. I love you still. I always have, I always will.",
+  "You are my sun, my moon, and all my stars.",
+];
+
 /* Build a custom golden Leaflet pin (teardrop). Answered = rose heart, finale = star. */
 function makeIcon(m, answered, unlocked, index) {
   const done = answered[m.id] === "correct";
@@ -654,17 +667,18 @@ function Quiz({ mem, state, wrongPicks, onAnswer }) {
   );
 }
 
-/* Floating-heart burst (plays on a correct answer / celebration). */
+/* Floating-heart + rose-petal burst (plays on a correct answer / celebration). */
 function HeartBurst({ trigger, full }) {
   if (!trigger) return null;
-  const hearts = ["💛", "❤️", "🤍", "💗", "🤍"];
+  const petals = ["💛", "❤️", "🌹", "💗", "🌸", "🤍", "💐", "🥀", "✨"];
   return (
     <div className={"burst" + (full ? " burst-full" : "")} key={trigger}>
-      {Array.from({ length: full ? 28 : 16 }).map((_, i) => {
+      {Array.from({ length: full ? 36 : 20 }).map((_, i) => {
         const left = Math.random() * 100;
         const delay = Math.random() * (full ? 0.8 : 0.3);
         const dur = 1 + Math.random() * (full ? 1.6 : 1);
         const size = 14 + Math.random() * 22;
+        const drift = (Math.random() - 0.5) * 60;
         return (
           <span
             key={i}
@@ -674,9 +688,10 @@ function HeartBurst({ trigger, full }) {
               animationDelay: delay + "s",
               animationDuration: dur + "s",
               fontSize: size + "px",
+              "--drift": drift + "px",
             }}
           >
-            {hearts[i % hearts.length]}
+            {petals[i % petals.length]}
           </span>
         );
       })}
@@ -686,24 +701,31 @@ function HeartBurst({ trigger, full }) {
 
 /* ───────────────────────────── MEMORY MODAL ─────────────────────────────
    Reveal flow she'll experience:
-     1) read the love note + answer the quiz
-     2) the trip's VIDEO plays (if you added one)
-     3) the moment the video ends → the PHOTOS (Moments / Food) are revealed
+     1) read the love note (envelope she taps open) + answer the quiz
+     2) ✨ PHOTO REVEAL POPUP — a hero photo slides in as her reward (dismissable with ×)
+     3) the trip's VIDEO plays (if you added one)
+     4) the moment the video ends → the PHOTOS (Moments / Food) are revealed
    (Already-answered memories open fully unlocked when revisited.)                */
 function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAnswer }) {
   const alreadyDone = !mem.quiz || answered[mem.id] === "correct";
   const hasVideo = !!mem.video;
-  const [stage, setStage] = useState(alreadyDone ? "full" : "quiz"); // "quiz" | "video" | "full"
+  const [stage, setStage] = useState(alreadyDone ? "full" : "quiz");
+  const [showReveal, setShowReveal] = useState(false);
   const videoRef = useRef(null);
+  const prevAnswered = useRef(answered[mem.id]);
 
-  // When she gets the answer right, advance the reveal.
   useEffect(() => {
-    if (answered[mem.id] === "correct" && stage === "quiz") {
-      setStage(hasVideo ? "video" : "full");
+    if (prevAnswered.current !== "correct" && answered[mem.id] === "correct" && stage === "quiz") {
+      setShowReveal(true);
     }
-  }, [answered, mem.id, stage, hasVideo]);
+    prevAnswered.current = answered[mem.id];
+  }, [answered, mem.id, stage]);
 
-  // Try to autoplay + scroll the video into view when it's its moment.
+  function dismissReveal() {
+    setShowReveal(false);
+    setStage(hasVideo ? "video" : "full");
+  }
+
   useEffect(() => {
     if (stage === "video" && videoRef.current) {
       videoRef.current.play().catch(() => {});
@@ -724,11 +746,19 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
         <div className="card-when">{mem.when}</div>
         <h2 className="card-title">{mem.name}</h2>
 
-        <div className="card-message">
-          {mem.message.split("\n\n").map((para, idx) => (
-            <p key={idx}>{para}</p>
-          ))}
-        </div>
+        <Envelope name={mem.name}>
+          <div className="card-message">
+            {mem.isFinale ? (
+              mem.message.split("\n\n").map((para, idx) => <p key={idx}>{para}</p>)
+            ) : (
+              mem.message.split("\n\n").map((para, idx) => (
+                <p key={idx}>
+                  <Typewriter text={para} speed={22} />
+                </p>
+              ))
+            )}
+          </div>
+        </Envelope>
 
         {mem.quiz && (
           <Quiz
@@ -737,6 +767,10 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
             wrongPicks={wrongPicks[mem.id]}
             onAnswer={onAnswer}
           />
+        )}
+
+        {showReveal && (
+          <PhotoReveal mem={mem} onClose={dismissReveal} />
         )}
 
         {mediaLocked ? (
@@ -797,6 +831,116 @@ function GoldenSparkles() {
   );
 }
 
+/* ───────────────────────────── TYPEWRITER TEXT ───────────────────────────── */
+function Typewriter({ text, speed = 28, onDone }) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+  const indexRef = useRef(0);
+
+  useEffect(() => {
+    indexRef.current = 0;
+    setDisplayed("");
+    setDone(false);
+    const id = setInterval(() => {
+      indexRef.current++;
+      if (indexRef.current >= text.length) {
+        setDisplayed(text);
+        setDone(true);
+        clearInterval(id);
+        if (onDone) onDone();
+      } else {
+        setDisplayed(text.slice(0, indexRef.current));
+      }
+    }, speed);
+    return () => clearInterval(id);
+  }, [text, speed]);
+
+  return (
+    <span>
+      {displayed}
+      {!done && <span className="tw-cursor">|</span>}
+    </span>
+  );
+}
+
+/* ───────────────────────────── ENVELOPE (tap to open love note) ───────────────────────────── */
+function Envelope({ children, name }) {
+  const [opened, setOpened] = useState(false);
+
+  return opened ? (
+    <div className="envelope-content" key="content">{children}</div>
+  ) : (
+    <button className="envelope-sealed" onClick={() => setOpened(true)}>
+      <div className="env-flap" />
+      <div className="env-body">
+        <span className="env-icon">💌</span>
+        <span className="env-label">A letter for you</span>
+        <span className="env-hint">tap to open</span>
+      </div>
+    </button>
+  );
+}
+
+/* ───────────────────────────── PHOTO REVEAL POPUP ───────────────────────────── */
+function PhotoReveal({ mem, onClose }) {
+  const photo = (mem.photos || []).find((p) => p.url) || null;
+  const hasVideo = !!mem.video;
+
+  return (
+    <div className="photo-reveal">
+      <button className="pr-close" onClick={onClose} aria-label="Close">{"×"}</button>
+      <div className="pr-inner">
+        {photo && photo.url ? (
+          <div className="pr-photo-wrap">
+            <img className="pr-photo" src={photo.url} alt={photo.caption || ""} />
+            <div className="pr-gradient" />
+          </div>
+        ) : (
+          <div className="pr-placeholder">
+            <span className="pr-ph-icon">{"✨"}</span>
+          </div>
+        )}
+        <div className="pr-overlay">
+          <div className="pr-trip-name">{mem.name}</div>
+          <div className="pr-caption">{photo && photo.caption ? photo.caption : mem.teaser}</div>
+          <div className="pr-heart-divider">{"♥"}</div>
+          <div className="pr-unlocked-text">
+            {hasVideo ? "Your video & photos are unlocked" : "Your photos are unlocked"}
+          </div>
+          <button className="pr-continue" onClick={onClose}>
+            {hasVideo ? "Watch our video →" : "See our photos →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────────── FLOATING LOVE QUOTES ───────────────────────────── */
+function LoveQuotes() {
+  const [idx, setIdx] = useState(0);
+  const [fade, setFade] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setIdx((i) => (i + 1) % LOVE_QUOTES.length);
+        setFade(true);
+      }, 600);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className={"love-quote" + (fade ? " lq-visible" : "")}>
+      <span className="lq-mark">"</span>
+      {LOVE_QUOTES[idx]}
+      <span className="lq-mark">"</span>
+    </div>
+  );
+}
+
 /* ───────────────────────────── INTRO SCREEN ───────────────────────────── */
 function Intro({ onBegin }) {
   return (
@@ -843,6 +987,7 @@ export default function App() {
   const totalPhotos = MEMORIES.reduce((n, m) => n + (m.photos ? m.photos.length : 0), 0);
   const totalFood = MEMORIES.reduce((n, m) => n + (m.food ? m.food.length : 0), 0);
   const openMem = openId ? MEMORIES.find((m) => m.id === openId) : null;
+  const daysOfLove = Math.floor((Date.now() - WEDDING_DATE.getTime()) / 86400000);
 
   // toast auto-dismiss
   useEffect(() => {
@@ -948,6 +1093,8 @@ export default function App() {
             </button>
           </header>
 
+          <LoveQuotes />
+
           <div className="viewbar">
             <div className="toggle">
               <button
@@ -972,6 +1119,10 @@ export default function App() {
           </div>
 
           <div className="stats">
+            <div className="stat stat-love">
+              <span className="stat-num">{daysOfLove}</span>
+              <span className="stat-label">Days of Love</span>
+            </div>
             <div className="stat">
               <span className="stat-num">{MEMORIES.length}</span>
               <span className="stat-label">Journeys</span>
@@ -1588,12 +1739,6 @@ const STYLES = `
   position: absolute; bottom: -10%; opacity: 0;
   animation-name: floatUp; animation-timing-function: ease-out; animation-fill-mode: forwards;
 }
-@keyframes floatUp {
-  0% { opacity: 0; transform: translateY(0) scale(.6) rotate(0deg); }
-  15% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(-110vh) scale(1.1) rotate(40deg); }
-}
-
 /* ——— CELEBRATION BANNER ——— */
 .celebrate {
   position: fixed; inset: 0; z-index: 55; pointer-events: none;
@@ -1654,6 +1799,176 @@ const STYLES = `
 @keyframes glowPulse {
   0%,100% { box-shadow: 0 0 18px rgba(212,175,55,.45); }
   50% { box-shadow: 0 0 32px rgba(240,217,138,.85); }
+}
+
+/* ——— LOVE QUOTES ——— */
+.love-quote {
+  position: relative; z-index: 5; text-align: center;
+  padding: 8px 18px; font-style: italic; font-size: 14.5px; color: #d8cba8;
+  background: rgba(8,12,30,.45);
+  transition: opacity .6s ease;
+  opacity: 0;
+  min-height: 36px; display: flex; align-items: center; justify-content: center;
+}
+.lq-visible { opacity: 1; }
+.lq-mark { color: #d4af37; font-size: 18px; margin: 0 4px; opacity: .7; }
+
+/* ——— DAYS OF LOVE STAT ——— */
+.stat-love .stat-num {
+  background: linear-gradient(180deg, #f7c3cd, #e89fb0);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none;
+}
+.stat-love { border-color: rgba(217,134,149,.3); }
+
+/* ——— TYPEWRITER CURSOR ——— */
+.tw-cursor {
+  color: #e8c46a; font-weight: 300; animation: twBlink .8s step-end infinite;
+}
+@keyframes twBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ——— ENVELOPE ——— */
+.envelope-sealed {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 100%; padding: 28px 16px; margin: 8px 0 4px; cursor: pointer;
+  border-radius: 16px; border: 1px solid rgba(212,175,55,.3);
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(212,175,55,.12), transparent 60%),
+    linear-gradient(170deg, #1a1f3e 0%, #131738 100%);
+  position: relative; overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  animation: envelopePulse 3s ease-in-out infinite;
+}
+.envelope-sealed:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: rgba(212,175,55,.6);
+  box-shadow: 0 12px 36px rgba(212,175,55,.2);
+}
+@keyframes envelopePulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(212,175,55,.15); }
+  50% { box-shadow: 0 8px 32px rgba(212,175,55,.35); }
+}
+.env-flap {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 80px solid transparent; border-right: 80px solid transparent;
+  border-top: 45px solid rgba(212,175,55,.18);
+  pointer-events: none;
+}
+.env-body { position: relative; z-index: 1; text-align: center; }
+.env-icon { display: block; font-size: 38px; margin-bottom: 8px;
+  animation: envFloat 2.5s ease-in-out infinite; }
+@keyframes envFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.env-label {
+  display: block; font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 21px; color: #f0d98a;
+}
+.env-hint {
+  display: block; margin-top: 6px; font-family: 'Marcellus', serif; font-size: 10.5px;
+  letter-spacing: .2em; text-transform: uppercase; color: #9aa6cf;
+}
+.envelope-content { animation: envOpen .6s ease both; }
+@keyframes envOpen {
+  from { opacity: 0; transform: translateY(-8px) scale(.97); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ——— PHOTO REVEAL POPUP ——— */
+.photo-reveal {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(4,6,16,.95); backdrop-filter: blur(12px);
+  animation: prIn .6s cubic-bezier(.2,1,.3,1) both;
+  padding: 16px;
+}
+@keyframes prIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.pr-close {
+  position: absolute; top: 16px; right: 18px; z-index: 5;
+  width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(212,175,55,.4);
+  color: #f0d98a; font-size: 22px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .2s ease, background .2s ease;
+}
+.pr-close:hover { background: rgba(255,255,255,.2); transform: scale(1.1); }
+.pr-inner {
+  position: relative; width: 100%; max-width: 480px;
+  border-radius: 24px; overflow: hidden;
+  border: 1px solid rgba(212,175,55,.4);
+  box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 60px rgba(212,175,55,.15);
+  animation: prSlideUp .7s cubic-bezier(.2,1,.3,1) .15s both;
+}
+@keyframes prSlideUp {
+  from { opacity: 0; transform: translateY(40px) scale(.92); }
+  to { opacity: 1; transform: none; }
+}
+.pr-photo-wrap { position: relative; }
+.pr-photo {
+  width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block;
+  animation: prPhotoZoom 8s ease-out both;
+}
+@keyframes prPhotoZoom {
+  from { transform: scale(1.15); }
+  to { transform: scale(1); }
+}
+.pr-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(4,6,16,.9) 0%, rgba(4,6,16,.3) 40%, transparent 70%);
+}
+.pr-placeholder {
+  aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 50% 40%, rgba(212,175,55,.16), #0c1230);
+}
+.pr-ph-icon { font-size: 56px; }
+.pr-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 20px 28px;
+  text-align: center;
+  animation: prFadeUp .8s ease .4s both;
+}
+@keyframes prFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.pr-trip-name {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: clamp(28px, 7vw, 38px);
+  background: linear-gradient(180deg, #fbe6b4, #d8b052);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.pr-caption {
+  font-style: italic; font-size: 17px; color: #efe4cb; margin-top: 4px;
+}
+.pr-heart-divider {
+  color: #f7c3cd; font-size: 18px; margin: 12px 0 8px;
+  animation: prHeartPulse 1.2s ease-in-out infinite;
+}
+@keyframes prHeartPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+.pr-unlocked-text {
+  font-family: 'Marcellus', serif; font-size: 11px; letter-spacing: .18em;
+  text-transform: uppercase; color: #e7b9c4;
+}
+.pr-continue {
+  display: inline-block; margin-top: 16px; cursor: pointer;
+  font-family: 'Marcellus', serif; font-size: 14px; letter-spacing: .1em;
+  color: #1a1206; border: none; border-radius: 999px; padding: 12px 28px;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  box-shadow: 0 8px 24px rgba(212,175,55,.4);
+  transition: transform .2s ease;
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+.pr-continue:hover { transform: translateY(-2px) scale(1.04); }
+
+/* ——— ENHANCED BURST (drift) ——— */
+@keyframes floatUp {
+  0% { opacity: 0; transform: translateY(0) translateX(0) scale(.6) rotate(0deg); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-110vh) translateX(var(--drift, 0px)) scale(1.1) rotate(40deg); }
 }
 
 @media (min-width: 700px) {
