@@ -1087,6 +1087,228 @@ function BirthdayCountdown({ phase, secsLeft, onDismiss }) {
   );
 }
 
+/* ───────────────────────────── FIREWORKS (canvas) ───────────────────────────── */
+function Fireworks({ active, duration = 6000 }) {
+  const canvasRef = useRef(null);
+  const animRef = useRef(null);
+
+  useEffect(() => {
+    if (!active || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    let w, h;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    const particles = [];
+    const rockets = [];
+    const colors = [
+      "#fbe6b4", "#e8c46a", "#f7c3cd", "#d98695",
+      "#ff6b6b", "#ffd93d", "#6bcb77", "#4d96ff",
+      "#ff8fab", "#ffc971", "#a0e7e5", "#e2b0ff",
+    ];
+    const start = Date.now();
+
+    function spawnRocket() {
+      rockets.push({
+        x: w * (0.15 + Math.random() * 0.7),
+        y: h,
+        vx: (Math.random() - 0.5) * 2,
+        vy: -(7 + Math.random() * 5),
+        targetY: h * (0.12 + Math.random() * 0.35),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        trail: [],
+      });
+    }
+
+    function explode(x, y, color) {
+      const count = 60 + Math.floor(Math.random() * 40);
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
+        const speed = 2 + Math.random() * 4;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          decay: 0.012 + Math.random() * 0.016,
+          color,
+          size: 1.5 + Math.random() * 2,
+          sparkle: Math.random() > 0.7,
+        });
+      }
+      for (let i = 0; i < 12; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1 + Math.random() * 2;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          decay: 0.008 + Math.random() * 0.01,
+          color: "#fff",
+          size: 1 + Math.random() * 1.5,
+          sparkle: true,
+        });
+      }
+    }
+
+    let nextRocket = 0;
+    function loop() {
+      const elapsed = Date.now() - start;
+      if (elapsed > duration + 2000) {
+        ctx.clearRect(0, 0, w, h);
+        return;
+      }
+      animRef.current = requestAnimationFrame(loop);
+
+      ctx.fillStyle = "rgba(0,0,0,0.15)";
+      ctx.fillRect(0, 0, w, h);
+
+      if (elapsed < duration && elapsed > nextRocket) {
+        spawnRocket();
+        nextRocket = elapsed + 200 + Math.random() * 400;
+      }
+
+      for (let i = rockets.length - 1; i >= 0; i--) {
+        const r = rockets[i];
+        r.trail.push({ x: r.x, y: r.y });
+        if (r.trail.length > 8) r.trail.shift();
+        r.x += r.vx;
+        r.y += r.vy;
+        r.vy += 0.06;
+
+        for (let t = 0; t < r.trail.length; t++) {
+          const alpha = t / r.trail.length * 0.5;
+          ctx.beginPath();
+          ctx.arc(r.trail[t].x, r.trail[t].y, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = r.color.replace(")", "," + alpha + ")").replace("rgb", "rgba").replace("#", "");
+          ctx.fillStyle = `rgba(255,245,210,${alpha})`;
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+
+        if (r.y <= r.targetY || r.vy >= 0) {
+          explode(r.x, r.y, r.color);
+          rockets.splice(i, 1);
+        }
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.04;
+        p.vx *= 0.985;
+        p.life -= p.decay;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        const alpha = p.life;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        const sz = p.sparkle ? p.size * (0.5 + Math.random()) : p.size;
+        ctx.arc(p.x, p.y, sz * p.life, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    animRef.current = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(animRef.current);
+      window.removeEventListener("resize", resize);
+    };
+  }, [active, duration]);
+
+  if (!active) return null;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fireworks-canvas"
+    />
+  );
+}
+
+/* ───────────────────────────── CALLIGRAPHY LOADING SCREEN ───────────────────────────── */
+function CalligraphyLoader({ onComplete }) {
+  const [phase, setPhase] = useState("drawing"); // "drawing" | "glowing" | "done"
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("glowing"), 3200);
+    const t2 = setTimeout(() => {
+      setPhase("done");
+      onComplete();
+    }, 4600);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [onComplete]);
+
+  return (
+    <div className={"calli-loader" + (phase === "done" ? " calli-fadeout" : "")}>
+      <div className="calli-stars" />
+      <div className="calli-inner">
+        <div className="calli-kicker">for the one who makes everything beautiful</div>
+        <svg className="calli-svg" viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="calliGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#fbe6b4" />
+              <stop offset="50%" stopColor="#e8c46a" />
+              <stop offset="100%" stopColor="#d4af37" />
+            </linearGradient>
+            <filter id="calliGlow">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          {/* "Nidhi" in flowing calligraphy strokes */}
+          <g fill="none" stroke="url(#calliGrad)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+             className={"calli-text" + (phase === "glowing" ? " calli-glow" : "")}>
+            {/* N */}
+            <path className="calli-letter" style={{ "--i": 0 }}
+              d="M40,140 L40,50 Q40,42 44,40 Q48,38 50,42 L90,120 Q94,128 96,120 L96,50 Q96,40 100,42" />
+            {/* i */}
+            <path className="calli-letter" style={{ "--i": 1 }}
+              d="M130,65 Q130,58 134,56 Q138,58 138,65 L136,140 Q136,146 132,144" />
+            <circle className="calli-dot" style={{ "--i": 1 }} cx="134" cy="40" r="4" fill="url(#calliGrad)" stroke="none" />
+            {/* d */}
+            <path className="calli-letter" style={{ "--i": 2 }}
+              d="M180,100 Q168,68 172,60 Q176,56 184,58 Q196,62 198,80 L198,38 Q198,32 202,34 L202,140 Q202,148 196,144 Q186,136 176,128 Q168,118 180,100Z" />
+            {/* h */}
+            <path className="calli-letter" style={{ "--i": 3 }}
+              d="M232,38 Q232,32 236,34 L236,90 Q244,60 260,58 Q272,58 274,72 L274,140 Q274,148 270,144" />
+            {/* i */}
+            <path className="calli-letter" style={{ "--i": 4 }}
+              d="M304,65 Q304,58 308,56 Q312,58 312,65 L310,140 Q310,146 306,144" />
+            <circle className="calli-dot" style={{ "--i": 4 }} cx="308" cy="40" r="4" fill="url(#calliGrad)" stroke="none" />
+            {/* decorative swirl */}
+            <path className="calli-swirl" style={{ "--i": 5 }}
+              d="M340,90 Q360,60 380,70 Q400,80 390,100 Q380,120 350,130 Q420,130 440,100 Q460,70 440,50" />
+          </g>
+        </svg>
+        <div className={"calli-sub" + (phase === "glowing" ? " calli-sub-show" : "")}>
+          <span className="calli-heart">{"💛"}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ───────────────────────────── INTRO SCREEN ───────────────────────────── */
 function Intro({ onBegin }) {
   return (
@@ -1128,6 +1350,7 @@ function Intro({ onBegin }) {
 
 /* ───────────────────────────── ROOT APP ───────────────────────────── */
 export default function App() {
+  const [loading, setLoading] = useState(true);
   const [started, setStarted] = useState(false);
   const [view, setView] = useState("map"); // 'map' | 'timeline' | 'feast'
   const [openId, setOpenId] = useState(null);
@@ -1142,6 +1365,7 @@ export default function App() {
 
   const audioRef = useRef(null);
   const unlockFired = useRef(false);
+  const onCalliDone = useCallback(() => setLoading(false), []);
 
   const { phase: bdayPhase, secsLeft: bdaySecsLeft } = useBirthdayCountdown();
 
@@ -1165,7 +1389,7 @@ export default function App() {
       unlockFired.current = true;
       setCelebrate((c) => c + 1);
       setToast("You know us by heart 💛  Our final memory is unlocked.");
-      const t = setTimeout(() => setCelebrate(0), 4500);
+      const t = setTimeout(() => setCelebrate(0), 8000);
       return () => clearTimeout(t);
     }
   }, [unlocked]);
@@ -1236,8 +1460,11 @@ export default function App() {
       {/* 🎵 ambient music — set SONG_URL at the top of the file */}
       <audio ref={audioRef} src={SONG_URL || undefined} loop preload="none" />
 
+      {/* ✍️ calligraphy loading screen */}
+      {loading && <CalligraphyLoader onComplete={onCalliDone} />}
+
       {/* 🎂 birthday countdown — auto-appears 5 min before midnight */}
-      {!countdownDismissed && (bdayPhase === "counting" || bdayPhase === "birthday") && (
+      {!loading && !countdownDismissed && (bdayPhase === "counting" || bdayPhase === "birthday") && (
         <BirthdayCountdown
           phase={bdayPhase}
           secsLeft={bdaySecsLeft}
@@ -1245,7 +1472,7 @@ export default function App() {
         />
       )}
 
-      {!started ? (
+      {!loading && !started ? (
         <Intro onBegin={begin} />
       ) : (
         <>
@@ -1347,6 +1574,7 @@ export default function App() {
 
           {celebrate > 0 && (
             <div className="celebrate">
+              <Fireworks active={celebrate > 0} duration={7000} />
               <HeartBurst trigger={celebrate} full />
               <div className="celebrate-msg">
                 You know us by heart {"💛"}
@@ -2354,6 +2582,86 @@ const STYLES = `
   transition: transform .2s ease;
 }
 .cd-bday-continue:hover { transform: translateY(-2px) scale(1.04); }
+
+/* ——— FIREWORKS CANVAS ——— */
+.fireworks-canvas {
+  position: fixed; inset: 0; z-index: 58; pointer-events: none;
+  width: 100%; height: 100%;
+}
+
+/* ——— CALLIGRAPHY LOADING SCREEN ——— */
+.calli-loader {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(800px 500px at 50% 40%, rgba(30,22,50,.98), rgba(6,4,18,1));
+  transition: opacity .8s ease;
+}
+.calli-fadeout { opacity: 0; pointer-events: none; }
+.calli-stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.4px 1.4px at 20% 30%, rgba(255,245,210,.8), transparent),
+    radial-gradient(1.2px 1.2px at 75% 20%, rgba(255,245,210,.7), transparent),
+    radial-gradient(1.1px 1.1px at 50% 70%, rgba(255,245,210,.6), transparent),
+    radial-gradient(1.3px 1.3px at 85% 60%, rgba(255,245,210,.75), transparent);
+  pointer-events: none;
+  animation: twinkle 5s ease-in-out infinite alternate;
+}
+.calli-inner {
+  position: relative; z-index: 2; text-align: center; max-width: 520px; width: 100%;
+  padding: 0 20px;
+}
+.calli-kicker {
+  font-family: 'Marcellus', serif; font-size: 11px; letter-spacing: .35em;
+  text-transform: uppercase; color: #e7b9c4; margin-bottom: 24px;
+  opacity: 0; animation: fadeUp .8s ease .2s both;
+}
+.calli-svg {
+  width: 100%; max-width: 460px; height: auto;
+  filter: drop-shadow(0 0 8px rgba(212,175,55,.2));
+}
+
+/* stroke-draw animation for each letter */
+.calli-letter {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: calliDraw 2.2s cubic-bezier(.4,.0,.2,1) both;
+  animation-delay: calc(var(--i) * 0.35s + 0.5s);
+}
+.calli-dot {
+  opacity: 0;
+  animation: calliDotPop .4s cubic-bezier(.2,1.2,.4,1) both;
+  animation-delay: calc(var(--i) * 0.35s + 1.6s);
+}
+.calli-swirl {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: calliDraw 1.5s cubic-bezier(.4,.0,.2,1) both;
+  animation-delay: calc(var(--i) * 0.35s + 0.5s);
+}
+@keyframes calliDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes calliDotPop {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* glow after drawing */
+.calli-glow {
+  filter: url(#calliGlow);
+  transition: filter .8s ease;
+}
+.calli-sub {
+  margin-top: 20px; font-size: 28px;
+  opacity: 0; transition: opacity .6s ease;
+}
+.calli-sub-show { opacity: 1; }
+.calli-heart {
+  display: inline-block;
+  animation: prHeartPulse 1.2s ease-in-out infinite;
+}
 
 /* ——— ENHANCED BURST (drift) ——— */
 @keyframes floatUp {
