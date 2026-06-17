@@ -47,7 +47,9 @@
   ════════════════════════════════════════════════════════════════════════════
 */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 /* >>> 🎵 PASTE YOUR SONG'S DIRECT AUDIO URL HERE (leave '' for none) */
 const SONG_URL = ""; // e.g. "/media/ilahi.mp3" or "https://example.com/ilahi.mp3"
@@ -305,40 +307,8 @@ const MEMORIES = [
 
 const QUIZ_TOTAL = MEMORIES.filter((m) => m.quiz).length;
 
-/* Inject Leaflet (dark interactive map) from CDN, once. */
-function useLeaflet() {
-  const [ready, setReady] = useState(typeof window !== "undefined" && !!window.L);
-  useEffect(() => {
-    if (typeof window === "undefined" || window.L) {
-      setReady(true);
-      return;
-    }
-    if (!document.getElementById("leaflet-css")) {
-      const css = document.createElement("link");
-      css.id = "leaflet-css";
-      css.rel = "stylesheet";
-      css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-      document.head.appendChild(css);
-    }
-    let script = document.getElementById("leaflet-js");
-    const onload = () => setReady(true);
-    if (!script) {
-      script = document.createElement("script");
-      script.id = "leaflet-js";
-      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-      script.onload = onload;
-      document.body.appendChild(script);
-    } else {
-      script.addEventListener("load", onload);
-    }
-    return () => script && script.removeEventListener("load", onload);
-  }, []);
-  return ready;
-}
-
 /* Build a custom golden Leaflet pin (teardrop). Answered = rose heart, finale = star. */
-function makeIcon(m, answered, unlocked) {
-  const L = window.L;
+function makeIcon(m, answered, unlocked, index) {
   const done = answered[m.id] === "correct";
   const finale = m.isFinale;
   let cls = "pin";
@@ -350,9 +320,10 @@ function makeIcon(m, answered, unlocked) {
     cls += " pin-done";
     glyph = "♥";
   }
+  const delay = index !== undefined ? index * 0.12 : 0;
   const html =
-    '<div class="' + cls + '"><span class="pin-glyph">' + glyph + "</span></div>" +
-    '<div class="pin-label">' + m.short + "</div>";
+    '<div class="' + cls + '" style="animation-delay:' + delay + 's"><span class="pin-glyph">' + glyph + "</span></div>" +
+    '<div class="pin-label" style="animation-delay:' + (delay + 0.2) + 's">' + m.short + "</div>";
   return L.divIcon({
     html,
     className: "pin-wrap",
@@ -363,14 +334,15 @@ function makeIcon(m, answered, unlocked) {
 
 /* ───────────────────────────── MAP VIEW ───────────────────────────── */
 function MapView({ answered, unlocked, onOpen }) {
-  const ready = useLeaflet();
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const markersRef = useRef({});
+  const onOpenRef = useRef(onOpen);
+  onOpenRef.current = onOpen;
 
   useEffect(() => {
-    if (!ready || !containerRef.current || mapRef.current) return;
-    const L = window.L;
+    if (!containerRef.current || mapRef.current) return;
+
     const map = L.map(containerRef.current, {
       zoomControl: true,
       scrollWheelZoom: true,
@@ -378,7 +350,6 @@ function MapView({ answered, unlocked, onOpen }) {
     });
     mapRef.current = map;
 
-    // Dark, cinematic map tiles (CartoDB dark matter)
     L.tileLayer("https://{s}.basemap.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -388,7 +359,6 @@ function MapView({ answered, unlocked, onOpen }) {
 
     const latlngs = MEMORIES.map((m) => [m.lat, m.lng]);
 
-    // Dotted golden path connecting the journey, in order
     L.polyline(latlngs, {
       color: "#d4af37",
       weight: 2,
@@ -397,39 +367,50 @@ function MapView({ answered, unlocked, onOpen }) {
       lineCap: "round",
     }).addTo(map);
 
-    MEMORIES.forEach((m) => {
+    MEMORIES.forEach((m, index) => {
       const marker = L.marker([m.lat, m.lng], {
-        icon: makeIcon(m, answered, unlocked),
+        icon: makeIcon(m, answered, unlocked, index),
       }).addTo(map);
-      marker.on("click", () => onOpen(m.id));
+      marker.on("click", () => onOpenRef.current(m.id));
       markersRef.current[m.id] = marker;
     });
 
     map.fitBounds(latlngs, { padding: [55, 55] });
-    const t = setTimeout(() => map.invalidateSize(), 250);
+
+    const timers = [
+      setTimeout(() => map.invalidateSize(), 100),
+      setTimeout(() => map.invalidateSize(), 300),
+      setTimeout(() => map.invalidateSize(), 600),
+    ];
+
     const onResize = () => map.invalidateSize();
     window.addEventListener("resize", onResize);
 
+    let ro;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(() => map.invalidateSize());
+      ro.observe(containerRef.current);
+    }
+
     return () => {
-      clearTimeout(t);
+      timers.forEach(clearTimeout);
       window.removeEventListener("resize", onResize);
+      if (ro) ro.disconnect();
       map.remove();
       mapRef.current = null;
       markersRef.current = {};
     };
-  }, [ready]);
+  }, []);
 
-  // Refresh pin icons when answers / unlock state change
   useEffect(() => {
-    MEMORIES.forEach((m) => {
+    MEMORIES.forEach((m, index) => {
       const marker = markersRef.current[m.id];
-      if (marker) marker.setIcon(makeIcon(m, answered, unlocked));
+      if (marker) marker.setIcon(makeIcon(m, answered, unlocked, index));
     });
   }, [answered, unlocked]);
 
   return (
     <div className="map-wrap">
-      {!ready && <div className="map-loading">Unrolling the map of us…</div>}
       <div ref={containerRef} className="map-container" />
     </div>
   );
@@ -795,6 +776,27 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
   );
 }
 
+/* ───────────────────────────── GOLDEN SPARKLES ───────────────────────────── */
+function GoldenSparkles() {
+  return (
+    <div className="sparkles-layer">
+      {Array.from({ length: 20 }).map((_, i) => (
+        <span
+          key={i}
+          className="sparkle"
+          style={{
+            left: Math.random() * 100 + "%",
+            top: Math.random() * 100 + "%",
+            animationDelay: Math.random() * 8 + "s",
+            animationDuration: 3 + Math.random() * 4 + "s",
+            fontSize: 4 + Math.random() * 8 + "px",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ───────────────────────────── INTRO SCREEN ───────────────────────────── */
 function Intro({ onBegin }) {
   return (
@@ -930,10 +932,11 @@ export default function App() {
         <Intro onBegin={begin} />
       ) : (
         <>
+          <GoldenSparkles />
           <header className="header">
             <div className="brand">
               <span className="brand-mark">{"❀"}</span>
-              <span className="brand-text">Our Story Map</span>
+              <span className="brand-text">Happy birthday Kukku</span>
             </div>
             <button
               className={"music" + (musicOn ? " music-on" : "")}
@@ -1136,26 +1139,37 @@ const STYLES = `
   border-bottom: 1px solid rgba(212,175,55,.18);
   background: linear-gradient(180deg, rgba(8,12,30,.85), rgba(8,12,30,.4));
   backdrop-filter: blur(6px);
+  animation: slideDown .6s cubic-bezier(.2,1,.3,1) both;
 }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: none; } }
 .brand { display: flex; align-items: center; gap: 9px; }
-.brand-mark { color: #e8c46a; font-size: 17px; }
+.brand-mark { color: #e8c46a; font-size: 17px; animation: gentleSpin 6s linear infinite; }
+@keyframes gentleSpin { 0%,100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.15); } }
 .brand-text {
   font-family: 'Marcellus', serif; font-size: 17px; letter-spacing: .12em;
-  color: #f3ead3;
+  background: linear-gradient(90deg, #f3ead3, #e8c46a, #f3ead3);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmerText 4s ease-in-out infinite;
 }
+@keyframes shimmerText { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 .music {
   width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
   border: 1px solid rgba(212,175,55,.35); background: rgba(255,255,255,.03);
   color: #e8c46a; font-size: 17px; line-height: 1;
   display: flex; align-items: center; justify-content: center; transition: all .2s ease;
+  animation: slideDown .6s cubic-bezier(.2,1,.3,1) .1s both;
 }
+.music:hover { transform: scale(1.1); border-color: rgba(212,175,55,.6); }
 .music-on { background: linear-gradient(180deg, #e8c46a, #caa13c); color: #1a1206;
-  box-shadow: 0 0 16px rgba(212,175,55,.5); animation: glowPulse 2.4s ease-in-out infinite; }
+  box-shadow: 0 0 16px rgba(212,175,55,.5); animation: glowPulse 2.4s ease-in-out infinite, musicBounce .8s ease; }
+@keyframes musicBounce { 0% { transform: scale(1); } 30% { transform: scale(1.2); } 60% { transform: scale(.95); } 100% { transform: scale(1); } }
 
 /* ——— VIEW BAR (Map / Timeline / Feast) ——— */
 .viewbar {
   position: relative; z-index: 5; display: flex; justify-content: center;
   padding: 10px 12px 2px; background: rgba(8,12,30,.45);
+  animation: fadeUp .5s ease .15s both;
 }
 .toggle {
   display: flex; border: 1px solid rgba(212,175,55,.35); border-radius: 999px;
@@ -1176,16 +1190,27 @@ const STYLES = `
   overflow-x: auto; -webkit-overflow-scrolling: touch;
   border-bottom: 1px solid rgba(212,175,55,.12);
   background: rgba(8,12,30,.45);
+  animation: fadeUp .5s ease .25s both;
 }
 .stat {
   flex: 1 0 auto; min-width: 72px; text-align: center;
   padding: 8px 6px; border-radius: 12px;
   background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
   border: 1px solid rgba(212,175,55,.14);
+  animation: statPop .5s cubic-bezier(.2,1.2,.4,1) both;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
+.stat:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(212,175,55,.2); }
+.stat:nth-child(1) { animation-delay: .3s; }
+.stat:nth-child(2) { animation-delay: .4s; }
+.stat:nth-child(3) { animation-delay: .5s; }
+.stat:nth-child(4) { animation-delay: .6s; }
+.stat:nth-child(5) { animation-delay: .7s; }
+@keyframes statPop { from { opacity: 0; transform: scale(.85) translateY(10px); } to { opacity: 1; } }
 .stat-num {
   display: block; font-family: 'Cormorant Garamond', serif; font-weight: 600;
   font-size: 26px; line-height: 1; color: #f0d98a;
+  text-shadow: 0 0 8px rgba(240,217,138,.3);
 }
 .stat-num .of { font-size: 15px; opacity: .7; }
 .stat-hearts .stat-num { color: #ef9fb0; }
@@ -1195,13 +1220,10 @@ const STYLES = `
 }
 
 /* ——— CONTENT / MAP ——— */
-.content { position: relative; z-index: 4; flex: 1; min-height: 0; }
+.content { position: relative; z-index: 4; flex: 1; min-height: 0; animation: contentReveal .7s ease .35s both; }
+@keyframes contentReveal { from { opacity: 0; } to { opacity: 1; } }
 .map-wrap { position: relative; width: 100%; height: 100%; }
 .map-container { width: 100%; height: 100%; background: #0a0e22; }
-.map-loading {
-  position: absolute; inset: 0; z-index: 2; display: flex; align-items: center;
-  justify-content: center; font-style: italic; font-size: 19px; color: #cdbf9a;
-}
 .leaflet-container { background: #0a0e22 !important; font-family: 'Cormorant Garamond', serif; }
 .leaflet-control-attribution {
   background: rgba(8,12,30,.7) !important; color: #8390b8 !important; font-size: 9px !important;
@@ -1220,13 +1242,18 @@ const STYLES = `
   border: 1.5px solid #fff3cf;
   box-shadow: 0 0 12px 2px rgba(212,175,55,.7);
   display: flex; align-items: center; justify-content: center;
-  animation: pinDrop .5s cubic-bezier(.2,1.2,.4,1) both;
+  animation: pinDrop .6s cubic-bezier(.2,1.2,.4,1) both;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
+.pin:hover { transform: rotate(-45deg) scale(1.25); box-shadow: 0 0 20px 4px rgba(212,175,55,.9); }
 .pin-glyph { transform: rotate(45deg); font-size: 11px; color: #2a1d05; line-height: 1; }
 .pin-done {
   background: linear-gradient(135deg, #f7c3cd, #d98695);
   box-shadow: 0 0 15px 3px rgba(217,134,149,.85);
+  animation: pinDrop .6s cubic-bezier(.2,1.2,.4,1) both, pinPulse 3s ease-in-out infinite;
 }
+.pin-done:hover { box-shadow: 0 0 22px 5px rgba(217,134,149,1); }
+@keyframes pinPulse { 0%,100% { box-shadow: 0 0 15px 3px rgba(217,134,149,.85); } 50% { box-shadow: 0 0 22px 5px rgba(217,134,149,.5); } }
 .pin-finale { width: 32px; height: 32px; }
 .pin-finale .pin-glyph { font-size: 15px; }
 .pin-locked { filter: grayscale(.55) brightness(.7); box-shadow: 0 0 8px 1px rgba(212,175,55,.35); }
@@ -1239,8 +1266,10 @@ const STYLES = `
   position: absolute; left: 50%; top: 24px; transform: translateX(-50%);
   font-family: 'Marcellus', serif; font-size: 11px; color: #f0d98a;
   white-space: nowrap; text-shadow: 0 1px 5px #000, 0 0 8px #000; pointer-events: none;
+  opacity: 0; animation: labelFadeIn .5s ease both;
 }
-@keyframes pinDrop { from { opacity: 0; transform: rotate(-45deg) translateY(-14px) scale(.6); } to { opacity: 1; } }
+@keyframes pinDrop { from { opacity: 0; transform: rotate(-45deg) translateY(-30px) scale(.4); } to { opacity: 1; } }
+@keyframes labelFadeIn { from { opacity: 0; transform: translateX(-50%) translateY(6px); } to { opacity: 1; transform: translateX(-50%); } }
 
 /* ——— TIMELINE ——— */
 .timeline {
@@ -1250,8 +1279,9 @@ const STYLES = `
 .tl-spine {
   position: absolute; left: 31px; top: 30px; bottom: 30px; width: 2px;
   background: repeating-linear-gradient(to bottom, #d4af37 0 3px, transparent 3px 11px);
-  opacity: .5;
+  opacity: .5; animation: spineGrow .8s ease both;
 }
+@keyframes spineGrow { from { transform: scaleY(0); transform-origin: top; } to { transform: scaleY(1); } }
 .tl-item {
   position: relative; display: flex; align-items: center; gap: 14px;
   width: 100%; text-align: left; cursor: pointer;
@@ -1259,7 +1289,17 @@ const STYLES = `
   border: 1px solid rgba(212,175,55,.16); border-radius: 16px;
   padding: 16px 16px 16px 14px; margin: 0 0 16px 0; color: inherit;
   transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  animation: tlSlideIn .5s cubic-bezier(.2,1,.3,1) both;
 }
+.tl-item:nth-child(2) { animation-delay: .08s; }
+.tl-item:nth-child(3) { animation-delay: .16s; }
+.tl-item:nth-child(4) { animation-delay: .24s; }
+.tl-item:nth-child(5) { animation-delay: .32s; }
+.tl-item:nth-child(6) { animation-delay: .40s; }
+.tl-item:nth-child(7) { animation-delay: .48s; }
+.tl-item:nth-child(8) { animation-delay: .56s; }
+.tl-item:nth-child(9) { animation-delay: .64s; }
+@keyframes tlSlideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: none; } }
 .tl-item:hover { transform: translateY(-2px); border-color: rgba(212,175,55,.4);
   box-shadow: 0 10px 30px rgba(0,0,0,.35); }
 .tl-finale { border-color: rgba(240,217,138,.45);
@@ -1313,10 +1353,12 @@ const STYLES = `
 .feast-card {
   position: relative; cursor: pointer; padding: 0; border-radius: 14px; overflow: hidden;
   border: 1px solid rgba(212,175,55,.22); background: #0c1230; text-align: left;
-  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  animation: feastCardIn .5s cubic-bezier(.2,1,.3,1) both;
 }
-.feast-card:hover { transform: translateY(-3px); border-color: rgba(212,175,55,.55);
-  box-shadow: 0 12px 28px rgba(0,0,0,.4); }
+@keyframes feastCardIn { from { opacity: 0; transform: scale(.9) translateY(12px); } to { opacity: 1; } }
+.feast-card:hover { transform: translateY(-4px) scale(1.02); border-color: rgba(212,175,55,.55);
+  box-shadow: 0 12px 28px rgba(0,0,0,.4), 0 0 20px rgba(212,175,55,.15); }
 .feast-card img { width: 100%; height: 132px; object-fit: cover; display: block; }
 .feast-ph {
   display: flex; align-items: center; justify-content: center; height: 132px; font-size: 30px;
@@ -1370,9 +1412,9 @@ const STYLES = `
     linear-gradient(170deg, #131a3a 0%, #0f1430 60%, #140f29 100%);
   border: 1px solid rgba(212,175,55,.35);
   box-shadow: 0 30px 80px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
-  animation: cardIn .42s cubic-bezier(.2,1,.3,1) both;
+  animation: cardIn .5s cubic-bezier(.2,1,.3,1) both;
 }
-@keyframes cardIn { from { opacity: 0; transform: translateY(24px) scale(.97); } to { opacity: 1; } }
+@keyframes cardIn { from { opacity: 0; transform: translateY(30px) scale(.94); } to { opacity: 1; transform: none; } }
 .close {
   position: absolute; top: 12px; right: 14px; z-index: 3;
   width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
@@ -1387,9 +1429,12 @@ const STYLES = `
 .card-title {
   font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
   font-size: clamp(30px, 8vw, 42px); text-align: center; margin: 4px 0 16px;
-  background: linear-gradient(180deg, #fbe6b4, #d8b052);
+  background: linear-gradient(90deg, #d8b052, #fbe6b4, #fff5d4, #fbe6b4, #d8b052);
+  background-size: 300% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: cardTitleShimmer 5s ease-in-out infinite;
 }
+@keyframes cardTitleShimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 
 /* ——— MESSAGE ——— */
 .card-message p {
@@ -1404,7 +1449,9 @@ const STYLES = `
   margin-top: 18px; padding: 16px 16px 18px; border-radius: 16px;
   background: linear-gradient(180deg, rgba(232,196,106,.07), rgba(232,196,106,.02));
   border: 1px solid rgba(212,175,55,.25);
+  animation: quizReveal .6s ease .2s both;
 }
+@keyframes quizReveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .quiz-tag {
   font-family: 'Marcellus', serif; font-size: 10.5px; letter-spacing: .2em;
   text-transform: uppercase; color: #e7b9c4; margin-bottom: 7px;
@@ -1474,7 +1521,9 @@ const STYLES = `
   position: relative; width: 100%; aspect-ratio: 4 / 3; border-radius: 16px;
   overflow: hidden; border: 1px solid rgba(212,175,55,.3); background: #0c1230;
 }
-.photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo { width: 100%; height: 100%; object-fit: cover; display: block;
+  animation: photoReveal .6s ease both; }
+@keyframes photoReveal { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: none; } }
 .placeholder {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 8px; text-align: center; padding: 20px;
@@ -1569,6 +1618,36 @@ const STYLES = `
   box-shadow: 0 12px 40px rgba(0,0,0,.5); animation: toastIn .35s ease both;
 }
 @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* ——— GOLDEN SPARKLES ——— */
+.sparkles-layer {
+  position: fixed; inset: 0; pointer-events: none; z-index: 3; overflow: hidden;
+}
+.sparkle {
+  position: absolute; width: 1em; height: 1em; border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,217,138,.9), rgba(212,175,55,.4), transparent 70%);
+  animation: sparkleFloat 5s ease-in-out infinite;
+}
+@keyframes sparkleFloat {
+  0%,100% { opacity: 0; transform: translateY(0) scale(.5); }
+  20% { opacity: .8; }
+  50% { opacity: 1; transform: translateY(-40px) scale(1); }
+  80% { opacity: .6; }
+}
+
+/* ——— TOGGLE BUTTON TRANSITIONS ——— */
+.tg { position: relative; overflow: hidden; }
+.tg::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent);
+  transform: translateX(-100%); transition: none;
+}
+.tg-on::after { animation: btnShine .6s ease both; }
+@keyframes btnShine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+/* ——— OVERLAY BACKDROP ——— */
+.overlay { animation: overlayIn .35s ease both; }
+@keyframes overlayIn { from { opacity: 0; backdrop-filter: blur(0); } to { opacity: 1; backdrop-filter: blur(5px); } }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
