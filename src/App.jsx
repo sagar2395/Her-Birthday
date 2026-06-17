@@ -54,6 +54,13 @@ import "leaflet/dist/leaflet.css";
 /* >>> 🎵 PASTE YOUR SONG'S DIRECT AUDIO URL HERE (leave '' for none) */
 const SONG_URL = ""; // e.g. "/media/ilahi.mp3" or "https://example.com/ilahi.mp3"
 
+/* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
+const BIRTHDAY_SONG_URL = ""; // e.g. "/media/happy-birthday.mp3"
+
+/* >>> 🎂 HER BIRTHDAY — month is 0-indexed (5 = June) */
+const BIRTHDAY_MONTH = 5; // June
+const BIRTHDAY_DAY = 22;
+
 /* ────────────────────────────────────────────────────────────────────────────
    THE MEMORIES  —  placed by real latitude / longitude, in the order we lived them.
    Each one has:  photos (moments)  •  food (everything we ate)  •  video (optional)
@@ -941,6 +948,145 @@ function LoveQuotes() {
   );
 }
 
+/* ───────────────────────────── BIRTHDAY COUNTDOWN ─────────────────────────
+   Auto-appears 5 minutes before midnight on her birthday eve.
+   At midnight → explodes into celebration + plays birthday music.            */
+function useBirthdayCountdown() {
+  const [phase, setPhase] = useState("idle"); // "idle" | "counting" | "birthday"
+  const [secsLeft, setSecsLeft] = useState(0);
+
+  useEffect(() => {
+    function getTargetMidnight() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const target = new Date(year, BIRTHDAY_MONTH, BIRTHDAY_DAY, 0, 0, 0, 0);
+      if (now > new Date(year, BIRTHDAY_MONTH, BIRTHDAY_DAY, 0, 10, 0, 0)) {
+        target.setFullYear(year + 1);
+      }
+      return target;
+    }
+
+    function tick() {
+      const now = new Date();
+      const target = getTargetMidnight();
+      const diff = (target - now) / 1000;
+
+      if (diff <= 0 && diff > -600) {
+        setPhase("birthday");
+        setSecsLeft(0);
+      } else if (diff > 0 && diff <= 300) {
+        setPhase("counting");
+        setSecsLeft(Math.ceil(diff));
+      } else {
+        setPhase("idle");
+        setSecsLeft(Math.max(0, Math.ceil(diff)));
+      }
+    }
+
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return { phase, secsLeft };
+}
+
+function BirthdayCountdown({ phase, secsLeft, onDismiss }) {
+  const audioRef = useRef(null);
+  const playedRef = useRef(false);
+
+  useEffect(() => {
+    if (phase === "birthday" && BIRTHDAY_SONG_URL && audioRef.current && !playedRef.current) {
+      playedRef.current = true;
+      audioRef.current.volume = 0.7;
+      audioRef.current.play().catch(() => {});
+    }
+  }, [phase]);
+
+  if (phase === "idle") return null;
+
+  const mins = Math.floor(secsLeft / 60);
+  const secs = secsLeft % 60;
+  const pad = (n) => String(n).padStart(2, "0");
+
+  if (phase === "birthday") {
+    return (
+      <div className="cd-overlay cd-birthday">
+        <audio ref={audioRef} src={BIRTHDAY_SONG_URL || undefined} preload="auto" />
+        <div className="cd-stars" />
+        <div className="cd-burst-layer">
+          {Array.from({ length: 40 }).map((_, i) => {
+            const emojis = ["🎂", "🎁", "🎀", "🌹", "💛", "✨", "🎉", "💗", "🌸", "🥂"];
+            return (
+              <span
+                key={i}
+                className="cd-confetti"
+                style={{
+                  left: Math.random() * 100 + "%",
+                  animationDelay: Math.random() * 2 + "s",
+                  animationDuration: 2 + Math.random() * 2 + "s",
+                  fontSize: 16 + Math.random() * 20 + "px",
+                }}
+              >
+                {emojis[i % emojis.length]}
+              </span>
+            );
+          })}
+        </div>
+        <div className="cd-inner cd-inner-bday">
+          <div className="cd-bday-kicker">It's here</div>
+          <h1 className="cd-bday-title">Happy Birthday</h1>
+          <h2 className="cd-bday-name">Nidhi</h2>
+          <div className="cd-bday-heart">{"💛"}</div>
+          <p className="cd-bday-msg">
+            Another year of loving you begins right now.
+            <br />
+            You make every single day feel like magic.
+          </p>
+          <div className="cd-bday-cake">{"🎂"}</div>
+          <button className="cd-bday-continue" onClick={onDismiss}>
+            Open your surprise →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cd-overlay cd-counting">
+      <div className="cd-stars" />
+      <div className="cd-candle-glow" />
+      <div className="cd-inner">
+        <div className="cd-kicker">Something magical is about to happen</div>
+        <div className="cd-timer">
+          <div className="cd-digit-group">
+            <span className="cd-digit" key={"m" + mins}>{pad(mins)}</span>
+            <span className="cd-unit">min</span>
+          </div>
+          <span className="cd-colon">:</span>
+          <div className="cd-digit-group">
+            <span className="cd-digit" key={"s" + secs}>{pad(secs)}</span>
+            <span className="cd-unit">sec</span>
+          </div>
+        </div>
+        <div className="cd-until">until your birthday</div>
+        <div className="cd-hearts-row">
+          {["💛", "🌹", "💛", "🌹", "💛"].map((h, i) => (
+            <span key={i} className="cd-float-heart" style={{ animationDelay: i * 0.4 + "s" }}>
+              {h}
+            </span>
+          ))}
+        </div>
+        <p className="cd-whisper">
+          Close your eyes for a moment… and when you open them,
+          <br />
+          everything changes.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ───────────────────────────── INTRO SCREEN ───────────────────────────── */
 function Intro({ onBegin }) {
   return (
@@ -978,9 +1124,12 @@ export default function App() {
   const [musicOn, setMusicOn] = useState(false);
   const [toast, setToast] = useState("");
   const [celebrate, setCelebrate] = useState(0);
+  const [countdownDismissed, setCountdownDismissed] = useState(false);
 
   const audioRef = useRef(null);
   const unlockFired = useRef(false);
+
+  const { phase: bdayPhase, secsLeft: bdaySecsLeft } = useBirthdayCountdown();
 
   const hearts = Object.values(answered).filter((v) => v === "correct").length;
   const unlocked = hearts >= QUIZ_TOTAL;
@@ -1072,6 +1221,15 @@ export default function App() {
 
       {/* 🎵 ambient music — set SONG_URL at the top of the file */}
       <audio ref={audioRef} src={SONG_URL || undefined} loop preload="none" />
+
+      {/* 🎂 birthday countdown — auto-appears 5 min before midnight */}
+      {!countdownDismissed && (bdayPhase === "counting" || bdayPhase === "birthday") && (
+        <BirthdayCountdown
+          phase={bdayPhase}
+          secsLeft={bdaySecsLeft}
+          onDismiss={() => setCountdownDismissed(true)}
+        />
+      )}
 
       {!started ? (
         <Intro onBegin={begin} />
@@ -1963,6 +2121,171 @@ const STYLES = `
   animation: glowPulse 2.5s ease-in-out infinite;
 }
 .pr-continue:hover { transform: translateY(-2px) scale(1.04); }
+
+/* ——— BIRTHDAY COUNTDOWN OVERLAY ——— */
+.cd-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 28px;
+  animation: fadeIn .8s ease both;
+}
+.cd-counting {
+  background:
+    radial-gradient(800px 500px at 50% 35%, rgba(30,20,60,.95), rgba(6,4,18,.98));
+}
+.cd-birthday {
+  background:
+    radial-gradient(900px 600px at 50% 30%, rgba(60,30,20,.9), rgba(6,4,18,.97));
+}
+.cd-stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.6px 1.6px at 15% 25%, rgba(255,245,210,.9), transparent),
+    radial-gradient(1.3px 1.3px at 70% 15%, rgba(255,245,210,.8), transparent),
+    radial-gradient(1.1px 1.1px at 45% 70%, rgba(255,245,210,.7), transparent),
+    radial-gradient(1.5px 1.5px at 88% 68%, rgba(255,245,210,.85), transparent),
+    radial-gradient(1.2px 1.2px at 30% 90%, rgba(255,245,210,.6), transparent);
+  pointer-events: none;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+.cd-candle-glow {
+  position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,180,80,.15), transparent 70%);
+  animation: candlePulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes candlePulse {
+  0%,100% { opacity: .6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+}
+.cd-inner {
+  position: relative; z-index: 2; max-width: 480px;
+}
+.cd-kicker {
+  font-family: 'Marcellus', serif; font-size: 12px; letter-spacing: .35em;
+  text-transform: uppercase; color: #e7b9c4;
+  animation: fadeUp 1s ease .2s both;
+}
+.cd-timer {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 28px 0 16px;
+  animation: fadeUp 1s ease .5s both;
+}
+.cd-digit-group { text-align: center; }
+.cd-digit {
+  display: block;
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(72px, 22vw, 120px); line-height: 1;
+  background: linear-gradient(180deg, #fbe6b4 0%, #e8c46a 40%, #c79a36 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 60px rgba(212,175,55,.3);
+  animation: digitPop .35s cubic-bezier(.2,1.2,.4,1) both;
+}
+@keyframes digitPop {
+  from { transform: scale(.85) translateY(6px); opacity: .4; }
+  to { transform: none; opacity: 1; }
+}
+.cd-unit {
+  display: block; font-family: 'Marcellus', serif; font-size: 11px;
+  letter-spacing: .2em; text-transform: uppercase; color: #9aa6cf; margin-top: 4px;
+}
+.cd-colon {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  font-size: clamp(48px, 14vw, 80px); color: #e8c46a;
+  animation: colonBlink 1s step-end infinite;
+  padding-bottom: 20px;
+}
+@keyframes colonBlink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+.cd-until {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500;
+  font-size: clamp(22px, 6vw, 30px); color: #f0d98a;
+  animation: fadeUp 1s ease .7s both;
+}
+.cd-hearts-row {
+  display: flex; justify-content: center; gap: 12px; margin: 22px 0;
+  animation: fadeUp 1s ease .9s both;
+}
+.cd-float-heart {
+  font-size: 20px; animation: cdHeartFloat 2.5s ease-in-out infinite;
+}
+@keyframes cdHeartFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.15); }
+}
+.cd-whisper {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(16px, 4.5vw, 20px); line-height: 1.6; color: #d8cba8;
+  max-width: 380px; margin: 0 auto;
+  animation: fadeUp 1.2s ease 1.2s both;
+}
+
+/* ——— BIRTHDAY CELEBRATION SCREEN ——— */
+.cd-burst-layer {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1;
+}
+.cd-confetti {
+  position: absolute; top: -10%;
+  animation-name: cdConfettiFall; animation-timing-function: ease-in;
+  animation-fill-mode: forwards; animation-iteration-count: infinite;
+}
+@keyframes cdConfettiFall {
+  0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(.7); }
+  10% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(110vh) rotate(360deg) scale(1.1); }
+}
+.cd-inner-bday { position: relative; z-index: 2; }
+.cd-bday-kicker {
+  font-family: 'Marcellus', serif; font-size: 13px; letter-spacing: .4em;
+  text-transform: uppercase; color: #e7b9c4;
+  animation: fadeUp .8s ease .2s both;
+}
+.cd-bday-title {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: clamp(36px, 12vw, 60px); line-height: 1.05; margin: 8px 0 0;
+  background: linear-gradient(180deg, #fbe6b4 0%, #e8c46a 50%, #c79a36 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 50px rgba(212,175,55,.35);
+  animation: fadeUp 1s ease .4s both;
+}
+.cd-bday-name {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: clamp(52px, 18vw, 100px); line-height: .95; margin: 0;
+  background: linear-gradient(180deg, #f7c3cd, #e89fb0, #d98695);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 40px rgba(217,134,149,.3);
+  animation: fadeUp 1.1s ease .6s both;
+}
+.cd-bday-heart {
+  font-size: 36px; margin: 16px 0;
+  animation: fadeUp 1s ease .8s both, prHeartPulse 1.2s ease-in-out 1.8s infinite;
+}
+.cd-bday-msg {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(18px, 5vw, 22px); line-height: 1.65; color: #efe4cb;
+  max-width: 400px; margin: 0 auto;
+  animation: fadeUp 1s ease 1s both;
+}
+.cd-bday-cake {
+  font-size: 48px; margin: 20px 0 8px;
+  animation: fadeUp 1s ease 1.2s both, cdCakeBounce 2s ease-in-out 2.2s infinite;
+}
+@keyframes cdCakeBounce {
+  0%,100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(-5deg); }
+  50% { transform: scale(1.05) rotate(0deg); }
+  75% { transform: scale(1.1) rotate(5deg); }
+}
+.cd-bday-continue {
+  display: inline-block; margin-top: 16px; cursor: pointer;
+  font-family: 'Marcellus', serif; font-size: 15px; letter-spacing: .1em;
+  color: #1a1206; border: none; border-radius: 999px; padding: 14px 34px;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  box-shadow: 0 10px 34px rgba(212,175,55,.45), inset 0 1px 0 rgba(255,255,255,.6);
+  animation: fadeUp 1s ease 1.5s both, glowPulse 3s ease-in-out 2.5s infinite;
+  transition: transform .2s ease;
+}
+.cd-bday-continue:hover { transform: translateY(-2px) scale(1.04); }
 
 /* ——— ENHANCED BURST (drift) ——— */
 @keyframes floatUp {
