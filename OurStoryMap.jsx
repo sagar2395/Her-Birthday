@@ -57,10 +57,15 @@ const MEMORIES = [
       "This is where we said “forever” and meant it. Two newlyweds chasing waterfalls through the Balinese jungle, getting happily lost in Kuala Lumpur's lights, eating like the day might run out. I watched you laugh with the ocean behind you and thought — this is the woman I get to spend my whole life loving. Our story began right here, with sandy feet and impossibly full hearts.",
     /* >>> 📸 ADD BALI / MALAYSIA PHOTOS BELOW */
     photos: [
-      { url: "", caption: "Chasing waterfalls in Bali" },
-      { url: "", caption: "That beach, that sunset, you" },
-      { url: "", caption: "Eating our way through KL" },
-      { url: "", caption: "Just married, just us" },
+      { url: "/media/bali/bali-01-passport-selfie.jpg", caption: "Passports out — the adventure begins" },
+      { url: "/media/bali/bali-02-boarding.jpg", caption: "Boarding our honeymoon flight" },
+      { url: "/media/bali/bali-03-beach.jpg", caption: "That beach, that sunset, you" },
+      { url: "/media/bali/bali-04-cafe.jpg", caption: "Café mornings in Bali" },
+      { url: "/media/bali/bali-05-atv-jungle.jpg", caption: "Jungle ATV adventure" },
+      { url: "/media/bali/bali-06-dolphin.jpg", caption: "Making friends with dolphins" },
+      { url: "/media/bali/bali-07-kl-tower.jpg", caption: "Standing tall at KL Tower" },
+      { url: "/media/bali/bali-08-kl-observation.jpg", caption: "Taking in the KL skyline" },
+      { url: "/media/bali/bali-09-kl-dinner.jpg", caption: "Dinner dates in Kuala Lumpur" },
     ],
     quiz: {
       q: "On our honeymoon, what did we chase through the Balinese jungle?",
