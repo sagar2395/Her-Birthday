@@ -314,8 +314,8 @@ const MEMORIES = [
 
 const QUIZ_TOTAL = MEMORIES.filter((m) => m.quiz).length;
 
-/* >>> 💍 YOUR WEDDING DATE (for the "days of love" counter) */
-const WEDDING_DATE = new Date("2024-06-25");
+/* >>> 💕 THE DAY YOU MET (for the "days since we met" counter) */
+const FIRST_MET_DATE = new Date("2024-03-07");
 
 const LOVE_QUOTES = [
   "In all the world, there is no heart for me like yours.",
@@ -1136,7 +1136,7 @@ export default function App() {
   const totalPhotos = MEMORIES.reduce((n, m) => n + (m.photos ? m.photos.length : 0), 0);
   const totalFood = MEMORIES.reduce((n, m) => n + (m.food ? m.food.length : 0), 0);
   const openMem = openId ? MEMORIES.find((m) => m.id === openId) : null;
-  const daysOfLove = Math.floor((Date.now() - WEDDING_DATE.getTime()) / 86400000);
+  const daysSinceMet = Math.floor((Date.now() - FIRST_MET_DATE.getTime()) / 86400000);
 
   // toast auto-dismiss
   useEffect(() => {
@@ -1278,8 +1278,8 @@ export default function App() {
 
           <div className="stats">
             <div className="stat stat-love">
-              <span className="stat-num">{daysOfLove}</span>
-              <span className="stat-label">Days of Love</span>
+              <span className="stat-num">{daysSinceMet}</span>
+              <span className="stat-label">Days Since We Met</span>
             </div>
             <div className="stat">
               <span className="stat-num">{MEMORIES.length}</span>
