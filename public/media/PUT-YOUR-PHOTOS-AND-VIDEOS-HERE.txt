@@ -1,0 +1,9 @@
+Drop your photos (.jpg/.png/.webp) and videos (.mp4) into THIS folder.
+
+Then reference them in src/main.jsx with a leading slash, e.g.:
+
+  url:   "/media/bali-coconut.jpg"
+  video: "/media/goa-clip.mp4"
+
+That's it — no uploading or accounts needed. See SETUP.md for online hosting
+options (Cloudinary etc.) if you'd rather not store big files here.
