@@ -1093,10 +1093,6 @@ function Intro({ onBegin }) {
     <div className="intro">
       <div className="intro-stars" />
       <div className="intro-inner">
-        <div className="intro-avatar">
-          <div className="intro-avatar-glow" />
-          <img src="/media/nidhi-avatar.svg" alt="" className="intro-avatar-img" />
-        </div>
         <div className="intro-kicker">Happy Birthday, my love</div>
         <h1 className="intro-name">Nidhi</h1>
         <div className="intro-rule">
@@ -1402,34 +1398,6 @@ const STYLES = `
 }
 .intro-inner { position: relative; z-index: 2; max-width: 540px; }
 
-/* ——— AVATAR ON INTRO ——— */
-.intro-avatar {
-  position: relative; width: 210px; height: 256px; margin: 0 auto 10px;
-  opacity: 0; animation: avatarIn 1.4s cubic-bezier(.2,1,.3,1) .1s both, avatarBreathe 6s ease-in-out 1.5s infinite;
-}
-@keyframes avatarBreathe {
-  0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-5px) scale(1.012); }
-}
-@keyframes avatarIn {
-  from { opacity: 0; transform: translateY(20px) scale(.88); }
-  to { opacity: 1; transform: none; }
-}
-.intro-avatar-glow {
-  position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
-  width: 160px; height: 160px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(212,175,55,.25), rgba(217,134,149,.15), transparent 70%);
-  animation: avatarGlow 3.5s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes avatarGlow {
-  0%,100% { opacity: .6; transform: translateX(-50%) scale(1); }
-  50% { opacity: 1; transform: translateX(-50%) scale(1.12); }
-}
-.intro-avatar-img {
-  position: relative; width: 100%; height: 100%; object-fit: contain;
-  filter: drop-shadow(0 8px 30px rgba(212,175,55,.2)) drop-shadow(0 2px 10px rgba(0,0,0,.4));
-}
 .intro-kicker {
   font-family: 'Marcellus', serif; letter-spacing: .42em; text-transform: uppercase;
   font-size: 12px; color: #e7b9c4; opacity: 0; animation: fadeUp 1s ease .3s both;
