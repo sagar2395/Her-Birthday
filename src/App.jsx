@@ -61,6 +61,9 @@ const BIRTHDAY_SONG_URL = ""; // e.g. "/media/happy-birthday.mp3"
 const BIRTHDAY_MONTH = 5; // June
 const BIRTHDAY_DAY = 22;
 
+/* ⚠️  TEST MODE — remove after testing! Target time ~10 min from deploy */
+const TEST_COUNTDOWN_TARGET = new Date("2026-06-17T19:38:00Z");
+
 /* ────────────────────────────────────────────────────────────────────────────
    THE MEMORIES  —  placed by real latitude / longitude, in the order we lived them.
    Each one has:  photos (moments)  •  food (everything we ate)  •  video (optional)
@@ -1013,7 +1016,9 @@ function useBirthdayCountdown() {
   const [secsLeft, setSecsLeft] = useState(0);
 
   useEffect(() => {
-    function getTargetMidnight() {
+    function getTarget() {
+      // ⚠️ TEST MODE: use fixed target. Remove after testing and restore getTargetMidnight().
+      if (typeof TEST_COUNTDOWN_TARGET !== "undefined") return TEST_COUNTDOWN_TARGET;
       const now = new Date();
       const year = now.getFullYear();
       const target = new Date(year, BIRTHDAY_MONTH, BIRTHDAY_DAY, 0, 0, 0, 0);
@@ -1025,13 +1030,14 @@ function useBirthdayCountdown() {
 
     function tick() {
       const now = new Date();
-      const target = getTargetMidnight();
+      const target = getTarget();
       const diff = (target - now) / 1000;
 
       if (diff <= 0 && diff > -600) {
         setPhase("birthday");
         setSecsLeft(0);
-      } else if (diff > 0 && diff <= 300) {
+      } else if (diff > 0 && diff <= 700) {
+        // ⚠️ TEST: widened from 300 → 700 so timer shows immediately. Restore to 300 after testing.
         setPhase("counting");
         setSecsLeft(Math.ceil(diff));
       } else {
