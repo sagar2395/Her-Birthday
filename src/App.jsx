@@ -69,26 +69,19 @@ const MEMORIES = [
     lng: 115.1889,
     message:
       "This is where we said “forever” and meant it. Two newlyweds chasing waterfalls through the Balinese jungle, getting happily lost in Kuala Lumpur's lights, eating like the day might run out. I watched you laugh with the ocean behind you and thought — this is the woman I get to spend my whole life loving. Our story began right here, with sandy feet and impossibly full hearts.",
-    /* >>> 🎬 VIDEO (optional): a DIRECT .mp4 URL or "/media/your-clip.mp4".
-       Plays after she answers the quiz; when it ends, the photos appear. */
-    /* ⬇️ SAMPLE video (a public demo clip) so you can SEE the quiz→video→photos
-       flow. Replace with your own .mp4 or "/media/your-clip.mp4". */
-    video: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-    /* >>> 📸 MOMENTS PHOTOS (places & candids)
-       ⬇️ SAMPLE images (picsum.photos) so you can preview — swap in your own URLs. */
+    video: "",
     photos: [
-      { url: "https://picsum.photos/seed/baliwaterfall/900/675", caption: "Chasing waterfalls in Bali" },
-      { url: "https://picsum.photos/seed/balibeach/900/675", caption: "That beach, that sunset, you" },
-      { url: "https://picsum.photos/seed/balijustus/900/675", caption: "Just married, just us" },
+      { url: "/media/bali/bali-01-passport-selfie.jpg", caption: "Passports out — the adventure begins" },
+      { url: "/media/bali/bali-02-boarding.jpg", caption: "Boarding our honeymoon flight" },
+      { url: "/media/bali/bali-03-beach.jpg", caption: "That beach, that sunset, you" },
+      { url: "/media/bali/bali-04-cafe.jpg", caption: "Café mornings in Bali" },
+      { url: "/media/bali/bali-05-atv-jungle.jpg", caption: "Jungle ATV adventure" },
+      { url: "/media/bali/bali-06-dolphin.jpg", caption: "Making friends with dolphins" },
+      { url: "/media/bali/bali-07-kl-tower.jpg", caption: "Standing tall at KL Tower" },
+      { url: "/media/bali/bali-08-kl-observation.jpg", caption: "Taking in the KL skyline" },
+      { url: "/media/bali/bali-09-kl-dinner.jpg", caption: "Dinner dates in Kuala Lumpur" },
     ],
-    /* >>> 🍲 FOOD PHOTOS (everything we ate here)
-       ⬇️ SAMPLE images — replace with photos of the food you actually ate. */
-    food: [
-      { url: "https://picsum.photos/seed/balicoconut/700/700", caption: "Fresh coconut by the beach" },
-      { url: "https://picsum.photos/seed/balinasi/700/700", caption: "Nasi goreng nights" },
-      { url: "https://picsum.photos/seed/balisatay/700/700", caption: "Satay & sunsets" },
-      { url: "https://picsum.photos/seed/klstreet/700/700", caption: "Street eats in Kuala Lumpur" },
-    ],
+    food: [],
     quiz: {
       q: "On our honeymoon, what did we chase through the Balinese jungle?",
       options: ["Waterfalls", "Snow", "Trains", "Deadlines"],
@@ -225,15 +218,22 @@ const MEMORIES = [
       "The Pink City, hand in hand. We climbed the fort, stood small and quiet beneath ancient temples, and you looked at every carving with that wonder I adore. Walking those golden walls beside you, I kept thinking how lucky I am that I get to explore this entire life with you.",
     video: "",
     photos: [
-      { url: "", caption: "Walking the fort walls" },
-      { url: "", caption: "Temple bells and you" },
-      { url: "", caption: "The Pink City glow" },
+      { url: "/media/jaipur/jaipur-01-amber-fort.jpg", caption: "Together at Amber Fort" },
+      { url: "/media/jaipur/jaipur-02-hawa-mahal.jpg", caption: "Hawa Mahal lit up at night" },
+      { url: "/media/jaipur/jaipur-03-jal-mahal.jpg", caption: "Dreaming by Jal Mahal" },
+      { url: "/media/jaipur/jaipur-04-night-view.jpg", caption: "The Pink City sparkling below" },
+      { url: "/media/jaipur/jaipur-05-palace-throne.jpg", caption: "Our royal palace moment" },
+      { url: "/media/jaipur/jaipur-06-hotel-mirror.jpg", caption: "Mirror selfie at our Rajasthani haveli" },
     ],
     food: [
-      { url: "", caption: "Pyaaz kachori, the Jaipur way" },
-      { url: "", caption: "Dal baati, again (no regrets)" },
-      { url: "", caption: "Lassi in a kulhad" },
-      { url: "", caption: "A slab of ghewar" },
+      { url: "/media/jaipur/jaipur-07-dinner-date.jpg", caption: "Dinner date — the prettiest view was across the table" },
+      { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Wine and tiny bites to start the feast" },
+      { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf" },
+      { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried" },
+      { url: "/media/jaipur/jaipur-11-naan-curry.jpg", caption: "Naan, curry, and no regrets" },
+      { url: "/media/jaipur/jaipur-12-thali.jpg", caption: "The Rajasthani thali of dreams" },
+      { url: "/media/jaipur/jaipur-13-thali-lassi.jpg", caption: "Thali round two with lassi" },
+      { url: "/media/jaipur/jaipur-14-poori-kachori.jpg", caption: "Poori-kachori breakfast — the real Pink City gold" },
     ],
     quiz: {
       q: "In the Pink City, what did we wander through together?",
