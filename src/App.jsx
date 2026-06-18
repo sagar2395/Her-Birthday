@@ -68,15 +68,140 @@ const BIRTHDAY_MIDNIGHT_UTC = new Date("2026-06-21T18:30:00Z");
    ──────────────────────────────────────────────────────────────────────────── */
 const MEMORIES = [
   {
+    id: "first-met",
+    name: "Where It All Began",
+    short: "First Meet",
+    when: "March 2022",
+    type: "occasion",
+    icon: "💕",
+    teaser: "A Kwid, a terrible coffee, and the start of everything.",
+    message:
+      "March 2022. I drove my little Renault Kwid to Bada Ganpati to pick you up — you'd just finished office and parked your Activa. We went on a long drive through the Super Corridor, windows down, talking like we'd known each other forever. At Cafe Yolo, I tried to impress you by ordering something called 'Cafe Anaconda' — easily the worst coffee either of us has ever tasted. But you laughed, and I knew. Later, when I had a short work call, I gently caressed your head — and you went completely calm. That was the moment I realised: I never want to stop being the person who makes your world feel quieter. Every single day since has been proof that I was right.",
+    video: "",
+    photos: [
+      { url: "", caption: "Bada Ganpati — where I first saw you that evening" },
+      { url: "", caption: "The Super Corridor drive that started it all" },
+      { url: "", caption: "Cafe Yolo — and the legendary Cafe Anaconda" },
+    ],
+    food: [
+      { url: "", caption: "Cafe Anaconda — the worst coffee, the best memory" },
+    ],
+    quiz: {
+      q: "What terrible coffee did I order at Cafe Yolo to impress you on our first meet?",
+      options: ["Cafe Tornado", "Cafe Anaconda", "Cafe Monsoon", "Cafe Everest"],
+      correct: 1,
+      right: "Cafe Anaconda! Terrible coffee, perfect evening. The beginning of us. 💛",
+      wrong: "Not quite — the name was dramatic, the taste was awful, and the company was everything. Try again, my love.",
+    },
+  },
+  {
+    id: "roka",
+    name: "Our Roka",
+    short: "Roka",
+    when: "October 2023",
+    type: "occasion",
+    icon: "🪷",
+    teaser: "Making it official, with blessings and love.",
+    message:
+      "The day we made it official. We went to the gurudwara together, heads bowed, hearts full — and then celebrated over lunch at Cafe Oakaz. It was simple, beautiful, and perfectly us. No grand gestures, just two people quietly promising to spend their lives together. That day, I looked at you across the table and thought: every road in my life was always leading here, to you.",
+    video: "",
+    photos: [
+      { url: "", caption: "Blessings at the gurudwara" },
+      { url: "", caption: "Celebrating our roka together" },
+    ],
+    food: [
+      { url: "", caption: "Lunch at Cafe Oakaz — our first meal as an official couple" },
+    ],
+    quiz: null,
+  },
+  {
+    id: "his-proposal",
+    name: "The Night I Proposed",
+    short: "His Proposal",
+    when: "January 2024",
+    type: "occasion",
+    icon: "💍",
+    teaser: "One knee, one slideshow, one chocolate box.",
+    message:
+      "I'd been planning this for weeks. The Eighteen restaurant, a custom slideshow playing on the big screen — every photo of us, every moment, building up to the question I already knew the answer to. When I got down on one knee and held out that chocolate box that said 'Will you marry me?' — Nidhi, the look on your face is burned into my heart forever. You said yes, and in that moment, I became the luckiest man alive. I still am.",
+    video: "",
+    photos: [
+      { url: "", caption: "The Eighteen — where I asked the most important question" },
+      { url: "", caption: "The custom slideshow on the big screen" },
+      { url: "", caption: "Down on one knee, heart in my throat" },
+      { url: "", caption: "She said yes" },
+    ],
+    food: [],
+    quiz: {
+      q: "What was written on the chocolate box I gave you when I proposed?",
+      options: ["I Love You Forever", "Be Mine", "Will you marry me?", "You + Me = Always"],
+      correct: 2,
+      right: "'Will you marry me?' — and you said yes. The best answer I've ever heard. 💍",
+      wrong: "Close but not quite — think chocolate, think a very specific question on the box. Try again, my love.",
+    },
+  },
+  {
+    id: "her-proposal",
+    name: "The Day She Proposed Back",
+    short: "Her Proposal",
+    when: "March 2024",
+    type: "occasion",
+    icon: "💗",
+    teaser: "My birthday, her chaos, one perfect ring.",
+    message:
+      "My birthday, March 2024 — and you had a secret plan. You wanted to propose right back at Cafe Oakaz (freshly renovated and gorgeous), on the top floor. But I kept changing my birthday plans — one idea after another — and you were silently losing your mind trying to keep your surprise alive. When we finally got there, you pulled out a ring, and I understood everything. All the stress, all the sneaky planning — it was all for this moment. You proposed to me, Nidhi. And in that moment, I realised you don't just love me — you fight for us, even against my own chaotic birthday plans.",
+    video: "",
+    photos: [
+      { url: "", caption: "Cafe Oakaz — renovated and ready for her surprise" },
+      { url: "", caption: "The top floor, just the two of us" },
+      { url: "", caption: "The ring — her proposal to me" },
+    ],
+    food: [],
+    quiz: {
+      q: "Why was it so chaotic for Nidhi to plan her proposal on my birthday?",
+      options: ["The restaurant was closed", "I kept changing my birthday plans", "It was raining", "She forgot the ring at home"],
+      correct: 1,
+      right: "I kept changing plans! Poor Nidhi was silently going mad trying to keep her surprise alive. Worth it. 💗",
+      wrong: "Not this one — think about whose birthday it was and how unpredictable the birthday boy was being. Try again!",
+    },
+  },
+  {
+    id: "wedding",
+    name: "The Day We Said Forever",
+    short: "Wedding",
+    when: "July 2024",
+    type: "occasion",
+    icon: "💒",
+    teaser: "11th July — the day everything began.",
+    message:
+      "11th July 2024. The day I married the most beautiful woman in the world. Nidhi, you managed everything — every detail, every flower, every moment — and still looked absolutely breathtaking. You danced in my baarat, just for me, and I couldn't look anywhere else. Your mother, your mausi, and your cousins gave the most beautiful dance performances to welcome me, and I felt so loved by your whole family. And then, during the mala exchange, I couldn't help myself — I had a short little dance on stage to 'Tu Hai To Dil Dhadakta Hai.' Because my heart really was doing exactly that. It still does. Every single day.",
+    video: "",
+    photos: [
+      { url: "", caption: "The most beautiful bride I've ever seen" },
+      { url: "", caption: "Dancing in the baarat — just for me" },
+      { url: "", caption: "Her family's welcome dances" },
+      { url: "", caption: "Mala exchange — and my little dance" },
+      { url: "", caption: "11th July — forever begins" },
+    ],
+    food: [],
+    quiz: {
+      q: "What song did I dance to on stage during the mala exchange at our wedding?",
+      options: ["Gallan Goodiyan", "Tu Hai To Dil Dhadakta Hai", "Tum Hi Ho", "London Thumakda"],
+      correct: 1,
+      right: "'Tu Hai To Dil Dhadakta Hai' — because with you, it really does. Every day. 💒",
+      wrong: "Not that one — think about what my heart was doing the moment I put the mala around your neck. Try again!",
+    },
+  },
+  {
     id: "bali",
     name: "Bali & Malaysia",
     short: "Bali",
     when: "July 2024",
+    type: "trip",
+    icon: "✈️",
     teaser: "Where our forever began.",
-    lat: -8.4095,
-    lng: 115.1889,
     message:
-      "This is where we said “forever” and meant it. Two newlyweds chasing waterfalls through the Balinese jungle, getting happily lost in Kuala Lumpur's lights, eating like the day might run out. I watched you laugh with the ocean behind you and thought — this is the woman I get to spend my whole life loving. Our story began right here, with sandy feet and impossibly full hearts.",
+      "Malaysia AND Bali — our honeymoon was an epic double feature. We ate thepla in the airport like proper Indori newlyweds, then spent the next days chasing every thrill we could find. The ATV ride through the Balinese jungle was wild, snorkeling made us feel like we'd discovered a secret ocean, and the dolphin centre — Nidhi, seeing your face when your childhood dream came true — I'll carry that forever. We lived on acai bowls, mango acai bowls, and drank from coconuts bigger than our heads by the beach. And somehow, in between all the adventure, we found the most incredible Indian food abroad. Two newlyweds, sandy feet, impossibly full hearts. This is where our forever really began.",
     video: "",
     photos: [
       { url: "/media/bali/bali-01-passport-selfie.jpg", caption: "Passports out — the adventure begins" },
@@ -89,13 +214,19 @@ const MEMORIES = [
       { url: "/media/bali/bali-08-kl-observation.jpg", caption: "Taking in the KL skyline" },
       { url: "/media/bali/bali-09-kl-dinner.jpg", caption: "Dinner dates in Kuala Lumpur" },
     ],
-    food: [],
+    food: [
+      { url: "", caption: "Thepla in the airport — Indori honeymoon essentials" },
+      { url: "", caption: "The acai bowl that changed everything" },
+      { url: "", caption: "Mango acai bowl by the beach" },
+      { url: "", caption: "Huge coconut — bigger than our heads" },
+      { url: "", caption: "Great Indian food, thousands of miles from home" },
+    ],
     quiz: {
-      q: "On our honeymoon, what did we chase through the Balinese jungle?",
-      options: ["Waterfalls", "Snow", "Trains", "Deadlines"],
-      correct: 0,
-      right: "Yes — waterfalls and you. The perfect beginning. 💛",
-      wrong: "Aw, almost — think jungle, mist and a lot of splashing. Try again, my love. 💧",
+      q: "What was Nidhi's childhood dream that came true on our honeymoon?",
+      options: ["Seeing the Eiffel Tower", "Visiting a dolphin centre", "Climbing a volcano", "Riding a hot air balloon"],
+      correct: 1,
+      right: "The dolphin centre! Seeing your face light up was the best part of the whole trip. 🐬",
+      wrong: "Not this one — think about something Nidhi had dreamed about since she was little. Try again, my love.",
     },
   },
   {
@@ -103,9 +234,9 @@ const MEMORIES = [
     name: "Pachmarhi",
     short: "Pachmarhi",
     when: "May 2025",
+    type: "trip",
+    icon: "🏔️",
     teaser: "An unplanned escape into the hills.",
-    lat: 22.4676,
-    lng: 78.4336,
     message:
       "No plan, just us and a long, winding drive into the Satpura hills. We dragged ourselves up before sunrise for the safari — half asleep, fully in love — and then stood quietly together at Gupt Mahadev, as if the temple was keeping our little secrets. Some of my favourite memories are the unplanned ones, because they're just you, me and the open road.",
     video: "",
@@ -120,28 +251,23 @@ const MEMORIES = [
       { url: "", caption: "Roadside Maggi on the drive" },
       { url: "", caption: "A simple local thali" },
     ],
-    quiz: {
-      q: "What did we drag ourselves out of bed before sunrise for in Pachmarhi?",
-      options: ["A breakfast buffet", "An early-morning Satpura safari", "A flight home", "A cricket match"],
-      correct: 1,
-      right: "Exactly — that sleepy 5 a.m. safari. Worth every single yawn.",
-      wrong: "So close — picture the jungle waking up around us. One more guess. 🌅",
-    },
+    quiz: null,
   },
   {
     id: "udaipur",
     name: "Udaipur & Nathdwara",
     short: "Udaipur",
     when: "July 2025",
+    type: "trip",
+    icon: "🏛️",
     teaser: "Our first anniversary, on the lakes.",
-    lat: 24.5854,
-    lng: 73.7125,
     message:
-      "One whole year of being your husband, and I'd choose you a thousand times over. We drifted past palaces on the lake, bowed our heads together at Nathdwara, and ate street food until we couldn't stop grinning. Udaipur shimmered that week — but honestly, I only ever had eyes for you.",
+      "One whole year of being your husband — our anniversary trip, and every moment was perfect. Udaipur was peaceful, exactly what we needed. We rented an Activa and explored every lake, every street, eating street food until our fingers were permanently stained with chaat masala. On our actual anniversary day, we drove to Nathdwara mandir — bowing our heads together, grateful for this one beautiful year and every year to come. Udaipur shimmered that week — but honestly, I only ever had eyes for you.",
     video: "",
     photos: [
       { url: "", caption: "On the lake at Udaipur" },
       { url: "", caption: "Blessings at Nathdwara" },
+      { url: "", caption: "Exploring on our rented Activa" },
       { url: "", caption: "One year of us" },
     ],
     food: [
@@ -154,7 +280,7 @@ const MEMORIES = [
       q: "What were we celebrating in the city of lakes?",
       options: ["A work trip", "New Year", "Our first wedding anniversary", "Diwali"],
       correct: 2,
-      right: "Our first anniversary — one year down, a whole forever to go.",
+      right: "Our first anniversary — one year down, a whole forever to go. 💛",
       wrong: "Not quite — think about what we promised each other a year before. 💍",
     },
   },
@@ -163,13 +289,12 @@ const MEMORIES = [
     name: "Delhi",
     short: "Delhi",
     when: "August 2025",
+    type: "trip",
+    icon: "🍛",
     teaser: "Short, chaotic, delicious.",
-    lat: 28.6139,
-    lng: 77.209,
     message:
-      "A quick escape — barely a weekend — but you make even the loudest, most chaotic places feel like ours. We followed our noses through the lanes and ate everything in sight. This whole trip was basically one long, glorious meal, so the Food tab is where this memory truly lives. I remember every flavour — and every one of your smiles.",
+      "A short trip — barely a weekend — but we packed in more street food than most people eat in a month. This whole trip was one long, glorious eating spree through Delhi's lanes, and I wouldn't change a single bite. Every chaat stall, every paratha, every sticky-sweet jalebi — we devoured it all together. The Food tab is where this memory truly lives, Nidhi. I remember every flavour — and every one of your smiles between bites.",
     video: "",
-    /* Delhi's story is the food, so its Moments tab is intentionally light. */
     photos: [],
     food: [
       { url: "", caption: "Chandni Chowk chaat" },
@@ -177,29 +302,25 @@ const MEMORIES = [
       { url: "", caption: "Butter chicken & hot naan" },
       { url: "", caption: "Sticky-sweet jalebi to finish" },
     ],
-    quiz: {
-      q: "Delhi was short and sweet — what stole the show?",
-      options: ["The traffic", "The street food", "The shopping malls", "The paperwork"],
-      correct: 1,
-      right: "The street food, obviously. We're a proud team of two foodies.",
-      wrong: "Hehe, no — think of us, a plate of chaat, and zero regrets. 😋",
-    },
+    quiz: null,
   },
   {
     id: "goa",
     name: "Goa",
     short: "Goa",
     when: "January 2026",
+    type: "trip",
+    icon: "🌊",
     teaser: "Where we healed, together.",
-    lat: 15.2993,
-    lng: 74.124,
     message:
-      "This one's tender. We came to Goa carrying something heavy, and we left a little lighter — together. The sea held us while we healed, and you reminded me that the right person makes even the hard chapters feel survivable. I quietly, completely fell in love with you all over again here.",
+      "This one's tender. We came to Goa to heal — together. We partied on Tito's Street, took long drives all the way to Arambol with the windows down, stayed right by the beach where we could hear the waves at night. Every morning, we walked into the ocean together — not swimming, just standing, letting the sea hold us. We came carrying something heavy, and we left a little lighter. You reminded me that the right person makes even the hard chapters feel survivable. I quietly, completely fell in love with you all over again here.",
     video: "",
     photos: [
       { url: "", caption: "The sea that healed us" },
-      { url: "", caption: "Slow mornings by the water" },
-      { url: "", caption: "Finding our smiles again" },
+      { url: "", caption: "Long drives to Arambol" },
+      { url: "", caption: "Partying on Tito's Street" },
+      { url: "", caption: "Ocean bath — just us and the waves" },
+      { url: "", caption: "Our beachside stay" },
     ],
     food: [
       { url: "", caption: "Beach-shack seafood" },
@@ -210,20 +331,38 @@ const MEMORIES = [
       q: "Goa wasn't just a holiday — what did we really do there?",
       options: ["Healed and found our way back to each other", "Ran a marathon", "Opened a café", "Learned to surf"],
       correct: 0,
-      right: "We healed there, side by side. I'll never forget what that meant.",
+      right: "We healed there, side by side. I'll never forget what that meant. 🩵",
       wrong: "Gently no — it was something far more important than any activity. 🩵",
     },
+  },
+  {
+    id: "snowops",
+    name: "Snowops — Our Company",
+    short: "Snowops",
+    when: "March 2026",
+    type: "occasion",
+    icon: "🚀",
+    teaser: "Building something beautiful, together.",
+    message:
+      "Most couples share a Netflix account. We started a company. Snowops — built from late-night conversations, shared ambitions, and the wild belief that we could create something real, together. You are my co-founder in every sense: in business, in life, in dreaming bigger than either of us could alone. Building Snowops with you isn't just work — it's proof that when two people trust each other completely, there's nothing they can't build.",
+    video: "",
+    photos: [
+      { url: "", caption: "The beginning of Snowops" },
+      { url: "", caption: "Co-founders in life and everything else" },
+    ],
+    food: [],
+    quiz: null,
   },
   {
     id: "jaipur",
     name: "Jaipur",
     short: "Jaipur",
     when: "April 2026",
+    type: "trip",
+    icon: "🕌",
     teaser: "Temples and forts, hand in hand.",
-    lat: 26.9124,
-    lng: 75.7873,
     message:
-      "The Pink City, hand in hand. We climbed the fort, stood small and quiet beneath ancient temples, and you looked at every carving with that wonder I adore. Walking those golden walls beside you, I kept thinking how lucky I am that I get to explore this entire life with you.",
+      "The Pink City, hand in hand — but it was the temples that stole this trip. We visited Khatu Shyam Mandir and Salasar Balaji Mandir, and Nidhi, watching you there — the peace on your face, the devotion — I fell in love with a new side of you. You absolutely loved it. We climbed the forts, explored every corner, and ate incredible food at Johari. Walking those golden walls beside you, I kept thinking how lucky I am that I get to explore this entire life with you.",
     video: "",
     photos: [
       { url: "/media/jaipur/jaipur-01-amber-fort.jpg", caption: "Together at Amber Fort" },
@@ -244,21 +383,41 @@ const MEMORIES = [
       { url: "/media/jaipur/jaipur-14-poori-kachori.jpg", caption: "Poori-kachori breakfast — the real Pink City gold" },
     ],
     quiz: {
-      q: "In the Pink City, what did we wander through together?",
-      options: ["A ski slope", "A tech expo", "Temples and the grand fort", "A beach"],
-      correct: 2,
-      right: "Temples and the fort, fingers laced together. My favourite kind of day.",
-      wrong: "Not this time — think ancient stone, bells, and a fort on a hill. 🔔",
+      q: "Which two temples did we visit on our Jaipur trip that Nidhi absolutely loved?",
+      options: ["Birla Mandir and ISKCON", "Khatu Shyam Mandir and Salasar Balaji Mandir", "Govind Dev Ji and Galtaji", "Moti Dungri and Garh Ganesh"],
+      correct: 1,
+      right: "Khatu Shyam and Salasar Balaji! The peace on your face there is something I'll never forget. 🙏",
+      wrong: "Not those — think about the two temples where Nidhi felt the most at home. Try again!",
     },
+  },
+  {
+    id: "flat-purchased",
+    name: "Our First Home",
+    short: "Our Flat",
+    when: "June 2026",
+    type: "occasion",
+    icon: "🏠",
+    teaser: "We explored every corner of the city — and found home.",
+    message:
+      "We walked through so many areas, debated so many floor plans, imagined so many futures — and finally, we found it. Our flat. Our first real home, just for us. No more temporary, no more 'someday.' This is where we'll cook our first meal together, where we'll argue about wall colours, where we'll build the life we've been dreaming about since that first drive down the Super Corridor. Every room in this flat is a promise. And I can't wait to fill it with us.",
+    video: "",
+    photos: [
+      { url: "", caption: "The flat hunt — we looked everywhere" },
+      { url: "", caption: "The one we chose — our first home" },
+    ],
+    food: [
+      { url: "", caption: "Our first home-cooked dinner (coming soon)" },
+    ],
+    quiz: null,
   },
   {
     id: "indore",
     name: "Indore — Home",
     short: "Indore",
     when: "Every ordinary, perfect day",
+    type: "trip",
+    icon: "☕",
     teaser: "Home — our everyday love (and our food capital).",
-    lat: 22.7196,
-    lng: 75.8577,
     message:
       "Not every love story needs a passport. Our own city holds our smallest, sweetest moments — the cafés we keep going back to, the restaurants where they already know our order, the lazy mall evenings that somehow become my favourite dates. And let's be honest: Indore feeds us better than anywhere on earth. Home isn't a place, Nidhi. It's wherever you are (preferably with chaat).",
     video: "",
@@ -267,45 +426,36 @@ const MEMORIES = [
       { url: "", caption: "Lazy mall evenings" },
       { url: "", caption: "Just another perfect ordinary day" },
     ],
-    /* ⬇️ SAMPLE food images so the Feast view looks full — replace with yours. */
     food: [
       { url: "https://picsum.photos/seed/sarafachaat/700/700", caption: "Sarafa night-market chaat" },
       { url: "https://picsum.photos/seed/pohajalebi/700/700", caption: "Poha-jalebi mornings" },
       { url: "https://picsum.photos/seed/56dukaan/700/700", caption: "56 Dukaan treats" },
       { url: "https://picsum.photos/seed/indorecafe/700/700", caption: "Our café usuals" },
     ],
-    quiz: {
-      q: "Back home in Indore, what's our favourite kind of everyday date?",
-      options: ["Skydiving", "Cafés, good food & a little mall therapy", "Deep-sea diving", "Mountaineering"],
-      correct: 1,
-      right: "Cafés and good food — our everyday love language. ☕",
-      wrong: "Ha, no — think comfort, good food, and zero adrenaline. 😉",
-    },
+    quiz: null,
   },
   {
-    id: "flat",
+    id: "finale",
     name: "A Birthday Promise",
     short: "Forever ★",
     when: "Happy Birthday, my love",
-    teaser: "A promise for the year ahead — and every year after.",
+    type: "occasion",
+    icon: "💛",
     isFinale: true,
-    lat: 22.776,
-    lng: 75.901,
+    teaser: "A promise for the year ahead — and every year after.",
     message:
-      "My dearest Nidhi,\n\nEvery pin on this map is a chapter of us — but this last one isn't a place. It's a promise.\n\nOn this birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a computer scientist, a dreamer who chose to bet on us and build something beautiful together. Watching you light up every room, every plan, every corner of our life — I fall deeper in love with you every single day.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
+      "My dearest Nidhi,\n\nEvery card before this one is a chapter of us — from that first drive in my Kwid to Cafe Yolo, to our roka at the gurudwara, to the night I proposed at The Eighteen, to the day you proposed right back at Cafe Oakaz, to our wedding on 11th July when you danced in my baarat, to our honeymoon in Bali where your dolphin dream came true, to every trip, every meal, every quiet moment that made us us.\n\nWe built Snowops together. We found our flat together. And now, on your birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a computer scientist, a dreamer who chose to bet on us and build something beautiful together.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
     ps:
       "P.S. You just proved you know our story by heart. But here's a secret only I know: every single day with you has been my favourite day — right up until the next one. Now close your eyes, make a wish… and come find me. 🥂",
     birthdayNote:
-      "This year, I wish for you: a thousand more sunsets together, every flavour you've ever craved, and the kind of happiness that makes your heart feel too full to hold. You deserve the whole world, Nidhi — and I'm going to spend my life making sure you feel it. Happy birthday, my love. 💛",
+      "This year, I wish for you: a thousand more sunsets together, every flavour you've ever craved, and the kind of happiness that makes your heart feel too full to hold.\n\nAnd here's what I see when I dream about our future:\n\nTravelling the world together — every continent, every culture, every sunset we haven't seen yet. Buying great cars — because you deserve to arrive in style (and I deserve a co-pilot who controls the playlist). Enjoying life — really, truly, deeply. Building Snowops into something we're both proud of. And most of all: growing old together, still laughing, still adventuring, still falling in love with you every morning.\n\nYou deserve the whole world, Nidhi — and I'm going to spend my life making sure you feel it. Happy birthday, my love. 💛",
     video: "",
     photos: [
       { url: "", caption: "Where forever begins" },
       { url: "", caption: "Dreaming up our future" },
       { url: "", caption: "Us, always" },
     ],
-    food: [
-      { url: "", caption: "Our first home-cooked dinner (soon)" },
-    ],
+    food: [],
     quiz: null,
   },
 ];
@@ -314,7 +464,6 @@ const MEMORIES = [
 
 const QUIZ_TOTAL = MEMORIES.filter((m) => m.quiz).length;
 
-/* >>> 💕 THE DAY YOU MET (for the "days since we met" counter) */
 const FIRST_MET_DATE = new Date("2022-03-07");
 
 const LOVE_QUOTES = [
@@ -325,6 +474,9 @@ const LOVE_QUOTES = [
   "Wherever you are is my home.",
   "I loved you yesterday. I love you still. I always have, I always will.",
   "You are my sun, my moon, and all my stars.",
+  "From Cafe Yolo to forever — I'd choose this story every time.",
+  "You danced in my baarat. I'll dance for you every day.",
+  "Co-founders in love, in life, in everything.",
 ];
 
 const REASONS_I_LOVE_YOU = [
@@ -350,115 +502,143 @@ const REASONS_I_LOVE_YOU = [
   { reason: "The way you make even ordinary days feel extraordinary", icon: "🌈" },
   { reason: "How safe I feel when I'm with you", icon: "🫂" },
   { reason: "Your determination — lawyer, tech wizard, dreamer, all at once", icon: "⚡" },
+  { reason: "How you kept your proposal a secret even when I kept changing plans", icon: "🎁" },
+  { reason: "The way you managed our entire wedding and still looked like a dream", icon: "👰" },
+  { reason: "How you light up at temples — Khatu Shyam, Salasar Balaji, Nathdwara", icon: "🙏" },
+  { reason: "Your courage to start Snowops with me — co-founder of my whole life", icon: "🚀" },
+  { reason: "The way you calmed down when I touched your head at Cafe Yolo — and I knew", icon: "🤍" },
   { reason: "Because you are my today, my tomorrow, and every day after", icon: "♾️" },
 ];
 
-/* Build a custom golden Leaflet pin (teardrop). Answered = rose heart, finale = star. */
-function makeIcon(m, answered, unlocked, index) {
-  const done = answered[m.id] === "correct";
-  const finale = m.isFinale;
-  let cls = "pin";
-  let glyph = "";
-  if (finale) {
-    cls += unlocked ? " pin-finale pin-unlocked" : " pin-finale pin-locked";
-    glyph = unlocked ? "★" : "🔒";
-  } else if (done) {
-    cls += " pin-done";
-    glyph = "♥";
-  }
-  const delay = index !== undefined ? index * 0.12 : 0;
-  const html =
-    '<div class="' + cls + '" style="animation-delay:' + delay + 's"><span class="pin-glyph">' + glyph + "</span></div>" +
-    '<div class="pin-label" style="animation-delay:' + (delay + 0.2) + 's">' + m.short + "</div>";
-  return L.divIcon({
-    html,
-    className: "pin-wrap",
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
-  });
+const SECRET_MESSAGES = [
+  "The first coffee I ever ordered for you was 'Cafe Anaconda.' Still embarrassed. ☕",
+  "Remember how you calmed down when I touched your head at Cafe Yolo? That's when I knew. 🤍",
+  "You kept your proposal secret while I kept changing plans. You're incredible. 💍",
+  "We ate thepla in the airport on our honeymoon. Most Indori thing ever. 🫓",
+  "The day you danced in my baarat — I couldn't see anyone else. 💃",
+  "From a Kwid and an Activa to our own flat and our own company. Look how far we've come. 🏠",
+  "Every new day with you is still my favourite chapter. 💛",
+];
+
+/* ───────────────────────────── OCCASION CARDS (replaces MapView) ───────────────────────────── */
+function OccasionCards({ answered, unlocked, onOpen }) {
+  return (
+    <div className="cards-view">
+      <div className="collage-strip">
+        <div className="collage-title">Our Story</div>
+        {MEMORIES.filter((m) => {
+          const p = (m.photos || []).find((p) => p.url);
+          return p;
+        })
+          .slice(0, 6)
+          .map((m, i) => {
+            const p = m.photos.find((p) => p.url);
+            return (
+              <div className="collage-img" key={m.id} style={{ animationDelay: i * 2 + "s" }}>
+                <img src={p.url} alt={m.name} />
+              </div>
+            );
+          })}
+      </div>
+
+      <div className="cards-grid">
+        {MEMORIES.map((m, i) => {
+          const done = answered[m.id] === "correct";
+          const finale = m.isFinale;
+          const locked = finale && !unlocked;
+          const tilt = ((i * 7 + 3) % 7) - 3;
+
+          let status = "";
+          if (finale && unlocked) status = "★";
+          else if (finale) status = "🔒";
+          else if (done) status = "♥";
+
+          const coverPhoto = (m.photos || []).find((p) => p.url);
+
+          return (
+            <button
+              key={m.id}
+              className={
+                "occasion-card" +
+                (done ? " oc-done" : "") +
+                (finale ? " oc-finale" : "") +
+                (locked ? " oc-locked" : "") +
+                (finale && unlocked ? " oc-unlocked" : "")
+              }
+              style={{ "--tilt": tilt + "deg", animationDelay: i * 0.06 + "s" }}
+              onClick={() => onOpen(m.id)}
+            >
+              <div className="oc-clip" />
+              <div className="oc-body">
+                <div className="oc-cover">
+                  {coverPhoto ? (
+                    <img src={coverPhoto.url} alt={m.name} className="oc-cover-img" />
+                  ) : (
+                    <span className="oc-icon">{m.icon || "💛"}</span>
+                  )}
+                </div>
+                <div className="oc-info">
+                  <span className="oc-name">{m.short}</span>
+                  <span className="oc-when">{m.when}</span>
+                </div>
+                {status && <div className="oc-status">{status}</div>}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <SecretSparkles />
+    </div>
+  );
 }
 
-/* ───────────────────────────── MAP VIEW ───────────────────────────── */
-function MapView({ answered, unlocked, onOpen }) {
-  const containerRef = useRef(null);
-  const mapRef = useRef(null);
-  const markersRef = useRef({});
-  const onOpenRef = useRef(onOpen);
-  onOpenRef.current = onOpen;
+/* ───────────────────────────── SECRET SPARKLES ───────────────────────────── */
+function SecretSparkles() {
+  const [found, setFound] = useState(new Set());
+  const [active, setActive] = useState(null);
 
-  useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
+  function reveal(idx) {
+    if (found.has(idx)) return;
+    setFound((s) => new Set(s).add(idx));
+    setActive(idx);
+    setTimeout(() => setActive(null), 3500);
+  }
 
-    const map = L.map(containerRef.current, {
-      zoomControl: true,
-      scrollWheelZoom: true,
-      attributionControl: true,
-    });
-    mapRef.current = map;
-
-    L.tileLayer("https://{s}.basemap.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 19,
-    }).addTo(map);
-
-    const latlngs = MEMORIES.map((m) => [m.lat, m.lng]);
-
-    L.polyline(latlngs, {
-      color: "#d4af37",
-      weight: 2,
-      opacity: 0.85,
-      dashArray: "1, 12",
-      lineCap: "round",
-    }).addTo(map);
-
-    MEMORIES.forEach((m, index) => {
-      const marker = L.marker([m.lat, m.lng], {
-        icon: makeIcon(m, answered, unlocked, index),
-      }).addTo(map);
-      marker.on("click", () => onOpenRef.current(m.id));
-      markersRef.current[m.id] = marker;
-    });
-
-    map.fitBounds(latlngs, { padding: [55, 55] });
-
-    const timers = [
-      setTimeout(() => map.invalidateSize(), 100),
-      setTimeout(() => map.invalidateSize(), 300),
-      setTimeout(() => map.invalidateSize(), 600),
-    ];
-
-    const onResize = () => map.invalidateSize();
-    window.addEventListener("resize", onResize);
-
-    let ro;
-    if (typeof ResizeObserver !== "undefined") {
-      ro = new ResizeObserver(() => map.invalidateSize());
-      ro.observe(containerRef.current);
-    }
-
-    return () => {
-      timers.forEach(clearTimeout);
-      window.removeEventListener("resize", onResize);
-      if (ro) ro.disconnect();
-      map.remove();
-      mapRef.current = null;
-      markersRef.current = {};
-    };
-  }, []);
-
-  useEffect(() => {
-    MEMORIES.forEach((m, index) => {
-      const marker = markersRef.current[m.id];
-      if (marker) marker.setIcon(makeIcon(m, answered, unlocked, index));
-    });
-  }, [answered, unlocked]);
+  const positions = [
+    { top: "12%", left: "8%" },
+    { top: "28%", right: "6%" },
+    { top: "45%", left: "4%" },
+    { top: "62%", right: "10%" },
+    { top: "78%", left: "12%" },
+    { top: "35%", right: "3%" },
+    { top: "88%", left: "6%" },
+  ];
 
   return (
-    <div className="map-wrap">
-      <div ref={containerRef} className="map-container" />
-    </div>
+    <>
+      {SECRET_MESSAGES.map((msg, idx) => (
+        <button
+          key={idx}
+          className={"secret-sparkle" + (found.has(idx) ? " ss-found" : "")}
+          style={positions[idx % positions.length]}
+          onClick={() => reveal(idx)}
+          aria-label="Secret message"
+        >
+          ✦
+        </button>
+      ))}
+      {active !== null && (
+        <div className="secret-bubble" key={active}>
+          {SECRET_MESSAGES[active]}
+        </div>
+      )}
+      {found.size > 0 && (
+        <div className="secret-counter">
+          ✨ {found.size}/{SECRET_MESSAGES.length} secrets found
+        </div>
+      )}
+    </>
   );
 }
 
@@ -525,7 +705,7 @@ function Feast({ onLightbox }) {
         <p>Every plate we shared, in every place we loved — a map of us, in flavours.</p>
       </div>
 
-      {MEMORIES.map((m) => {
+      {MEMORIES.filter((m) => (m.food || []).length > 0).map((m) => {
         const food = m.food || [];
         return (
           <div className="feast-group" key={m.id}>
@@ -533,26 +713,22 @@ function Feast({ onLightbox }) {
               <span className="fg-name">{m.name}</span>
               <span className="fg-when">{m.when}</span>
             </div>
-            {food.length === 0 ? (
-              <div className="feast-empty">No dishes added here yet — drop their photos in the code. 🍽️</div>
-            ) : (
-              <div className="feast-row">
-                {food.map((f, i) => (
-                  <button
-                    key={i}
-                    className="feast-card"
-                    onClick={() => onLightbox({ ...f, place: m.name })}
-                  >
-                    {f.url ? (
-                      <img src={f.url} alt={f.caption} />
-                    ) : (
-                      <span className="feast-ph">🍴</span>
-                    )}
-                    <span className="feast-cap">{f.caption}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="feast-row">
+              {food.map((f, i) => (
+                <button
+                  key={i}
+                  className="feast-card"
+                  onClick={() => onLightbox({ ...f, place: m.name })}
+                >
+                  {f.url ? (
+                    <img src={f.url} alt={f.caption} />
+                  ) : (
+                    <span className="feast-ph">🍴</span>
+                  )}
+                  <span className="feast-cap">{f.caption}</span>
+                </button>
+              ))}
+            </div>
           </div>
         );
       })}
@@ -659,7 +835,13 @@ function Gallery({ photos, emptyText }) {
 
 /* Tabs inside a memory card: Moments  ⇄  Food */
 function MediaTabs({ photos, food }) {
+  const hasFood = food && food.length > 0;
   const [tab, setTab] = useState("moments");
+
+  if (!hasFood) {
+    return <Gallery key="moments" photos={photos} />;
+  }
+
   return (
     <div className="media-tabs-wrap">
       <div className="media-tabs">
@@ -1379,7 +1561,7 @@ function BirthdayLetter({ onContinue }) {
               look at a sunset like it's performing just for you.
             </p>
             <p>
-              I've built you a little world tonight. Every pin on the map ahead is
+              I've built you a little world tonight. Every card ahead is
               a memory of us. Every quiz is a question only you and I would know.
               And at the end of it all, there's something waiting just for you.
             </p>
@@ -1456,11 +1638,15 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [started, setStarted] = useState(false);
   const [showLetter, setShowLetter] = useState(false);
-  const [view, setView] = useState("map"); // 'map' | 'foryou' | 'feast'
+  const [view, setView] = useState("story"); // 'story' | 'foryou' | 'feast'
   const [openId, setOpenId] = useState(null);
   const [lightbox, setLightbox] = useState(null);
-  const [answered, setAnswered] = useState({}); // id -> 'correct'
-  const [wrongPicks, setWrongPicks] = useState({}); // id -> [indices]
+  const [answered, setAnswered] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("osm-answered")) || {}; } catch { return {}; }
+  });
+  const [wrongPicks, setWrongPicks] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("osm-wrongPicks")) || {}; } catch { return {}; }
+  });
   const [burst, setBurst] = useState(0);
   const [musicOn, setMusicOn] = useState(false);
   const [toast, setToast] = useState("");
@@ -1478,6 +1664,10 @@ export default function App() {
   const totalPhotos = MEMORIES.reduce((n, m) => n + (m.photos ? m.photos.length : 0), 0);
   const openMem = openId ? MEMORIES.find((m) => m.id === openId) : null;
   const daysSinceMet = Math.floor((Date.now() - FIRST_MET_DATE.getTime()) / 86400000);
+
+  // persist answered & wrongPicks to localStorage
+  useEffect(() => { localStorage.setItem("osm-answered", JSON.stringify(answered)); }, [answered]);
+  useEffect(() => { localStorage.setItem("osm-wrongPicks", JSON.stringify(wrongPicks)); }, [wrongPicks]);
 
   // toast auto-dismiss
   useEffect(() => {
@@ -1606,8 +1796,8 @@ export default function App() {
           <div className="viewbar">
             <div className="toggle">
               <button
-                className={"tg" + (view === "map" ? " tg-on" : "")}
-                onClick={() => setView("map")}
+                className={"tg" + (view === "story" ? " tg-on" : "")}
+                onClick={() => setView("story")}
               >
                 Our Story
               </button>
@@ -1653,8 +1843,8 @@ export default function App() {
           </div>
 
           <main className="content">
-            {view === "map" ? (
-              <MapView answered={answered} unlocked={unlocked} onOpen={openPin} />
+            {view === "story" ? (
+              <OccasionCards answered={answered} unlocked={unlocked} onOpen={openPin} />
             ) : view === "foryou" ? (
               <ReasonsILoveYou />
             ) : (
@@ -1683,7 +1873,7 @@ export default function App() {
               <HeartBurst trigger={celebrate} full />
               <div className="celebrate-msg">
                 You know us by heart {"💛"}
-                <span>Tap the golden pin to open our final memory.</span>
+                <span>Tap the golden card to open our final memory.</span>
               </div>
             </div>
           )}
@@ -1932,54 +2122,157 @@ const STYLES = `
 /* ——— CONTENT / MAP ——— */
 .content { position: relative; z-index: 4; flex: 1; min-height: 0; animation: contentReveal .7s ease .35s both; }
 @keyframes contentReveal { from { opacity: 0; } to { opacity: 1; } }
-.map-wrap { position: relative; width: 100%; height: 100%; }
-.map-container { width: 100%; height: 100%; background: #0a0e22; }
-.leaflet-container { background: #0a0e22 !important; font-family: 'Cormorant Garamond', serif; }
-.leaflet-control-attribution {
-  background: rgba(8,12,30,.7) !important; color: #8390b8 !important; font-size: 9px !important;
+/* ——— CLOTHESLINE CARDS ——— */
+.cards-view {
+  height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: 0 0 64px; position: relative;
 }
-.leaflet-control-attribution a { color: #b9a05a !important; }
-.leaflet-bar a {
-  background: rgba(12,18,42,.9) !important; color: #e8c46a !important;
-  border-color: rgba(212,175,55,.3) !important;
+.collage-strip {
+  position: relative; width: 100%; height: 140px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, rgba(212,175,55,.08), transparent);
+  border-bottom: 1px solid rgba(212,175,55,.15);
+}
+.collage-title {
+  position: absolute; z-index: 3; text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: clamp(28px, 8vw, 40px);
+  background: linear-gradient(180deg, #fbe6b4, #d8b052);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 40px rgba(212,175,55,.3);
+  pointer-events: none;
+}
+.collage-img {
+  position: absolute; inset: 0;
+  opacity: 0;
+  animation: kenBurns 12s ease-in-out infinite;
+}
+.collage-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(.45) saturate(.7);
+}
+.collage-img::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(10,14,34,.8) 0%, transparent 15%, transparent 85%, rgba(10,14,34,.8) 100%);
+}
+@keyframes kenBurns {
+  0% { opacity: 0; transform: scale(1.05); }
+  8% { opacity: 1; }
+  28% { opacity: 1; transform: scale(1); }
+  34% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
-/* ——— PINS ——— */
-.pin-wrap { background: transparent !important; border: none !important; }
-.pin {
-  width: 22px; height: 22px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
-  background: linear-gradient(135deg, #f5e29a, #d4af37);
-  border: 1.5px solid #fff3cf;
-  box-shadow: 0 0 12px 2px rgba(212,175,55,.7);
+.cards-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+  padding: 24px 16px; max-width: 900px; margin: 0 auto;
+}
+@media (min-width: 560px) { .cards-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 860px) { .cards-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.occasion-card {
+  position: relative; cursor: pointer; padding: 0;
+  border: none; background: transparent; text-align: center;
+  transform: rotate(var(--tilt, 0deg));
+  animation: cardDangle 4s ease-in-out infinite, ocFadeIn .5s ease both;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.occasion-card:hover {
+  transform: rotate(0deg) translateY(-6px) scale(1.04);
+  z-index: 2;
+}
+@keyframes cardDangle {
+  0%,100% { transform: rotate(var(--tilt, 0deg)); }
+  50% { transform: rotate(calc(var(--tilt, 0deg) + 0.5deg)); }
+}
+@keyframes ocFadeIn {
+  from { opacity: 0; transform: rotate(var(--tilt, 0deg)) translateY(20px) scale(.9); }
+  to { opacity: 1; }
+}
+
+.oc-clip {
+  width: 20px; height: 20px; margin: 0 auto -8px;
+  background: linear-gradient(180deg, #f0d98a, #caa13c);
+  border-radius: 50%; border: 2px solid #fff3cf;
+  box-shadow: 0 0 8px rgba(212,175,55,.5);
+  position: relative; z-index: 2;
+}
+.oc-body {
+  border-radius: 10px; overflow: hidden;
+  background: linear-gradient(170deg, #1a1f3e, #131738);
+  border: 1px solid rgba(212,175,55,.25);
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+.occasion-card:hover .oc-body {
+  border-color: rgba(212,175,55,.55);
+  box-shadow: 0 14px 36px rgba(0,0,0,.5), 0 0 20px rgba(212,175,55,.15);
+}
+.oc-cover {
+  height: 110px; display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(212,175,55,.12), transparent 60%),
+    linear-gradient(160deg, #14193a, #0f1330);
+  overflow: hidden;
+}
+.oc-cover-img { width: 100%; height: 100%; object-fit: cover; }
+.oc-icon { font-size: 36px; }
+.oc-info { padding: 10px 8px 12px; }
+.oc-name {
+  display: block; font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-weight: 600; font-size: 16px; color: #f0d98a; line-height: 1.2;
+}
+.oc-when {
+  display: block; margin-top: 3px;
+  font-family: 'Marcellus', serif; font-size: 9.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: #9aa6cf;
+}
+.oc-status {
+  position: absolute; top: 26px; right: 6px; font-size: 14px;
+  background: rgba(8,12,30,.7); border-radius: 50%; width: 24px; height: 24px;
   display: flex; align-items: center; justify-content: center;
-  animation: pinDrop .6s cubic-bezier(.2,1.2,.4,1) both;
-  transition: transform .2s ease, box-shadow .2s ease;
+  border: 1px solid rgba(212,175,55,.3);
 }
-.pin:hover { transform: rotate(-45deg) scale(1.25); box-shadow: 0 0 20px 4px rgba(212,175,55,.9); }
-.pin-glyph { transform: rotate(45deg); font-size: 11px; color: #2a1d05; line-height: 1; }
-.pin-done {
-  background: linear-gradient(135deg, #f7c3cd, #d98695);
-  box-shadow: 0 0 15px 3px rgba(217,134,149,.85);
-  animation: pinDrop .6s cubic-bezier(.2,1.2,.4,1) both, pinPulse 3s ease-in-out infinite;
+.oc-done .oc-body { border-color: rgba(217,134,149,.4); }
+.oc-done .oc-status { color: #f7c3cd; border-color: rgba(217,134,149,.4); }
+.oc-finale.oc-locked { opacity: .6; filter: grayscale(.3); }
+.oc-finale.oc-unlocked .oc-body {
+  border-color: rgba(240,217,138,.6);
+  box-shadow: 0 0 22px rgba(240,217,138,.3), 0 8px 24px rgba(0,0,0,.4);
 }
-.pin-done:hover { box-shadow: 0 0 22px 5px rgba(217,134,149,1); }
-@keyframes pinPulse { 0%,100% { box-shadow: 0 0 15px 3px rgba(217,134,149,.85); } 50% { box-shadow: 0 0 22px 5px rgba(217,134,149,.5); } }
-.pin-finale { width: 32px; height: 32px; }
-.pin-finale .pin-glyph { font-size: 15px; }
-.pin-locked { filter: grayscale(.55) brightness(.7); box-shadow: 0 0 8px 1px rgba(212,175,55,.35); }
-.pin-unlocked {
-  background: linear-gradient(135deg, #fff0b8, #e8c046);
-  box-shadow: 0 0 22px 6px rgba(240,217,138,.9);
+.oc-finale.oc-unlocked .oc-clip {
   animation: glowPulse 1.5s ease-in-out infinite;
 }
-.pin-label {
-  position: absolute; left: 50%; top: 24px; transform: translateX(-50%);
-  font-family: 'Marcellus', serif; font-size: 11px; color: #f0d98a;
-  white-space: nowrap; text-shadow: 0 1px 5px #000, 0 0 8px #000; pointer-events: none;
-  opacity: 0; animation: labelFadeIn .5s ease both;
+
+/* ——— SECRET SPARKLES ——— */
+.secret-sparkle {
+  position: fixed; z-index: 6; cursor: pointer;
+  width: 22px; height: 22px; border: none; border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,217,138,.7), rgba(212,175,55,.2), transparent);
+  color: #f0d98a; font-size: 10px; display: flex; align-items: center; justify-content: center;
+  animation: sparkleFloat 5s ease-in-out infinite;
+  transition: transform .2s ease, opacity .3s ease;
 }
-@keyframes pinDrop { from { opacity: 0; transform: rotate(-45deg) translateY(-30px) scale(.4); } to { opacity: 1; } }
-@keyframes labelFadeIn { from { opacity: 0; transform: translateX(-50%) translateY(6px); } to { opacity: 1; transform: translateX(-50%); } }
+.secret-sparkle:hover { transform: scale(1.5); }
+.ss-found { opacity: .2; pointer-events: none; }
+.secret-bubble {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 65;
+  max-width: 88%; text-align: center; padding: 14px 22px; border-radius: 16px;
+  font-size: 16px; font-style: italic; color: #f6ecd2;
+  background: rgba(12,18,42,.95); border: 1px solid rgba(212,175,55,.45);
+  box-shadow: 0 12px 40px rgba(0,0,0,.5);
+  animation: secretReveal .5s ease both;
+}
+@keyframes secretReveal {
+  from { opacity: 0; transform: translateX(-50%) scale(.9) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+}
+.secret-counter {
+  position: fixed; top: 60px; right: 12px; z-index: 6;
+  font-family: 'Marcellus', serif; font-size: 10px; letter-spacing: .1em;
+  color: #f0d98a; background: rgba(8,12,30,.8); padding: 4px 10px; border-radius: 999px;
+  border: 1px solid rgba(212,175,55,.25);
+}
 
 /* ——— FEAST VIEW ——— */
 .feast {
