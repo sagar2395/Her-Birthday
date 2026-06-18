@@ -251,13 +251,11 @@ const MEMORIES = [
       "No plan, just us and a long, winding drive into the Satpura hills. We dragged ourselves up before sunrise for the safari — half asleep, fully in love — and then stood quietly together at Gupt Mahadev, as if the temple was keeping our little secrets. Some of my favourite memories are the unplanned ones, because they're just you, me and the open road.",
     video: "",
     photos: [
-      { url: "", caption: "The long drive in" },
-      { url: "", caption: "Dawn at the Satpura safari" },
-      { url: "", caption: "A quiet moment at Gupt Mahadev" },
-      { url: "", caption: "Hills, mist, and you" },
+      { url: "/media/pachmarhi/pachmarhi-01-satpura-tiger.jpg", caption: "Satpura National Park — posing with the tiger" },
+      { url: "/media/pachmarhi/pachmarhi-02-viewpoint.jpg", caption: "On top of the world at the viewpoint" },
     ],
     food: [
-      { url: "", caption: "Hot chai in the hills" },
+      { url: "/media/pachmarhi/pachmarhi-03-cafe-croissant.jpg", caption: "Croissants, coffee, and that smile" },
       { url: "", caption: "Roadside Maggi on the drive" },
       { url: "", caption: "A simple local thali" },
     ],
