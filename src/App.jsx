@@ -221,6 +221,8 @@ const MEMORIES = [
       { url: "/media/bali/bali-07-kl-tower.jpg", caption: "Standing tall at KL Tower" },
       { url: "/media/bali/bali-08-kl-observation.jpg", caption: "Taking in the KL skyline" },
       { url: "/media/bali/bali-09-kl-dinner.jpg", caption: "Dinner dates in Kuala Lumpur" },
+      { url: "/media/bali/bali-10-ocean-walkway.jpg", caption: "That ocean view walkway — paradise found" },
+      { url: "/media/bali/bali-11-stone-garden.jpg", caption: "Posing with the ancient stone guardians" },
     ],
     food: [
       { url: "", caption: "Thepla in the airport — Indori honeymoon essentials" },
