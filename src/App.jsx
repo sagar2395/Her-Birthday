@@ -48,8 +48,6 @@
 */
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 
 /* >>> 🎵 PASTE YOUR SONG'S DIRECT AUDIO URL HERE (leave '' for none) */
 const SONG_URL = ""; // e.g. "/media/ilahi.mp3" or "https://example.com/ilahi.mp3"
