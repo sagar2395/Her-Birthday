@@ -23,10 +23,9 @@
         elegant placeholder. Add as many as you like.
 
   ── 2) 🍲  FOOD PHOTOS ──────────────────────────────────────────────────────
-        Each trip ALSO has a `food: [ ... ]` list. Drop every dish you ate
-        together here. These show up BOTH in the card's "Food" tab AND in the
-        dedicated "Feast" view (the food map of us). One place to add — two
-        places it appears.
+        All food photos live in the `FEAST_PHOTOS` array (below MEMORIES).
+        They show up in the dedicated "Feast Together" view — one unified
+        gallery of every dish from every trip.
 
   ── 3) 🎬  VIDEOS (optional, feasible!) ─────────────────────────────────────
         Each trip has a `video: ""`. Paste a DIRECT video file URL (.mp4) or a
@@ -50,10 +49,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 /* >>> 🎵 PASTE YOUR SONG'S DIRECT AUDIO URL HERE (leave '' for none) */
-const SONG_URL = ""; // e.g. "/media/ilahi.mp3" or "https://example.com/ilahi.mp3"
+const SONG_URL = "/media/hawayein.mp3";
 
 /* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
-const BIRTHDAY_SONG_URL = ""; // e.g. "/media/happy-birthday.mp3"
+const BIRTHDAY_SONG_URL = "/media/happy-birthday.mp3";
 
 /* >>> 🎂 HER BIRTHDAY — month is 0-indexed (5 = June) */
 const BIRTHDAY_MONTH = 5; // June
@@ -79,13 +78,11 @@ const MEMORIES = [
       "March 2022. I drove my little Renault Kwid to Bada Ganpati to pick you up — you'd just finished office and parked your Activa. We went on a long drive through the Super Corridor, windows down, talking like we'd known each other forever. At Cafe Yolo, I tried to impress you by ordering something called 'Cafe Anaconda' — easily the worst coffee either of us has ever tasted. But you laughed, and I knew. Later, when I had a short work call, I gently caressed your head — and you went completely calm. That was the moment I realised: I never want to stop being the person who makes your world feel quieter. Every single day since has been proof that I was right.",
     video: "",
     photos: [
-      { url: "", caption: "Bada Ganpati — where I first saw you that evening" },
-      { url: "", caption: "The Super Corridor drive that started it all" },
-      { url: "", caption: "Cafe Yolo — and the legendary Cafe Anaconda" },
+      { url: "/media/first-met/first-met-01-bada-ganpati.jpg", caption: "Bada Ganpati — where I picked you up that evening" },
+      { url: "/media/first-met/first-met-02-kwid.jpg", caption: "The Kwid — our ride that started it all" },
+      { url: "/media/first-met/first-met-03-cafe-yolo.jpg", caption: "Cafe Yolo — and the legendary Cafe Anaconda" },
     ],
-    food: [
-      { url: "", caption: "Cafe Anaconda — the worst coffee, the best memory" },
-    ],
+    food: [],
     quiz: {
       q: "What terrible coffee did I order at Cafe Yolo to impress you on our first meet?",
       options: ["Cafe Tornado", "Cafe Anaconda", "Cafe Monsoon", "Cafe Everest"],
@@ -106,12 +103,13 @@ const MEMORIES = [
       "The day we made it official. We went to the gurudwara together, heads bowed, hearts full — and then celebrated over lunch at Cafe Oakaz. It was simple, beautiful, and perfectly us. No grand gestures, just two people quietly promising to spend their lives together. That day, I looked at you across the table and thought: every road in my life was always leading here, to you.",
     video: "",
     photos: [
-      { url: "", caption: "Blessings at the gurudwara" },
-      { url: "", caption: "Celebrating our roka together" },
+      { url: "/media/roka/roka-01-celebration-wide.jpg", caption: "The room that held our promise — balloons, petals, and us" },
+      { url: "/media/roka/roka-02-holding-hands.jpg", caption: "Holding hands, holding futures" },
+      { url: "/media/roka/roka-03-together.jpg", caption: "Celebrating our roka together" },
+      { url: "/media/roka/roka-04-candid-laughs.jpg", caption: "The laughs that made it all real" },
+      { url: "/media/roka/roka-05-rose-petal-heart.jpg", caption: "Rose petals, balloons, and the start of forever" },
     ],
-    food: [
-      { url: "", caption: "Lunch at Cafe Oakaz — our first meal as an official couple" },
-    ],
+    food: [],
     quiz: null,
   },
   {
@@ -126,10 +124,13 @@ const MEMORIES = [
       "I'd been planning this for weeks. The Eighteen restaurant, a custom slideshow playing on the big screen — every photo of us, every moment, building up to the question I already knew the answer to. When I got down on one knee and held out that chocolate box that said 'Will you marry me?' — Nidhi, the look on your face is burned into my heart forever. You said yes, and in that moment, I became the luckiest man alive. I still am.",
     video: "",
     photos: [
-      { url: "", caption: "The Eighteen — where I asked the most important question" },
-      { url: "", caption: "The custom slideshow on the big screen" },
-      { url: "", caption: "Down on one knee, heart in my throat" },
-      { url: "", caption: "She said yes" },
+      { url: "/media/his-proposal/his-proposal-01-rooftop-selfie.jpg", caption: "The evening that changed everything — rooftop under fairy lights" },
+      { url: "/media/his-proposal/his-proposal-02-her-smile.jpg", caption: "That smile — she had no idea what was coming" },
+      { url: "/media/his-proposal/his-proposal-03-heart-hands.jpg", caption: "Heart hands — if only she knew what I had planned" },
+      { url: "/media/his-proposal/his-proposal-04-forehead-kiss.jpg", caption: "The moment right before I asked the most important question" },
+      { url: "/media/his-proposal/his-proposal-05-the-eighteen-inside.jpg", caption: "The Eighteen — where I asked her to be mine forever" },
+      { url: "/media/his-proposal/his-proposal-06-the-eighteen-entrance.jpg", caption: "Together at The Eighteen — the night she said yes" },
+      { url: "/media/his-proposal/his-proposal-07-chocolate-box.jpg", caption: "Will U Marry Me — the chocolate box that sealed the deal" },
     ],
     food: [],
     quiz: {
@@ -152,9 +153,11 @@ const MEMORIES = [
       "My birthday, March 2024 — and you had a secret plan. You wanted to propose right back at Cafe Oakaz (freshly renovated and gorgeous), on the top floor. But I kept changing my birthday plans — one idea after another — and you were silently losing your mind trying to keep your surprise alive. When we finally got there, you pulled out a ring, and I understood everything. All the stress, all the sneaky planning — it was all for this moment. You proposed to me, Nidhi. And in that moment, I realised you don't just love me — you fight for us, even against my own chaotic birthday plans.",
     video: "",
     photos: [
-      { url: "", caption: "Cafe Oakaz — renovated and ready for her surprise" },
-      { url: "", caption: "The top floor, just the two of us" },
-      { url: "", caption: "The ring — her proposal to me" },
+      { url: "/media/her-proposal/her-proposal-01-couch-selfie.jpg", caption: "Cafe Oakaz — renovated and ready for her surprise" },
+      { url: "/media/her-proposal/her-proposal-02-intimate-moment.jpg", caption: "The moment she made my heart stop" },
+      { url: "/media/her-proposal/her-proposal-03-her-at-oakaz.jpg", caption: "The top floor, just the two of us" },
+      { url: "/media/her-proposal/her-proposal-04-together-wide.jpg", caption: "Together at Oakaz — where she turned my birthday into forever" },
+      { url: "/media/her-proposal/her-proposal-05-holding-hands.jpg", caption: "Holding hands, holding on to this moment" },
     ],
     food: [],
     quiz: {
@@ -177,11 +180,11 @@ const MEMORIES = [
       "11th July 2024. The day I married the most beautiful woman in the world. Nidhi, you managed everything — every detail, every flower, every moment — and still looked absolutely breathtaking. You danced in my baarat, just for me, and I couldn't look anywhere else. Your mother, your mausi, and your cousins gave the most beautiful dance performances to welcome me, and I felt so loved by your whole family. And then, during the mala exchange, I couldn't help myself — I had a short little dance on stage to 'Tu Hai To Dil Dhadakta Hai.' Because my heart really was doing exactly that. It still does. Every single day.",
     video: "",
     photos: [
-      { url: "", caption: "The most beautiful bride I've ever seen" },
-      { url: "", caption: "Dancing in the baarat — just for me" },
-      { url: "", caption: "Her family's welcome dances" },
-      { url: "", caption: "Mala exchange — and my little dance" },
-      { url: "", caption: "11th July — forever begins" },
+      { url: "/media/wedding/wedding-01-grand-entry.jpg", caption: "Walking into forever — our grand entry with sparklers" },
+      { url: "/media/wedding/wedding-02-on-stage.jpg", caption: "On stage, jaimala done — the moment it all became real" },
+      { url: "/media/wedding/wedding-03-stage-together.jpg", caption: "The most beautiful bride I've ever seen — and my little dance" },
+      { url: "/media/wedding/wedding-04-havan.jpg", caption: "Seven rounds, one promise — by the sacred fire" },
+      { url: "/media/wedding/wedding-05-temple-visit.jpg", caption: "First temple visit as Mr. and Mrs. — blessings for the road ahead" },
     ],
     food: [],
     quiz: {
@@ -213,14 +216,10 @@ const MEMORIES = [
       { url: "/media/bali/bali-07-kl-tower.jpg", caption: "Standing tall at KL Tower" },
       { url: "/media/bali/bali-08-kl-observation.jpg", caption: "Taking in the KL skyline" },
       { url: "/media/bali/bali-09-kl-dinner.jpg", caption: "Dinner dates in Kuala Lumpur" },
+      { url: "/media/bali/bali-10-ocean-walkway.jpg", caption: "That ocean view walkway — paradise found" },
+      { url: "/media/bali/bali-11-stone-garden.jpg", caption: "Posing with the ancient stone guardians" },
     ],
-    food: [
-      { url: "", caption: "Thepla in the airport — Indori honeymoon essentials" },
-      { url: "", caption: "The acai bowl that changed everything" },
-      { url: "", caption: "Mango acai bowl by the beach" },
-      { url: "", caption: "Huge coconut — bigger than our heads" },
-      { url: "", caption: "Great Indian food, thousands of miles from home" },
-    ],
+    food: [],
     quiz: {
       q: "What was Nidhi's childhood dream that came true on our honeymoon?",
       options: ["Seeing the Eiffel Tower", "Visiting a dolphin centre", "Climbing a volcano", "Riding a hot air balloon"],
@@ -241,48 +240,11 @@ const MEMORIES = [
       "No plan, just us and a long, winding drive into the Satpura hills. We dragged ourselves up before sunrise for the safari — half asleep, fully in love — and then stood quietly together at Gupt Mahadev, as if the temple was keeping our little secrets. Some of my favourite memories are the unplanned ones, because they're just you, me and the open road.",
     video: "",
     photos: [
-      { url: "", caption: "The long drive in" },
-      { url: "", caption: "Dawn at the Satpura safari" },
-      { url: "", caption: "A quiet moment at Gupt Mahadev" },
-      { url: "", caption: "Hills, mist, and you" },
+      { url: "/media/pachmarhi/pachmarhi-01-satpura-tiger.jpg", caption: "Satpura National Park — posing with the tiger" },
+      { url: "/media/pachmarhi/pachmarhi-02-viewpoint.jpg", caption: "On top of the world at the viewpoint" },
     ],
-    food: [
-      { url: "", caption: "Hot chai in the hills" },
-      { url: "", caption: "Roadside Maggi on the drive" },
-      { url: "", caption: "A simple local thali" },
-    ],
+    food: [],
     quiz: null,
-  },
-  {
-    id: "udaipur",
-    name: "Udaipur & Nathdwara",
-    short: "Udaipur",
-    when: "July 2025",
-    type: "trip",
-    icon: "🏛️",
-    teaser: "Our first anniversary, on the lakes.",
-    message:
-      "One whole year of being your husband — our anniversary trip, and every moment was perfect. Udaipur was peaceful, exactly what we needed. We rented an Activa and explored every lake, every street, eating street food until our fingers were permanently stained with chaat masala. On our actual anniversary day, we drove to Nathdwara mandir — bowing our heads together, grateful for this one beautiful year and every year to come. Udaipur shimmered that week — but honestly, I only ever had eyes for you.",
-    video: "",
-    photos: [
-      { url: "", caption: "On the lake at Udaipur" },
-      { url: "", caption: "Blessings at Nathdwara" },
-      { url: "", caption: "Exploring on our rented Activa" },
-      { url: "", caption: "One year of us" },
-    ],
-    food: [
-      { url: "", caption: "Lakeside kachori" },
-      { url: "", caption: "Dal baati churma" },
-      { url: "", caption: "Prasad at Nathdwara" },
-      { url: "", caption: "Anniversary mithai" },
-    ],
-    quiz: {
-      q: "What were we celebrating in the city of lakes?",
-      options: ["A work trip", "New Year", "Our first wedding anniversary", "Diwali"],
-      correct: 2,
-      right: "Our first anniversary — one year down, a whole forever to go. 💛",
-      wrong: "Not quite — think about what we promised each other a year before. 💍",
-    },
   },
   {
     id: "delhi",
@@ -296,12 +258,7 @@ const MEMORIES = [
       "A short trip — barely a weekend — but we packed in more street food than most people eat in a month. This whole trip was one long, glorious eating spree through Delhi's lanes, and I wouldn't change a single bite. Every chaat stall, every paratha, every sticky-sweet jalebi — we devoured it all together. The Food tab is where this memory truly lives, Nidhi. I remember every flavour — and every one of your smiles between bites.",
     video: "",
     photos: [],
-    food: [
-      { url: "", caption: "Chandni Chowk chaat" },
-      { url: "", caption: "Parathe Wali Gali feast" },
-      { url: "", caption: "Butter chicken & hot naan" },
-      { url: "", caption: "Sticky-sweet jalebi to finish" },
-    ],
+    food: [],
     quiz: null,
   },
   {
@@ -316,17 +273,18 @@ const MEMORIES = [
       "This one's tender. We came to Goa to heal — together. We partied on Tito's Street, took long drives all the way to Arambol with the windows down, stayed right by the beach where we could hear the waves at night. Every morning, we walked into the ocean together — not swimming, just standing, letting the sea hold us. We came carrying something heavy, and we left a little lighter. You reminded me that the right person makes even the hard chapters feel survivable. I quietly, completely fell in love with you all over again here.",
     video: "",
     photos: [
-      { url: "", caption: "The sea that healed us" },
-      { url: "", caption: "Long drives to Arambol" },
-      { url: "", caption: "Partying on Tito's Street" },
-      { url: "", caption: "Ocean bath — just us and the waves" },
-      { url: "", caption: "Our beachside stay" },
+      { url: "/media/goa/goa-01-flight-selfie.jpg", caption: "On the flight — couldn't stop looking at each other" },
+      { url: "/media/goa/goa-02-beach-hug.jpg", caption: "The sea that healed us" },
+      { url: "/media/goa/goa-03-waves.jpg", caption: "Ocean bath — just us and the waves" },
+      { url: "/media/goa/goa-04-sunset-together.jpg", caption: "Watching the sunset, side by side" },
+      { url: "/media/goa/goa-05-sunset-kiss.jpg", caption: "A kiss as the sun went down" },
+      { url: "/media/goa/goa-06-her-at-sunset.jpg", caption: "Her, the sunset, and my whole world in one frame" },
+      { url: "/media/goa/goa-07-hotel-selfie.jpg", caption: "Our beachside stay" },
+      { url: "/media/goa/goa-08-night-dance.jpg", caption: "Dancing on the beach at night" },
+      { url: "/media/goa/goa-09-night-beach.jpg", caption: "She owns the night" },
+      { url: "/media/goa/goa-10-butterfly-wall.jpg", caption: "The butterfly wall — our spot" },
     ],
-    food: [
-      { url: "", caption: "Beach-shack seafood" },
-      { url: "", caption: "Prawn curry rice" },
-      { url: "", caption: "Bebinca by the sea" },
-    ],
+    food: [],
     quiz: {
       q: "Goa wasn't just a holiday — what did we really do there?",
       options: ["Healed and found our way back to each other", "Ran a marathon", "Opened a café", "Learned to surf"],
@@ -347,8 +305,8 @@ const MEMORIES = [
       "Most couples share a Netflix account. We started a company. Snowops — built from late-night conversations, shared ambitions, and the wild belief that we could create something real, together. You are my co-founder in every sense: in business, in life, in dreaming bigger than either of us could alone. Building Snowops with you isn't just work — it's proof that when two people trust each other completely, there's nothing they can't build.",
     video: "",
     photos: [
-      { url: "", caption: "The beginning of Snowops" },
-      { url: "", caption: "Co-founders in life and everything else" },
+      { url: "/media/snowops/snowops-01-company.jpg", caption: "The beginning of Snowops" },
+      { url: "/media/snowops/snowops-02-luxury.jpg", caption: "Co-founders in life and everything else" },
     ],
     food: [],
     quiz: null,
@@ -372,16 +330,7 @@ const MEMORIES = [
       { url: "/media/jaipur/jaipur-05-palace-throne.jpg", caption: "Our royal palace moment" },
       { url: "/media/jaipur/jaipur-06-hotel-mirror.jpg", caption: "Mirror selfie at our Rajasthani haveli" },
     ],
-    food: [
-      { url: "/media/jaipur/jaipur-07-dinner-date.jpg", caption: "Dinner date — the prettiest view was across the table" },
-      { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Wine and tiny bites to start the feast" },
-      { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf" },
-      { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried" },
-      { url: "/media/jaipur/jaipur-11-naan-curry.jpg", caption: "Naan, curry, and no regrets" },
-      { url: "/media/jaipur/jaipur-12-thali.jpg", caption: "The Rajasthani thali of dreams" },
-      { url: "/media/jaipur/jaipur-13-thali-lassi.jpg", caption: "Thali round two with lassi" },
-      { url: "/media/jaipur/jaipur-14-poori-kachori.jpg", caption: "Poori-kachori breakfast — the real Pink City gold" },
-    ],
+    food: [],
     quiz: {
       q: "Which two temples did we visit on our Jaipur trip that Nidhi absolutely loved?",
       options: ["Birla Mandir and ISKCON", "Khatu Shyam Mandir and Salasar Balaji Mandir", "Govind Dev Ji and Galtaji", "Moti Dungri and Garh Ganesh"],
@@ -392,8 +341,8 @@ const MEMORIES = [
   },
   {
     id: "flat-purchased",
-    name: "Our First Home",
-    short: "Our Flat",
+    name: "Our Home",
+    short: "Our Home",
     when: "June 2026",
     type: "occasion",
     icon: "🏠",
@@ -402,12 +351,9 @@ const MEMORIES = [
       "We walked through so many areas, debated so many floor plans, imagined so many futures — and finally, we found it. Our flat. Our first real home, just for us. No more temporary, no more 'someday.' This is where we'll cook our first meal together, where we'll argue about wall colours, where we'll build the life we've been dreaming about since that first drive down the Super Corridor. Every room in this flat is a promise. And I can't wait to fill it with us.",
     video: "",
     photos: [
-      { url: "", caption: "The flat hunt — we looked everywhere" },
-      { url: "", caption: "The one we chose — our first home" },
+      { url: "/media/home/home-01-coming-soon.jpg", caption: "Coming soon — the next chapter of us" },
     ],
-    food: [
-      { url: "", caption: "Our first home-cooked dinner (coming soon)" },
-    ],
+    food: [],
     quiz: null,
   },
   {
@@ -422,16 +368,16 @@ const MEMORIES = [
       "Not every love story needs a passport. Our own city holds our smallest, sweetest moments — the cafés we keep going back to, the restaurants where they already know our order, the lazy mall evenings that somehow become my favourite dates. And let's be honest: Indore feeds us better than anywhere on earth. Home isn't a place, Nidhi. It's wherever you are (preferably with chaat).",
     video: "",
     photos: [
-      { url: "", caption: "Our usual café table" },
-      { url: "", caption: "Lazy mall evenings" },
-      { url: "", caption: "Just another perfect ordinary day" },
+      { url: "/media/indore/indore-01-event-night.jpg", caption: "Dressed up, showing up — always together" },
+      { url: "/media/indore/indore-02-holi-family.jpg", caption: "Holi with family — colours, chaos, and us" },
+      { url: "/media/indore/indore-03-burger-king-queen.jpg", caption: "My Burger King queen" },
+      { url: "/media/indore/indore-04-cafe-hug.jpg", caption: "Our favourite corner of every café" },
+      { url: "/media/indore/indore-05-coffee-outdoors.jpg", caption: "Coffee and sunshine — her happy place" },
+      { url: "/media/indore/indore-06-cafe-smile.jpg", caption: "That smile across the table" },
+      { url: "/media/indore/indore-07-railway-track.jpg", caption: "Free spirit on the tracks" },
+      { url: "/media/indore/indore-08-romantic-dinner.jpg", caption: "The hand-kiss that stopped time" },
     ],
-    food: [
-      { url: "https://picsum.photos/seed/sarafachaat/700/700", caption: "Sarafa night-market chaat" },
-      { url: "https://picsum.photos/seed/pohajalebi/700/700", caption: "Poha-jalebi mornings" },
-      { url: "https://picsum.photos/seed/56dukaan/700/700", caption: "56 Dukaan treats" },
-      { url: "https://picsum.photos/seed/indorecafe/700/700", caption: "Our café usuals" },
-    ],
+    food: [],
     quiz: null,
   },
   {
@@ -451,9 +397,7 @@ const MEMORIES = [
       "This year, I wish for you: a thousand more sunsets together, every flavour you've ever craved, and the kind of happiness that makes your heart feel too full to hold.\n\nAnd here's what I see when I dream about our future:\n\nTravelling the world together — every continent, every culture, every sunset we haven't seen yet. Buying great cars — because you deserve to arrive in style (and I deserve a co-pilot who controls the playlist). Enjoying life — really, truly, deeply. Building Snowops into something we're both proud of. And most of all: growing old together, still laughing, still adventuring, still falling in love with you every morning.\n\nYou deserve the whole world, Nidhi — and I'm going to spend my life making sure you feel it. Happy birthday, my love. 💛",
     video: "",
     photos: [
-      { url: "", caption: "Where forever begins" },
-      { url: "", caption: "Dreaming up our future" },
-      { url: "", caption: "Us, always" },
+      { url: "/media/finale/finale-01-queen.jpg", caption: "Live life, queen size" },
     ],
     food: [],
     quiz: null,
@@ -461,6 +405,16 @@ const MEMORIES = [
 ];
 
 /* ──────────────────────────────────────────────────────────────────────────── */
+
+const FEAST_PHOTOS = [
+  { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Wine and tiny bites — Jaipur" },
+  { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf — Jaipur" },
+  { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried — Jaipur" },
+  { url: "/media/jaipur/jaipur-11-naan-curry.jpg", caption: "Naan, curry, and no regrets — Jaipur" },
+  { url: "/media/jaipur/jaipur-12-thali.jpg", caption: "The Rajasthani thali of dreams — Jaipur" },
+  { url: "/media/jaipur/jaipur-13-thali-lassi.jpg", caption: "Thali round two with lassi — Jaipur" },
+  { url: "/media/jaipur/jaipur-14-poori-kachori.jpg", caption: "Poori-kachori breakfast — Jaipur" },
+];
 
 const QUIZ_TOTAL = MEMORIES.filter((m) => m.quiz).length;
 
@@ -701,37 +655,26 @@ function Feast({ onLightbox }) {
     <div className="feast">
       <div className="feast-head">
         <div className="feast-kicker">Two foodies, one love story</div>
-        <h2>Our Feast</h2>
+        <h2>Feast Together</h2>
         <p>Every plate we shared, in every place we loved — a map of us, in flavours.</p>
       </div>
 
-      {MEMORIES.filter((m) => (m.food || []).length > 0).map((m) => {
-        const food = m.food || [];
-        return (
-          <div className="feast-group" key={m.id}>
-            <div className="feast-group-head">
-              <span className="fg-name">{m.name}</span>
-              <span className="fg-when">{m.when}</span>
-            </div>
-            <div className="feast-row">
-              {food.map((f, i) => (
-                <button
-                  key={i}
-                  className="feast-card"
-                  onClick={() => onLightbox({ ...f, place: m.name })}
-                >
-                  {f.url ? (
-                    <img src={f.url} alt={f.caption} />
-                  ) : (
-                    <span className="feast-ph">🍴</span>
-                  )}
-                  <span className="feast-cap">{f.caption}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+      <div className="feast-row feast-row-unified">
+        {FEAST_PHOTOS.map((f, i) => (
+          <button
+            key={i}
+            className="feast-card"
+            onClick={() => onLightbox({ ...f, place: "Our Feast" })}
+          >
+            {f.url ? (
+              <img src={f.url} alt={f.caption} />
+            ) : (
+              <span className="feast-ph">🍴</span>
+            )}
+            <span className="feast-cap">{f.caption}</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -833,42 +776,9 @@ function Gallery({ photos, emptyText }) {
   );
 }
 
-/* Tabs inside a memory card: Moments  ⇄  Food */
-function MediaTabs({ photos, food }) {
-  const hasFood = food && food.length > 0;
-  const [tab, setTab] = useState("moments");
-
-  if (!hasFood) {
-    return <Gallery key="moments" photos={photos} />;
-  }
-
-  return (
-    <div className="media-tabs-wrap">
-      <div className="media-tabs">
-        <button
-          className={"mt" + (tab === "moments" ? " mt-on" : "")}
-          onClick={() => setTab("moments")}
-        >
-          📷 Moments
-        </button>
-        <button
-          className={"mt" + (tab === "food" ? " mt-on" : "")}
-          onClick={() => setTab("food")}
-        >
-          🍲 Food
-        </button>
-      </div>
-      {tab === "moments" ? (
-        <Gallery key="moments" photos={photos} />
-      ) : (
-        <Gallery
-          key="food"
-          photos={food}
-          emptyText="No food photos here yet — paste their URLs in the code to fill this plate. 🍴"
-        />
-      )}
-    </div>
-  );
+/* Photos inside a memory card (food is now in the unified Feast section) */
+function MediaTabs({ photos }) {
+  return <Gallery key="moments" photos={photos} />;
 }
 
 /* ───────────────────────────── QUIZ BLOCK ───────────────────────────── */
@@ -975,11 +885,42 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
 
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="card" onClick={(e) => e.stopPropagation()}>
+      <div className={"card" + (mem.isFinale ? " card-finale" : "")} onClick={(e) => e.stopPropagation()}>
         <HeartBurst trigger={burst} />
+        {mem.isFinale && <Fireworks active duration={10000} />}
         <button className="close" onClick={onClose} aria-label="Close">
           {"×"}
         </button>
+
+        {mem.isFinale && (
+          <div className="finale-hero">
+            <div className="finale-confetti-layer">
+              {Array.from({ length: 30 }).map((_, i) => {
+                const emojis = ["🎂", "🎁", "🎀", "🌹", "💛", "✨", "🎉", "💗", "🎊", "🥂", "👑", "🎈"];
+                return (
+                  <span
+                    key={i}
+                    className="finale-confetti"
+                    style={{
+                      left: Math.random() * 100 + "%",
+                      animationDelay: Math.random() * 3 + "s",
+                      animationDuration: 2.5 + Math.random() * 2 + "s",
+                      fontSize: 14 + Math.random() * 18 + "px",
+                    }}
+                  >
+                    {emojis[i % emojis.length]}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="finale-crown">👑</div>
+            <h1 className="finale-bday-title">Happy Birthday</h1>
+            <h2 className="finale-bday-name">Nidhi</h2>
+            <div className="finale-sparkle-row">
+              {"✨ 🎂 ✨"}
+            </div>
+          </div>
+        )}
 
         <div className="card-when">{mem.when}</div>
         <h2 className="card-title">{mem.name}</h2>
@@ -1037,7 +978,7 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
                 )}
               </div>
             )}
-            {stage === "full" && <MediaTabs photos={mem.photos} food={mem.food} />}
+            {stage === "full" && <MediaTabs photos={mem.photos} />}
           </div>
         )}
 
@@ -3253,5 +3194,92 @@ const STYLES = `
   .card-message p { font-size: 19.5px; }
   .bday-letter-body p { font-size: 18.5px; }
   .reason-text { font-size: 18.5px; }
+}
+
+/* ——— FINALE CELEBRATION ——— */
+.card-finale {
+  border: 2px solid rgba(251,230,180,.25);
+  box-shadow:
+    0 0 40px rgba(251,230,180,.15),
+    0 0 80px rgba(251,230,180,.08),
+    inset 0 0 60px rgba(251,230,180,.04);
+}
+.card-finale > .fireworks-canvas {
+  position: fixed;
+  border-radius: 0;
+  z-index: 58;
+  pointer-events: none;
+}
+.finale-hero {
+  position: relative;
+  text-align: center;
+  padding: 32px 16px 20px;
+  margin: -22px -20px 20px;
+  border-radius: 20px 20px 0 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(251,230,180,.12) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(20,15,40,.9) 0%, transparent 100%);
+  overflow: hidden;
+  z-index: 1;
+}
+.finale-confetti-layer {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden;
+  z-index: 0;
+}
+.finale-confetti {
+  position: absolute; top: -30px;
+  animation: finaleConfettiFall linear infinite;
+  opacity: .85;
+  pointer-events: none;
+}
+@keyframes finaleConfettiFall {
+  0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
+  10%  { opacity: .85; }
+  90%  { opacity: .7; }
+  100% { transform: translateY(250px) rotate(720deg); opacity: 0; }
+}
+.finale-crown {
+  font-size: 48px;
+  animation: finaleCrownBounce 2s ease-in-out infinite;
+  margin-bottom: 8px;
+}
+@keyframes finaleCrownBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.1); }
+}
+.finale-bday-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(36px, 9vw, 56px);
+  color: transparent;
+  background: linear-gradient(135deg, #fbe6b4 0%, #e8c46a 30%, #f7c3cd 60%, #fbe6b4 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: finaleShimmer 3s ease-in-out infinite;
+  margin: 0; line-height: 1.2;
+  text-shadow: none;
+}
+@keyframes finaleShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.finale-bday-name {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(28px, 7vw, 44px);
+  color: #f7c3cd;
+  margin: 4px 0 0;
+  line-height: 1.2;
+  text-shadow: 0 0 20px rgba(247,195,205,.4);
+}
+.finale-sparkle-row {
+  font-size: 22px;
+  margin-top: 12px;
+  letter-spacing: 8px;
+  animation: finalePulse 2s ease-in-out infinite;
+}
+@keyframes finalePulse {
+  0%, 100% { opacity: .7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
 }
 `;
