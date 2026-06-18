@@ -106,8 +106,11 @@ const MEMORIES = [
       "The day we made it official. We went to the gurudwara together, heads bowed, hearts full — and then celebrated over lunch at Cafe Oakaz. It was simple, beautiful, and perfectly us. No grand gestures, just two people quietly promising to spend their lives together. That day, I looked at you across the table and thought: every road in my life was always leading here, to you.",
     video: "",
     photos: [
-      { url: "", caption: "Blessings at the gurudwara" },
-      { url: "", caption: "Celebrating our roka together" },
+      { url: "/media/roka/roka-01-celebration-wide.jpg", caption: "The room that held our promise — balloons, petals, and us" },
+      { url: "/media/roka/roka-02-holding-hands.jpg", caption: "Holding hands, holding futures" },
+      { url: "/media/roka/roka-03-together.jpg", caption: "Celebrating our roka together" },
+      { url: "/media/roka/roka-04-candid-laughs.jpg", caption: "The laughs that made it all real" },
+      { url: "/media/roka/roka-05-rose-petal-heart.jpg", caption: "Rose petals, balloons, and the start of forever" },
     ],
     food: [
       { url: "", caption: "Lunch at Cafe Oakaz — our first meal as an official couple" },
