@@ -407,10 +407,6 @@ const MEMORIES = [
 /* ──────────────────────────────────────────────────────────────────────────── */
 
 const FEAST_PHOTOS = [
-  { url: "/media/goa/goa-food-01-dinner.jpg", caption: "Beach-shack seafood — Goa" },
-  { url: "/media/goa/goa-food-02-beachside-cafe.jpg", caption: "Beachside café daydreams — Goa" },
-  { url: "/media/pachmarhi/pachmarhi-03-cafe-croissant.jpg", caption: "Croissants, coffee, and that smile — Pachmarhi" },
-  { url: "/media/jaipur/jaipur-07-dinner-date.jpg", caption: "Dinner date — Jaipur" },
   { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Wine and tiny bites — Jaipur" },
   { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf — Jaipur" },
   { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried — Jaipur" },
