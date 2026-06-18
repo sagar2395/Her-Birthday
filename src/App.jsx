@@ -247,32 +247,6 @@ const MEMORIES = [
     quiz: null,
   },
   {
-    id: "udaipur",
-    name: "Udaipur & Nathdwara",
-    short: "Udaipur",
-    when: "July 2025",
-    type: "trip",
-    icon: "🏛️",
-    teaser: "Our first anniversary, on the lakes.",
-    message:
-      "One whole year of being your husband — our anniversary trip, and every moment was perfect. Udaipur was peaceful, exactly what we needed. We rented an Activa and explored every lake, every street, eating street food until our fingers were permanently stained with chaat masala. On our actual anniversary day, we drove to Nathdwara mandir — bowing our heads together, grateful for this one beautiful year and every year to come. Udaipur shimmered that week — but honestly, I only ever had eyes for you.",
-    video: "",
-    photos: [
-      { url: "", caption: "On the lake at Udaipur" },
-      { url: "", caption: "Blessings at Nathdwara" },
-      { url: "", caption: "Exploring on our rented Activa" },
-      { url: "", caption: "One year of us" },
-    ],
-    food: [],
-    quiz: {
-      q: "What were we celebrating in the city of lakes?",
-      options: ["A work trip", "New Year", "Our first wedding anniversary", "Diwali"],
-      correct: 2,
-      right: "Our first anniversary — one year down, a whole forever to go. 💛",
-      wrong: "Not quite — think about what we promised each other a year before. 💍",
-    },
-  },
-  {
     id: "delhi",
     name: "Delhi",
     short: "Delhi",
