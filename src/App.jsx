@@ -1,7 +1,9 @@
 /*
   ════════════════════════════════════════════════════════════════════════════
-   OUR STORY MAP & FEAST  —  A birthday surprise for Nidhi Arjariya Chhabra
-   An interactive memory atlas of every place — and every plate — we've loved.
+   HER STORY  —  A birthday gift for Nidhi Arjariya Chhabra
+   Her whole life, told with love: from the little girl in her very first
+   photos, through every birthday and every year that made her, all the way
+   to the life we're building together — and every plate we've loved along it.
   ════════════════════════════════════════════════════════════════════════════
 
   HOW TO MAKE THIS YOURS  (everything you need to edit is marked with  >>> )
@@ -66,6 +68,118 @@ const BIRTHDAY_MIDNIGHT_UTC = new Date("2026-06-21T18:30:00Z");
    Each one has:  photos (moments)  •  food (everything we ate)  •  video (optional)
    ──────────────────────────────────────────────────────────────────────────── */
 const MEMORIES = [
+  {
+    id: "born",
+    name: "The Day You Arrived",
+    short: "Hello, World",
+    when: "Once upon a beginning",
+    type: "occasion",
+    icon: "🍼",
+    teaser: "Before us, before everything — there was you.",
+    message:
+      "Before me, before us, before a single page of our story was written — there was you. A tiny, perfect girl who arrived and quietly changed the world for everyone who would ever love you. I wasn't there yet, Nidhi, but when I look at these photos I feel something fierce and overwhelming: gratitude. Gratitude that you were born, that you made it here, that somewhere in the world a little girl was beginning a life that would one day become my whole world. This is where your story truly begins. Happy birthday, my love. 🤍",
+    video: "",
+    photos: [
+      { url: "/media/born/born-01-newborn.jpg", caption: "The very first you — brand new to a world that had no idea how lucky it had just become." },
+      { url: "/media/born/born-02-lifted-to-the-sky.jpg", caption: "Lifted to the sky, already reaching for everything. Some things never change. 🤍" },
+    ],
+    food: [],
+    quiz: null,
+  },
+  {
+    id: "little-you",
+    name: "Little You",
+    short: "Little You",
+    when: "A childhood full of light",
+    type: "occasion",
+    icon: "🌸",
+    teaser: "Tiny hands, big eyes, a heart already too big for the frame.",
+    message:
+      "Look at you. Tiny hands, enormous eyes, and a personality already far too big for any photograph to hold. You were dressed like royalty and fed sweets like a little princess — and honestly, not much has changed (you still deserve to be treated like a queen, and I fully intend to keep doing it). I love that I get to see these pieces of you, the years long before I knew you existed. Every one of them was quietly building the woman I would fall completely, hopelessly in love with.",
+    video: "",
+    photos: [
+      { url: "/media/little-you/little-you-01-rajasthani-portrait.jpg", caption: "Dressed like a little queen — and already looking at the world like she owned it. 👑" },
+      { url: "/media/little-you/little-you-02-being-fed.jpg", caption: "The first of a lifetime of sweet-tooth moments. Some things were written from the very start. 🍬" },
+    ],
+    food: [],
+    quiz: null,
+  },
+  {
+    id: "childhood-birthdays",
+    name: "Birthday Girl, Even Then",
+    short: "Birthday Girl",
+    when: "Every birthday before this one",
+    type: "occasion",
+    icon: "🎂",
+    teaser: "Party hats, paper horns, and a wish behind closed eyes.",
+    message:
+      "Long before I was the one holding the cake for you, there were birthdays just like this — party hats, paper horns, and a wish waiting behind closed eyes. I love imagining little you on these days, surrounded by people who adored you, blowing out candles for dreams you didn't yet know would come true. This year, I finally get to be part of the celebration — and I promise to make a beautiful fuss over you on this day for the rest of our lives. Happy birthday, birthday girl. 🎉",
+    video: "",
+    photos: [
+      { url: "/media/childhood-birthdays/childhood-bday-01-cake.jpg", caption: "Eyes closed, wish ready, cake in front of you — you've always known how to make a wish count." },
+      { url: "/media/childhood-birthdays/childhood-bday-02-party-horn.jpg", caption: "Party hat on, horn blowing — the original birthday girl. Today is no different. 🎉" },
+    ],
+    food: [],
+    quiz: null,
+  },
+  {
+    id: "family",
+    name: "Where You Come From",
+    short: "Family",
+    when: "The roots that made you",
+    type: "occasion",
+    icon: "🏡",
+    teaser: "The love you were raised in.",
+    message:
+      "Every bit of warmth you carry, every way you turn a house into a home, every ounce of the fierce love you give so freely — it all started here, with these people. Your family. The ones who raised you, fed you, lifted you to the sky and caught you every single time. When I married you, Nidhi, I didn't just fall in love with you — I fell in love with where you come from, and with all the love that quietly shaped you into the woman I adore.",
+    video: "",
+    photos: [
+      { url: "/media/family/family-01-beach.jpg", caption: "Toes in the water, your whole family laughing — the kind of day a childhood is made of. 🌊" },
+      { url: "/media/family/family-02-grandmother.jpg", caption: "Generations in a single frame — the love you were raised in." },
+      { url: "/media/family/family-03-with-dad.jpg", caption: "Safe in the arms that held you first." },
+    ],
+    food: [],
+    quiz: null,
+  },
+  {
+    id: "siblings",
+    name: "The Ones Who Loved You First",
+    short: "Loved You First",
+    when: "Built-in best friends",
+    type: "occasion",
+    icon: "🧡",
+    teaser: "The bonds that taught you how to love.",
+    message:
+      "Before best friends, before me — you had them. The ones who fought with you and for you, who kissed your cheek and held you close, who turned an ordinary childhood into something golden. The way you love now — so fiercely, so completely, so without holding back — you learned it here, in these arms, in these little moments. I see it every single day in how you love me. And I'll forever be grateful to the people who taught you first.",
+    video: "",
+    photos: [
+      { url: "/media/siblings/siblings-04-joyful-hug.jpg", caption: "Caught mid-laugh, holding on tight — this is the joy you've carried your whole life." },
+      { url: "/media/siblings/siblings-01-little-brother-kiss.jpg", caption: "A kiss on the cheek and a bond for life." },
+      { url: "/media/siblings/siblings-07-cheek-kiss.jpg", caption: "The kind of love that needs no words — just a cheek to kiss. 🧡" },
+      { url: "/media/siblings/siblings-02-porch.jpg", caption: "Two against the world, right from the very start." },
+      { url: "/media/siblings/siblings-05-school.jpg", caption: "Years pass, you grow up — but some arms always feel like home." },
+    ],
+    food: [],
+    quiz: null,
+  },
+  {
+    id: "growing-up",
+    name: "Becoming You",
+    short: "Becoming You",
+    when: "The girl who'd be my world",
+    type: "occasion",
+    icon: "✨",
+    teaser: "Somewhere in these years, you became you.",
+    message:
+      "Somewhere in these years, a bright little girl quietly became the woman I'd spend my life adoring. That same smile, those same shining eyes — they were already there, already perfect, just waiting for me to find them. Sometimes I wish I'd known you back then, only so I could have loved you for longer. But mostly I just feel impossibly lucky that every one of these years, every version of you, was leading you straight to the day our roads finally crossed.",
+    video: "",
+    photos: [
+      { url: "/media/growing-up/growing-up-01-smile.jpg", caption: "That smile. Even then, it could light up an entire room." },
+      { url: "/media/growing-up/growing-up-02-portrait.jpg", caption: "Somewhere in this face is the woman I'd fall for — I just didn't know it yet. ✨" },
+    ],
+    food: [],
+    quiz: null,
+  },
   {
     id: "first-met",
     name: "Where It All Began",
@@ -390,7 +504,7 @@ const MEMORIES = [
     isFinale: true,
     teaser: "A promise for the year ahead — and every year after.",
     message:
-      "My dearest Nidhi,\n\nEvery card before this one is a chapter of us — from that first drive in my Kwid to Cafe Yolo, to our roka at the gurudwara, to the night I proposed at The Eighteen, to the day you proposed right back at Cafe Oakaz, to our wedding on 11th July when you danced in my baarat, to our honeymoon in Bali where your dolphin dream came true, to every trip, every meal, every quiet moment that made us us.\n\nWe built Snowops together. We found our flat together. And now, on your birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a computer scientist, a dreamer who chose to bet on us and build something beautiful together.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
+      "My dearest Nidhi,\n\nEvery card before this one is a piece of your story — from the tiny girl who arrived and changed the world, to little you blowing out birthday candles, to the years that quietly shaped you — and then to us: that first drive in my Kwid to Cafe Yolo, our roka at the gurudwara, to the night I proposed at The Eighteen, to the day you proposed right back at Cafe Oakaz, to our wedding on 11th July when you danced in my baarat, to our honeymoon in Bali where your dolphin dream came true, to every trip, every meal, every quiet moment that made us us.\n\nWe built Snowops together. We found our flat together. And now, on your birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a computer scientist, a dreamer who chose to bet on us and build something beautiful together.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
     ps:
       "P.S. You just proved you know our story by heart. But here's a secret only I know: every single day with you has been my favourite day — right up until the next one. Now close your eyes, make a wish… and come find me. 🥂",
     birthdayNote:
@@ -479,7 +593,7 @@ function OccasionCards({ answered, unlocked, onOpen }) {
   return (
     <div className="cards-view">
       <div className="collage-strip">
-        <div className="collage-title">Our Story</div>
+        <div className="collage-title">Her Story</div>
         {MEMORIES.filter((m) => {
           const p = (m.photos || []).find((p) => p.url);
           return p;
@@ -1502,9 +1616,11 @@ function BirthdayLetter({ onContinue }) {
               look at a sunset like it's performing just for you.
             </p>
             <p>
-              I've built you a little world tonight. Every card ahead is
-              a memory of us. Every quiz is a question only you and I would know.
-              And at the end of it all, there's something waiting just for you.
+              I've built you a little world tonight — your whole story, Nidhi.
+              Every card ahead is a piece of you: from the tiny girl in those
+              first photos, through every birthday and every year that shaped
+              you, all the way to the life we're building now. And at the end of
+              it all, there's something waiting just for you.
             </p>
             <p>
               So take your time. Explore. Remember. Smile.
@@ -1527,7 +1643,7 @@ function BirthdayLetter({ onContinue }) {
             className={"bday-letter-btn" + (scrolled ? " bday-letter-btn-show" : "")}
             onClick={onContinue}
           >
-            Take me to our story {"→"}
+            Take me to her story {"→"}
           </button>
         </div>
       </div>
@@ -1561,12 +1677,13 @@ function Intro({ onBegin }) {
           <span>{"❀"}</span>
         </div>
         <p className="intro-line">
-          Before you open anything else, let me take you somewhere first —
-          across every place our story has ever touched, every meal we've
-          shared, all the way to where forever begins.
+          Before you open anything else, let me take you all the way back to the
+          beginning — to the little girl in these photos, through every birthday
+          and every year that made you, all the way to the day our roads crossed
+          and forever began.
         </p>
         <button className="begin" onClick={onBegin}>
-          Begin our story
+          Begin her story
         </button>
         <div className="intro-sub">Nidhi Arjariya Chhabra</div>
       </div>
@@ -1740,7 +1857,7 @@ export default function App() {
                 className={"tg" + (view === "story" ? " tg-on" : "")}
                 onClick={() => setView("story")}
               >
-                Our Story
+                Her Story
               </button>
               <button
                 className={"tg" + (view === "foryou" ? " tg-on" : "")}
@@ -2006,7 +2123,7 @@ const STYLES = `
   box-shadow: 0 0 16px rgba(212,175,55,.5); animation: glowPulse 2.4s ease-in-out infinite, musicBounce .8s ease; }
 @keyframes musicBounce { 0% { transform: scale(1); } 30% { transform: scale(1.2); } 60% { transform: scale(.95); } 100% { transform: scale(1); } }
 
-/* ——— VIEW BAR (Our Story / For You / Our Feast) ——— */
+/* ——— VIEW BAR (Her Story / For You / Our Feast) ——— */
 .viewbar {
   position: relative; z-index: 5; display: flex; justify-content: center;
   padding: 10px 12px 2px; background: rgba(8,12,30,.45);
