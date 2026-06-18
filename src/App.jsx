@@ -397,9 +397,7 @@ const MEMORIES = [
       "This year, I wish for you: a thousand more sunsets together, every flavour you've ever craved, and the kind of happiness that makes your heart feel too full to hold.\n\nAnd here's what I see when I dream about our future:\n\nTravelling the world together — every continent, every culture, every sunset we haven't seen yet. Buying great cars — because you deserve to arrive in style (and I deserve a co-pilot who controls the playlist). Enjoying life — really, truly, deeply. Building Snowops into something we're both proud of. And most of all: growing old together, still laughing, still adventuring, still falling in love with you every morning.\n\nYou deserve the whole world, Nidhi — and I'm going to spend my life making sure you feel it. Happy birthday, my love. 💛",
     video: "",
     photos: [
-      { url: "", caption: "Where forever begins" },
-      { url: "", caption: "Dreaming up our future" },
-      { url: "", caption: "Us, always" },
+      { url: "/media/finale/finale-01-queen.jpg", caption: "Live life, queen size" },
     ],
     food: [],
     quiz: null,
@@ -891,11 +889,42 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
 
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="card" onClick={(e) => e.stopPropagation()}>
+      <div className={"card" + (mem.isFinale ? " card-finale" : "")} onClick={(e) => e.stopPropagation()}>
         <HeartBurst trigger={burst} />
+        {mem.isFinale && <Fireworks active duration={10000} />}
         <button className="close" onClick={onClose} aria-label="Close">
           {"×"}
         </button>
+
+        {mem.isFinale && (
+          <div className="finale-hero">
+            <div className="finale-confetti-layer">
+              {Array.from({ length: 30 }).map((_, i) => {
+                const emojis = ["🎂", "🎁", "🎀", "🌹", "💛", "✨", "🎉", "💗", "🎊", "🥂", "👑", "🎈"];
+                return (
+                  <span
+                    key={i}
+                    className="finale-confetti"
+                    style={{
+                      left: Math.random() * 100 + "%",
+                      animationDelay: Math.random() * 3 + "s",
+                      animationDuration: 2.5 + Math.random() * 2 + "s",
+                      fontSize: 14 + Math.random() * 18 + "px",
+                    }}
+                  >
+                    {emojis[i % emojis.length]}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="finale-crown">👑</div>
+            <h1 className="finale-bday-title">Happy Birthday</h1>
+            <h2 className="finale-bday-name">Nidhi</h2>
+            <div className="finale-sparkle-row">
+              {"✨ 🎂 ✨"}
+            </div>
+          </div>
+        )}
 
         <div className="card-when">{mem.when}</div>
         <h2 className="card-title">{mem.name}</h2>
@@ -3169,5 +3198,90 @@ const STYLES = `
   .card-message p { font-size: 19.5px; }
   .bday-letter-body p { font-size: 18.5px; }
   .reason-text { font-size: 18.5px; }
+}
+
+/* ——— FINALE CELEBRATION ——— */
+.card-finale {
+  overflow: visible;
+  border: 2px solid rgba(251,230,180,.25);
+  box-shadow:
+    0 0 40px rgba(251,230,180,.15),
+    0 0 80px rgba(251,230,180,.08),
+    inset 0 0 60px rgba(251,230,180,.04);
+}
+.card-finale .fireworks-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+  border-radius: inherit;
+}
+.finale-hero {
+  position: relative;
+  text-align: center;
+  padding: 32px 16px 20px;
+  margin: -24px -24px 20px;
+  border-radius: 14px 14px 0 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(251,230,180,.12) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(20,15,40,.9) 0%, transparent 100%);
+  overflow: hidden;
+}
+.finale-confetti-layer {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden;
+}
+.finale-confetti {
+  position: absolute; top: -30px;
+  animation: finaleConfettiFall linear infinite;
+  opacity: .85;
+}
+@keyframes finaleConfettiFall {
+  0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
+  10%  { opacity: .85; }
+  90%  { opacity: .7; }
+  100% { transform: translateY(calc(100vh)) rotate(720deg); opacity: 0; }
+}
+.finale-crown {
+  font-size: 48px;
+  animation: finaleCrownBounce 2s ease-in-out infinite;
+  margin-bottom: 8px;
+}
+@keyframes finaleCrownBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.1); }
+}
+.finale-bday-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(36px, 9vw, 56px);
+  color: transparent;
+  background: linear-gradient(135deg, #fbe6b4 0%, #e8c46a 30%, #f7c3cd 60%, #fbe6b4 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: finaleShimmer 3s ease-in-out infinite;
+  margin: 0; line-height: 1.2;
+  text-shadow: none;
+}
+@keyframes finaleShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.finale-bday-name {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(28px, 7vw, 44px);
+  color: #f7c3cd;
+  margin: 4px 0 0;
+  line-height: 1.2;
+  text-shadow: 0 0 20px rgba(247,195,205,.4);
+}
+.finale-sparkle-row {
+  font-size: 22px;
+  margin-top: 12px;
+  letter-spacing: 8px;
+  animation: finalePulse 2s ease-in-out infinite;
+}
+@keyframes finalePulse {
+  0%, 100% { opacity: .7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
 }
 `;
