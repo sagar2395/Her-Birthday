@@ -367,8 +367,8 @@ const MEMORIES = [
   },
   {
     id: "flat-purchased",
-    name: "Our First Home",
-    short: "Our Flat",
+    name: "Our Home",
+    short: "Our Home",
     when: "June 2026",
     type: "occasion",
     icon: "🏠",
@@ -377,8 +377,7 @@ const MEMORIES = [
       "We walked through so many areas, debated so many floor plans, imagined so many futures — and finally, we found it. Our flat. Our first real home, just for us. No more temporary, no more 'someday.' This is where we'll cook our first meal together, where we'll argue about wall colours, where we'll build the life we've been dreaming about since that first drive down the Super Corridor. Every room in this flat is a promise. And I can't wait to fill it with us.",
     video: "",
     photos: [
-      { url: "", caption: "The flat hunt — we looked everywhere" },
-      { url: "", caption: "The one we chose — our first home" },
+      { url: "/media/home/home-01-coming-soon.jpg", caption: "Coming soon — the next chapter of us" },
     ],
     food: [],
     quiz: null,
