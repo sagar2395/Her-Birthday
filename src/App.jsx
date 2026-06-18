@@ -49,10 +49,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 /* >>> 🎵 PASTE YOUR SONG'S DIRECT AUDIO URL HERE (leave '' for none) */
-const SONG_URL = ""; // e.g. "/media/ilahi.mp3" or "https://example.com/ilahi.mp3"
+const SONG_URL = "/media/hawayein.mp3";
 
 /* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
-const BIRTHDAY_SONG_URL = ""; // e.g. "/media/happy-birthday.mp3"
+const BIRTHDAY_SONG_URL = "/media/happy-birthday.mp3";
 
 /* >>> 🎂 HER BIRTHDAY — month is 0-indexed (5 = June) */
 const BIRTHDAY_MONTH = 5; // June
