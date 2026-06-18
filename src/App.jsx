@@ -129,10 +129,13 @@ const MEMORIES = [
       "I'd been planning this for weeks. The Eighteen restaurant, a custom slideshow playing on the big screen — every photo of us, every moment, building up to the question I already knew the answer to. When I got down on one knee and held out that chocolate box that said 'Will you marry me?' — Nidhi, the look on your face is burned into my heart forever. You said yes, and in that moment, I became the luckiest man alive. I still am.",
     video: "",
     photos: [
-      { url: "", caption: "The Eighteen — where I asked the most important question" },
-      { url: "", caption: "The custom slideshow on the big screen" },
-      { url: "", caption: "Down on one knee, heart in my throat" },
-      { url: "", caption: "She said yes" },
+      { url: "/media/his-proposal/his-proposal-01-rooftop-selfie.jpg", caption: "The evening that changed everything — rooftop under fairy lights" },
+      { url: "/media/his-proposal/his-proposal-02-her-smile.jpg", caption: "That smile — she had no idea what was coming" },
+      { url: "/media/his-proposal/his-proposal-03-heart-hands.jpg", caption: "Heart hands — if only she knew what I had planned" },
+      { url: "/media/his-proposal/his-proposal-04-forehead-kiss.jpg", caption: "The moment right before I asked the most important question" },
+      { url: "/media/his-proposal/his-proposal-05-the-eighteen-inside.jpg", caption: "The Eighteen — where I asked her to be mine forever" },
+      { url: "/media/his-proposal/his-proposal-06-the-eighteen-entrance.jpg", caption: "Together at The Eighteen — the night she said yes" },
+      { url: "/media/his-proposal/his-proposal-07-chocolate-box.jpg", caption: "Will U Marry Me — the chocolate box that sealed the deal" },
     ],
     food: [],
     quiz: {
