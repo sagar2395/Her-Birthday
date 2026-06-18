@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(npm run *)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(mkdir -p /home/user/Her-Birthday/public/media/pachmarhi)",
+      "Bash(cp /root/.claude/uploads/23c7932c-e4f9-523a-8d0c-875aac29be6f/d85d3587-3d1a33f0cdc942d09f97ce64e40821e71_all_173.jpg /home/user/Her-Birthday/public/media/pachmarhi/pachmarhi-01-satpura-tiger.jpg)",
+      "Bash(cp /root/.claude/uploads/23c7932c-e4f9-523a-8d0c-875aac29be6f/2a32c2cc-3d1a33f0cdc942d09f97ce64e40821e71_all_143.jpg /home/user/Her-Birthday/public/media/pachmarhi/pachmarhi-02-viewpoint.jpg)",
+      "Bash(cp /root/.claude/uploads/23c7932c-e4f9-523a-8d0c-875aac29be6f/d23818a1-3d1a33f0cdc942d09f97ce64e40821e71_all_124.jpg /home/user/Her-Birthday/public/media/pachmarhi/pachmarhi-03-cafe-croissant.jpg)"
     ]
   }
 }
