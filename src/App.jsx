@@ -185,11 +185,11 @@ const MEMORIES = [
       "11th July 2024. The day I married the most beautiful woman in the world. Nidhi, you managed everything — every detail, every flower, every moment — and still looked absolutely breathtaking. You danced in my baarat, just for me, and I couldn't look anywhere else. Your mother, your mausi, and your cousins gave the most beautiful dance performances to welcome me, and I felt so loved by your whole family. And then, during the mala exchange, I couldn't help myself — I had a short little dance on stage to 'Tu Hai To Dil Dhadakta Hai.' Because my heart really was doing exactly that. It still does. Every single day.",
     video: "",
     photos: [
-      { url: "", caption: "The most beautiful bride I've ever seen" },
-      { url: "", caption: "Dancing in the baarat — just for me" },
-      { url: "", caption: "Her family's welcome dances" },
-      { url: "", caption: "Mala exchange — and my little dance" },
-      { url: "", caption: "11th July — forever begins" },
+      { url: "/media/wedding/wedding-01-grand-entry.jpg", caption: "Walking into forever — our grand entry with sparklers" },
+      { url: "/media/wedding/wedding-02-on-stage.jpg", caption: "On stage, jaimala done — the moment it all became real" },
+      { url: "/media/wedding/wedding-03-stage-together.jpg", caption: "The most beautiful bride I've ever seen — and my little dance" },
+      { url: "/media/wedding/wedding-04-havan.jpg", caption: "Seven rounds, one promise — by the sacred fire" },
+      { url: "/media/wedding/wedding-05-temple-visit.jpg", caption: "First temple visit as Mr. and Mrs. — blessings for the road ahead" },
     ],
     food: [],
     quiz: {
