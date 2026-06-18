@@ -3202,44 +3202,46 @@ const STYLES = `
 
 /* ——— FINALE CELEBRATION ——— */
 .card-finale {
-  overflow: visible;
   border: 2px solid rgba(251,230,180,.25);
   box-shadow:
     0 0 40px rgba(251,230,180,.15),
     0 0 80px rgba(251,230,180,.08),
     inset 0 0 60px rgba(251,230,180,.04);
 }
-.card-finale .fireworks-canvas {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-  border-radius: inherit;
+.card-finale > .fireworks-canvas {
+  position: fixed;
+  border-radius: 0;
+  z-index: 58;
+  pointer-events: none;
 }
 .finale-hero {
   position: relative;
   text-align: center;
   padding: 32px 16px 20px;
-  margin: -24px -24px 20px;
-  border-radius: 14px 14px 0 0;
+  margin: -22px -20px 20px;
+  border-radius: 20px 20px 0 0;
   background:
     radial-gradient(ellipse at 50% 0%, rgba(251,230,180,.12) 0%, transparent 70%),
     linear-gradient(180deg, rgba(20,15,40,.9) 0%, transparent 100%);
   overflow: hidden;
+  z-index: 1;
 }
 .finale-confetti-layer {
   position: absolute; inset: 0;
   pointer-events: none; overflow: hidden;
+  z-index: 0;
 }
 .finale-confetti {
   position: absolute; top: -30px;
   animation: finaleConfettiFall linear infinite;
   opacity: .85;
+  pointer-events: none;
 }
 @keyframes finaleConfettiFall {
   0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
   10%  { opacity: .85; }
   90%  { opacity: .7; }
-  100% { transform: translateY(calc(100vh)) rotate(720deg); opacity: 0; }
+  100% { transform: translateY(250px) rotate(720deg); opacity: 0; }
 }
 .finale-crown {
   font-size: 48px;
