@@ -79,9 +79,9 @@ const MEMORIES = [
       "March 2022. I drove my little Renault Kwid to Bada Ganpati to pick you up — you'd just finished office and parked your Activa. We went on a long drive through the Super Corridor, windows down, talking like we'd known each other forever. At Cafe Yolo, I tried to impress you by ordering something called 'Cafe Anaconda' — easily the worst coffee either of us has ever tasted. But you laughed, and I knew. Later, when I had a short work call, I gently caressed your head — and you went completely calm. That was the moment I realised: I never want to stop being the person who makes your world feel quieter. Every single day since has been proof that I was right.",
     video: "",
     photos: [
-      { url: "", caption: "Bada Ganpati — where I first saw you that evening" },
-      { url: "", caption: "The Super Corridor drive that started it all" },
-      { url: "", caption: "Cafe Yolo — and the legendary Cafe Anaconda" },
+      { url: "/media/first-met/first-met-01-bada-ganpati.jpg", caption: "Bada Ganpati — where I picked you up that evening" },
+      { url: "/media/first-met/first-met-02-kwid.jpg", caption: "The Kwid — our ride that started it all" },
+      { url: "/media/first-met/first-met-03-cafe-yolo.jpg", caption: "Cafe Yolo — and the legendary Cafe Anaconda" },
     ],
     food: [
       { url: "", caption: "Cafe Anaconda — the worst coffee, the best memory" },
