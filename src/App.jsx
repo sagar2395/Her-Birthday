@@ -23,10 +23,9 @@
         elegant placeholder. Add as many as you like.
 
   ── 2) 🍲  FOOD PHOTOS ──────────────────────────────────────────────────────
-        Each trip ALSO has a `food: [ ... ]` list. Drop every dish you ate
-        together here. These show up BOTH in the card's "Food" tab AND in the
-        dedicated "Feast" view (the food map of us). One place to add — two
-        places it appears.
+        All food photos live in the `FEAST_PHOTOS` array (below MEMORIES).
+        They show up in the dedicated "Feast Together" view — one unified
+        gallery of every dish from every trip.
 
   ── 3) 🎬  VIDEOS (optional, feasible!) ─────────────────────────────────────
         Each trip has a `video: ""`. Paste a DIRECT video file URL (.mp4) or a
@@ -83,9 +82,7 @@ const MEMORIES = [
       { url: "/media/first-met/first-met-02-kwid.jpg", caption: "The Kwid — our ride that started it all" },
       { url: "/media/first-met/first-met-03-cafe-yolo.jpg", caption: "Cafe Yolo — and the legendary Cafe Anaconda" },
     ],
-    food: [
-      { url: "", caption: "Cafe Anaconda — the worst coffee, the best memory" },
-    ],
+    food: [],
     quiz: {
       q: "What terrible coffee did I order at Cafe Yolo to impress you on our first meet?",
       options: ["Cafe Tornado", "Cafe Anaconda", "Cafe Monsoon", "Cafe Everest"],
@@ -112,9 +109,7 @@ const MEMORIES = [
       { url: "/media/roka/roka-04-candid-laughs.jpg", caption: "The laughs that made it all real" },
       { url: "/media/roka/roka-05-rose-petal-heart.jpg", caption: "Rose petals, balloons, and the start of forever" },
     ],
-    food: [
-      { url: "", caption: "Lunch at Cafe Oakaz — our first meal as an official couple" },
-    ],
+    food: [],
     quiz: null,
   },
   {
@@ -224,13 +219,7 @@ const MEMORIES = [
       { url: "/media/bali/bali-10-ocean-walkway.jpg", caption: "That ocean view walkway — paradise found" },
       { url: "/media/bali/bali-11-stone-garden.jpg", caption: "Posing with the ancient stone guardians" },
     ],
-    food: [
-      { url: "", caption: "Thepla in the airport — Indori honeymoon essentials" },
-      { url: "", caption: "The acai bowl that changed everything" },
-      { url: "", caption: "Mango acai bowl by the beach" },
-      { url: "", caption: "Huge coconut — bigger than our heads" },
-      { url: "", caption: "Great Indian food, thousands of miles from home" },
-    ],
+    food: [],
     quiz: {
       q: "What was Nidhi's childhood dream that came true on our honeymoon?",
       options: ["Seeing the Eiffel Tower", "Visiting a dolphin centre", "Climbing a volcano", "Riding a hot air balloon"],
@@ -254,11 +243,7 @@ const MEMORIES = [
       { url: "/media/pachmarhi/pachmarhi-01-satpura-tiger.jpg", caption: "Satpura National Park — posing with the tiger" },
       { url: "/media/pachmarhi/pachmarhi-02-viewpoint.jpg", caption: "On top of the world at the viewpoint" },
     ],
-    food: [
-      { url: "/media/pachmarhi/pachmarhi-03-cafe-croissant.jpg", caption: "Croissants, coffee, and that smile" },
-      { url: "", caption: "Roadside Maggi on the drive" },
-      { url: "", caption: "A simple local thali" },
-    ],
+    food: [],
     quiz: null,
   },
   {
@@ -278,12 +263,7 @@ const MEMORIES = [
       { url: "", caption: "Exploring on our rented Activa" },
       { url: "", caption: "One year of us" },
     ],
-    food: [
-      { url: "", caption: "Lakeside kachori" },
-      { url: "", caption: "Dal baati churma" },
-      { url: "", caption: "Prasad at Nathdwara" },
-      { url: "", caption: "Anniversary mithai" },
-    ],
+    food: [],
     quiz: {
       q: "What were we celebrating in the city of lakes?",
       options: ["A work trip", "New Year", "Our first wedding anniversary", "Diwali"],
@@ -304,12 +284,7 @@ const MEMORIES = [
       "A short trip — barely a weekend — but we packed in more street food than most people eat in a month. This whole trip was one long, glorious eating spree through Delhi's lanes, and I wouldn't change a single bite. Every chaat stall, every paratha, every sticky-sweet jalebi — we devoured it all together. The Food tab is where this memory truly lives, Nidhi. I remember every flavour — and every one of your smiles between bites.",
     video: "",
     photos: [],
-    food: [
-      { url: "", caption: "Chandni Chowk chaat" },
-      { url: "", caption: "Parathe Wali Gali feast" },
-      { url: "", caption: "Butter chicken & hot naan" },
-      { url: "", caption: "Sticky-sweet jalebi to finish" },
-    ],
+    food: [],
     quiz: null,
   },
   {
@@ -335,11 +310,7 @@ const MEMORIES = [
       { url: "/media/goa/goa-09-night-beach.jpg", caption: "She owns the night" },
       { url: "/media/goa/goa-10-butterfly-wall.jpg", caption: "The butterfly wall — our spot" },
     ],
-    food: [
-      { url: "/media/goa/goa-food-01-dinner.jpg", caption: "Beach-shack seafood and that smile" },
-      { url: "/media/goa/goa-food-02-beachside-cafe.jpg", caption: "Lost in thought at the beachside café" },
-      { url: "", caption: "Bebinca by the sea" },
-    ],
+    food: [],
     quiz: {
       q: "Goa wasn't just a holiday — what did we really do there?",
       options: ["Healed and found our way back to each other", "Ran a marathon", "Opened a café", "Learned to surf"],
@@ -385,16 +356,7 @@ const MEMORIES = [
       { url: "/media/jaipur/jaipur-05-palace-throne.jpg", caption: "Our royal palace moment" },
       { url: "/media/jaipur/jaipur-06-hotel-mirror.jpg", caption: "Mirror selfie at our Rajasthani haveli" },
     ],
-    food: [
-      { url: "/media/jaipur/jaipur-07-dinner-date.jpg", caption: "Dinner date — the prettiest view was across the table" },
-      { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Wine and tiny bites to start the feast" },
-      { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf" },
-      { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried" },
-      { url: "/media/jaipur/jaipur-11-naan-curry.jpg", caption: "Naan, curry, and no regrets" },
-      { url: "/media/jaipur/jaipur-12-thali.jpg", caption: "The Rajasthani thali of dreams" },
-      { url: "/media/jaipur/jaipur-13-thali-lassi.jpg", caption: "Thali round two with lassi" },
-      { url: "/media/jaipur/jaipur-14-poori-kachori.jpg", caption: "Poori-kachori breakfast — the real Pink City gold" },
-    ],
+    food: [],
     quiz: {
       q: "Which two temples did we visit on our Jaipur trip that Nidhi absolutely loved?",
       options: ["Birla Mandir and ISKCON", "Khatu Shyam Mandir and Salasar Balaji Mandir", "Govind Dev Ji and Galtaji", "Moti Dungri and Garh Ganesh"],
@@ -418,9 +380,7 @@ const MEMORIES = [
       { url: "", caption: "The flat hunt — we looked everywhere" },
       { url: "", caption: "The one we chose — our first home" },
     ],
-    food: [
-      { url: "", caption: "Our first home-cooked dinner (coming soon)" },
-    ],
+    food: [],
     quiz: null,
   },
   {
@@ -444,12 +404,7 @@ const MEMORIES = [
       { url: "/media/indore/indore-07-railway-track.jpg", caption: "Free spirit on the tracks" },
       { url: "/media/indore/indore-08-romantic-dinner.jpg", caption: "The hand-kiss that stopped time" },
     ],
-    food: [
-      { url: "", caption: "Sarafa night-market chaat" },
-      { url: "", caption: "Poha-jalebi mornings" },
-      { url: "", caption: "56 Dukaan treats" },
-      { url: "", caption: "Our café usuals" },
-    ],
+    food: [],
     quiz: null,
   },
   {
@@ -479,6 +434,20 @@ const MEMORIES = [
 ];
 
 /* ──────────────────────────────────────────────────────────────────────────── */
+
+const FEAST_PHOTOS = [
+  { url: "/media/goa/goa-food-01-dinner.jpg", caption: "Beach-shack seafood — Goa" },
+  { url: "/media/goa/goa-food-02-beachside-cafe.jpg", caption: "Beachside café daydreams — Goa" },
+  { url: "/media/pachmarhi/pachmarhi-03-cafe-croissant.jpg", caption: "Croissants, coffee, and that smile — Pachmarhi" },
+  { url: "/media/jaipur/jaipur-07-dinner-date.jpg", caption: "Dinner date — Jaipur" },
+  { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Wine and tiny bites — Jaipur" },
+  { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf — Jaipur" },
+  { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried — Jaipur" },
+  { url: "/media/jaipur/jaipur-11-naan-curry.jpg", caption: "Naan, curry, and no regrets — Jaipur" },
+  { url: "/media/jaipur/jaipur-12-thali.jpg", caption: "The Rajasthani thali of dreams — Jaipur" },
+  { url: "/media/jaipur/jaipur-13-thali-lassi.jpg", caption: "Thali round two with lassi — Jaipur" },
+  { url: "/media/jaipur/jaipur-14-poori-kachori.jpg", caption: "Poori-kachori breakfast — Jaipur" },
+];
 
 const QUIZ_TOTAL = MEMORIES.filter((m) => m.quiz).length;
 
@@ -719,37 +688,26 @@ function Feast({ onLightbox }) {
     <div className="feast">
       <div className="feast-head">
         <div className="feast-kicker">Two foodies, one love story</div>
-        <h2>Our Feast</h2>
+        <h2>Feast Together</h2>
         <p>Every plate we shared, in every place we loved — a map of us, in flavours.</p>
       </div>
 
-      {MEMORIES.filter((m) => (m.food || []).length > 0).map((m) => {
-        const food = m.food || [];
-        return (
-          <div className="feast-group" key={m.id}>
-            <div className="feast-group-head">
-              <span className="fg-name">{m.name}</span>
-              <span className="fg-when">{m.when}</span>
-            </div>
-            <div className="feast-row">
-              {food.map((f, i) => (
-                <button
-                  key={i}
-                  className="feast-card"
-                  onClick={() => onLightbox({ ...f, place: m.name })}
-                >
-                  {f.url ? (
-                    <img src={f.url} alt={f.caption} />
-                  ) : (
-                    <span className="feast-ph">🍴</span>
-                  )}
-                  <span className="feast-cap">{f.caption}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+      <div className="feast-row feast-row-unified">
+        {FEAST_PHOTOS.map((f, i) => (
+          <button
+            key={i}
+            className="feast-card"
+            onClick={() => onLightbox({ ...f, place: "Our Feast" })}
+          >
+            {f.url ? (
+              <img src={f.url} alt={f.caption} />
+            ) : (
+              <span className="feast-ph">🍴</span>
+            )}
+            <span className="feast-cap">{f.caption}</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -851,42 +809,9 @@ function Gallery({ photos, emptyText }) {
   );
 }
 
-/* Tabs inside a memory card: Moments  ⇄  Food */
-function MediaTabs({ photos, food }) {
-  const hasFood = food && food.length > 0;
-  const [tab, setTab] = useState("moments");
-
-  if (!hasFood) {
-    return <Gallery key="moments" photos={photos} />;
-  }
-
-  return (
-    <div className="media-tabs-wrap">
-      <div className="media-tabs">
-        <button
-          className={"mt" + (tab === "moments" ? " mt-on" : "")}
-          onClick={() => setTab("moments")}
-        >
-          📷 Moments
-        </button>
-        <button
-          className={"mt" + (tab === "food" ? " mt-on" : "")}
-          onClick={() => setTab("food")}
-        >
-          🍲 Food
-        </button>
-      </div>
-      {tab === "moments" ? (
-        <Gallery key="moments" photos={photos} />
-      ) : (
-        <Gallery
-          key="food"
-          photos={food}
-          emptyText="No food photos here yet — paste their URLs in the code to fill this plate. 🍴"
-        />
-      )}
-    </div>
-  );
+/* Photos inside a memory card (food is now in the unified Feast section) */
+function MediaTabs({ photos }) {
+  return <Gallery key="moments" photos={photos} />;
 }
 
 /* ───────────────────────────── QUIZ BLOCK ───────────────────────────── */
@@ -1055,7 +980,7 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
                 )}
               </div>
             )}
-            {stage === "full" && <MediaTabs photos={mem.photos} food={mem.food} />}
+            {stage === "full" && <MediaTabs photos={mem.photos} />}
           </div>
         )}
 
