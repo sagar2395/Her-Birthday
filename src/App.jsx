@@ -158,9 +158,11 @@ const MEMORIES = [
       "My birthday, March 2024 — and you had a secret plan. You wanted to propose right back at Cafe Oakaz (freshly renovated and gorgeous), on the top floor. But I kept changing my birthday plans — one idea after another — and you were silently losing your mind trying to keep your surprise alive. When we finally got there, you pulled out a ring, and I understood everything. All the stress, all the sneaky planning — it was all for this moment. You proposed to me, Nidhi. And in that moment, I realised you don't just love me — you fight for us, even against my own chaotic birthday plans.",
     video: "",
     photos: [
-      { url: "", caption: "Cafe Oakaz — renovated and ready for her surprise" },
-      { url: "", caption: "The top floor, just the two of us" },
-      { url: "", caption: "The ring — her proposal to me" },
+      { url: "/media/her-proposal/her-proposal-01-couch-selfie.jpg", caption: "Cafe Oakaz — renovated and ready for her surprise" },
+      { url: "/media/her-proposal/her-proposal-02-intimate-moment.jpg", caption: "The moment she made my heart stop" },
+      { url: "/media/her-proposal/her-proposal-03-her-at-oakaz.jpg", caption: "The top floor, just the two of us" },
+      { url: "/media/her-proposal/her-proposal-04-together-wide.jpg", caption: "Together at Oakaz — where she turned my birthday into forever" },
+      { url: "/media/her-proposal/her-proposal-05-holding-hands.jpg", caption: "Holding hands, holding on to this moment" },
     ],
     food: [],
     quiz: {
