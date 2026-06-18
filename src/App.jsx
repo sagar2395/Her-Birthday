@@ -80,7 +80,7 @@ const MEMORIES = [
       "Before me, before us, before a single page of our story was written — there was you. A tiny, perfect girl who arrived and quietly changed the world for everyone who would ever love you. I wasn't there yet, Nidhi, but when I look at these photos I feel something fierce and overwhelming: gratitude. Gratitude that you were born, that you made it here, that somewhere in the world a little girl was beginning a life that would one day become my whole world. This is where your story truly begins. Happy birthday, my love. 🤍",
     video: "",
     photos: [
-      { url: "/media/born/born-01-newborn.jpg", caption: "The very first you — brand new to a world that had no idea how lucky it had just become." },
+      { url: "/media/born/born-01-newborn.jpg", focus: "74% 32%", caption: "The very first you — brand new to a world that had no idea how lucky it had just become." },
       { url: "/media/born/born-02-lifted-to-the-sky.jpg", caption: "Lifted to the sky, already reaching for everything. Some things never change. 🤍" },
       { url: "/media/born/born-03-flower-garden.jpg", caption: "A little flower among the flowers — you fit right in. 🌸" },
     ],
@@ -96,28 +96,12 @@ const MEMORIES = [
     icon: "🌸",
     teaser: "Tiny hands, big eyes, a heart already too big for the frame.",
     message:
-      "Look at you. Tiny hands, enormous eyes, and a personality already far too big for any photograph to hold. You were dressed like royalty and fed sweets like a little princess — and honestly, not much has changed (you still deserve to be treated like a queen, and I fully intend to keep doing it). I love that I get to see these pieces of you, the years long before I knew you existed. Every one of them was quietly building the woman I would fall completely, hopelessly in love with.",
+      "Look at you. Tiny hands, enormous eyes, and a personality already far too big for any photograph to hold. Dressed like royalty, fed sweets like a little princess, blowing out candles with your eyes squeezed shut — you've been the centre of everyone's love, the birthday girl, since the very beginning. I love that I get to see these little pieces of you, the years long before I knew you existed. Every one of them was quietly building the woman I would fall completely, hopelessly in love with.",
     video: "",
     photos: [
       { url: "/media/little-you/little-you-01-rajasthani-portrait.jpg", caption: "Dressed like a little queen — and already looking at the world like she owned it. 👑" },
-      { url: "/media/little-you/little-you-02-being-fed.jpg", caption: "The first of a lifetime of sweet-tooth moments. Some things were written from the very start. 🍬" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "childhood-birthdays",
-    name: "Birthday Girl, Even Then",
-    short: "Birthday Girl",
-    when: "Every birthday before this one",
-    type: "occasion",
-    icon: "🎂",
-    teaser: "Party hats, paper horns, and a wish behind closed eyes.",
-    message:
-      "Long before I was the one holding the cake for you, there were birthdays just like this — party hats, paper horns, and a wish waiting behind closed eyes. I love imagining little you on these days, surrounded by people who adored you, blowing out candles for dreams you didn't yet know would come true. This year, I finally get to be part of the celebration — and I promise to make a beautiful fuss over you on this day for the rest of our lives. Happy birthday, birthday girl. 🎉",
-    video: "",
-    photos: [
-      { url: "/media/childhood-birthdays/childhood-bday-01-cake.jpg", caption: "Eyes closed, wish ready, cake in front of you — you've always known how to make a wish count." },
+      { url: "/media/little-you/little-you-02-being-fed.jpg", fit: "contain", caption: "Sweet tooth from the very start — being fed by hands that adored you. 🍬" },
+      { url: "/media/childhood-birthdays/childhood-bday-01-cake.jpg", caption: "Eyes closed, wish ready, cake in front of you — you've always known how to make a wish count. 🎂" },
       { url: "/media/childhood-birthdays/childhood-bday-02-party-horn.jpg", caption: "Party hat on, horn blowing — the original birthday girl. Today is no different. 🎉" },
     ],
     food: [],
@@ -132,76 +116,64 @@ const MEMORIES = [
     icon: "🏡",
     teaser: "The love you were raised in.",
     message:
-      "Every bit of warmth you carry, every way you turn a house into a home, every ounce of the fierce love you give so freely — it all started here, with these people. Your family. The ones who raised you, fed you, lifted you to the sky and caught you every single time. When I married you, Nidhi, I didn't just fall in love with you — I fell in love with where you come from, and with all the love that quietly shaped you into the woman I adore.",
+      "Every bit of warmth you carry, every way you turn a house into a home, every ounce of the fierce love you give so freely — it all started here, with these people. Your family. The ones who raised you, fed you, lifted you to the sky and caught you every single time. When I married you, Nidhi, I didn't just fall in love with you — I fell in love with where you come from, and with all the love that quietly shaped you into the woman I adore. And the best part? They're still right here — at every celebration, every hug, every photo. Some things only grow stronger with time. 💗",
     video: "",
     photos: [
-      { url: "/media/family/family-01-beach.jpg", caption: "Toes in the water, your whole family laughing — the kind of day a childhood is made of. 🌊" },
+      { url: "/media/family/family-01-beach.jpg", focus: "50% 24%", caption: "Toes in the water, your whole family laughing — the kind of day a childhood is made of. 🌊" },
       { url: "/media/family/family-02-grandmother.jpg", caption: "Generations in a single frame — the love you were raised in." },
-      { url: "/media/family/family-03-with-dad.jpg", caption: "Safe in the arms that held you first." },
-      { url: "/media/family/family-04-temple.jpg", caption: "Your first adventures — the whole family, exploring the world together. 🛕" },
       { url: "/media/family/family-05-with-grandmother.jpg", caption: "In your grandmother's lap — wrapped in the oldest, softest kind of love." },
+      { url: "/media/family/family-03-with-dad.jpg", caption: "Safe in the arms that held you first." },
       { url: "/media/family/family-06-home.jpg", caption: "Everyday home, everyday love — the little moments that quietly built you." },
+      { url: "/media/family/family-04-temple.jpg", caption: "Your first adventures — the whole family, exploring the world together. 🛕" },
+      { url: "/media/siblings/siblings-04-joyful-hug.jpg", focus: "50% 24%", caption: "Caught mid-laugh, holding on tight — the joy you've carried your whole life." },
+      { url: "/media/siblings/siblings-05-school.jpg", caption: "Years pass, you grow up — but some arms always feel like home." },
+      { url: "/media/family/family-07-recent-four.jpg", focus: "50% 22%", caption: "All grown up, still together — the family that made you, still right beside you." },
+      { url: "/media/family/family-08-with-mom.jpg", focus: "50% 16%", caption: "Your very first home was her arms — and it still is. 💗" },
+      { url: "/media/family/family-09-recent-group.jpg", focus: "50% 46%", caption: "Last year, same love, brand-new smiles — your whole world in one frame." },
     ],
     food: [],
     quiz: null,
   },
   {
-    id: "siblings",
-    name: "The Ones Who Loved You First",
-    short: "Loved You First",
-    when: "Built-in best friends",
+    id: "her-first-baby",
+    name: "Her First Baby",
+    short: "Her First Baby",
+    when: "Her little brother, always",
     type: "occasion",
     icon: "🧡",
-    teaser: "The bonds that taught you how to love.",
+    teaser: "The first little one she ever loved like her own.",
     message:
-      "Before best friends, before me — you had them. The ones who fought with you and for you, who kissed your cheek and held you close, who turned an ordinary childhood into something golden. The way you love now — so fiercely, so completely, so without holding back — you learned it here, in these arms, in these little moments. I see it every single day in how you love me. And I'll forever be grateful to the people who taught you first.",
+      "He was the very first baby you ever loved like your own. Long before you were anyone's wife, you were his big sister — the one who mothered him, kissed his cheeks, carried him on your back, and decided early on that he was yours to protect. Watching how fiercely and tenderly you loved your little brother told me everything I needed to know about the heart you have. He was your first baby. And look at him now — all grown up, still laughing in your arms. Some bonds only grow stronger with time. 🧡",
     video: "",
     photos: [
-      { url: "/media/siblings/siblings-04-joyful-hug.jpg", caption: "Caught mid-laugh, holding on tight — this is the joy you've carried your whole life." },
-      { url: "/media/siblings/siblings-01-little-brother-kiss.jpg", caption: "A kiss on the cheek and a bond for life." },
-      { url: "/media/siblings/siblings-07-cheek-kiss.jpg", caption: "The kind of love that needs no words — just a cheek to kiss. 🧡" },
+      { url: "/media/siblings/siblings-01-little-brother-kiss.jpg", focus: "50% 20%", caption: "A kiss on the cheek and a bond for life." },
       { url: "/media/siblings/siblings-02-porch.jpg", caption: "Two against the world, right from the very start." },
-      { url: "/media/siblings/siblings-09-piggyback-hug.jpg", caption: "Holding on tight — the way you always have. 🧡" },
+      { url: "/media/siblings/siblings-09-piggyback-hug.jpg", caption: "Carrying him everywhere — you never once put him down. 🧡" },
+      { url: "/media/siblings/siblings-07-cheek-kiss.jpg", caption: "The kind of love that needs no words — just a cheek to kiss." },
       { url: "/media/siblings/siblings-08-temple.jpg", caption: "Reaching for the sky together — some hands you never stop holding." },
-      { url: "/media/siblings/siblings-05-school.jpg", caption: "Years pass, you grow up — but some arms always feel like home." },
+      { url: "/media/siblings/siblings-10-brother-grown.jpg", focus: "50% 22%", caption: "All grown up now — and still, you're the one who makes him laugh like that. 🧡" },
     ],
     food: [],
     quiz: null,
   },
   {
-    id: "growing-up",
+    id: "becoming-you",
     name: "Becoming You",
     short: "Becoming You",
-    when: "The girl who'd be my world",
+    when: "Every phase that made her",
     type: "occasion",
     icon: "✨",
-    teaser: "Somewhere in these years, you became you.",
+    teaser: "A little girl becoming the woman I'd adore.",
     message:
-      "Somewhere in these years, a bright little girl quietly became the woman I'd spend my life adoring. That same smile, those same shining eyes — they were already there, already perfect, just waiting for me to find them. Sometimes I wish I'd known you back then, only so I could have loved you for longer. But mostly I just feel impossibly lucky that every one of these years, every version of you, was leading you straight to the day our roads finally crossed.",
+      "Watch a little girl become a young woman, frame by frame. That same smile, those same shining eyes — they were always there, just growing into the person you were meant to be. Dancing like no one was watching, chasing the sea, laughing at something just out of frame: independent, fearless, completely your own. You never needed anyone to complete you, Nidhi — you were already whole, already brilliant, already everything. And every single one of these years, every version of you, was quietly leading you straight to the day our roads would finally cross.",
     video: "",
     photos: [
-      { url: "/media/growing-up/growing-up-01-smile.jpg", caption: "That smile. Even then, it could light up an entire room." },
+      { url: "/media/growing-up/growing-up-01-smile.jpg", focus: "50% 6%", caption: "That smile. Even then, it could light up an entire room." },
       { url: "/media/growing-up/growing-up-03-portrait.jpg", caption: "A little older now — the same light in your eyes." },
       { url: "/media/growing-up/growing-up-02-portrait.jpg", caption: "Somewhere in this face is the woman I'd fall for — I just didn't know it yet. ✨" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "her-spirit",
-    name: "Her Own Light",
-    short: "Her Own Light",
-    when: "The woman she was becoming",
-    type: "occasion",
-    icon: "💃",
-    teaser: "Long before me, you were already someone wonderful.",
-    message:
-      "Before I ever knew you existed, you were already so completely, wonderfully you. Dancing like no one was watching, chasing the sea, laughing at something just out of frame. I love these glimpses of the woman you were becoming — independent, full of life, lighting up every room you walked into. You never needed anyone to complete you, Nidhi. You were already whole, already brilliant, already everything. And that is exactly the woman I was so lucky to fall in love with.",
-    video: "",
-    photos: [
       { url: "/media/her-spirit/her-spirit-01-dancing.jpg", caption: "Dancing like the whole world was yours — because it was. 💃" },
       { url: "/media/her-spirit/her-spirit-02-beach.jpg", caption: "Just you and the sea — free, fearless, completely yourself. 🌊" },
-      { url: "/media/her-spirit/her-spirit-03-candid.jpg", caption: "That shy little smile — the one I'd fall for without even knowing it yet." },
+      { url: "/media/her-spirit/her-spirit-03-candid.jpg", caption: "That quiet little smile — the one I'd fall for without even knowing it yet." },
     ],
     food: [],
     quiz: null,
@@ -218,7 +190,7 @@ const MEMORIES = [
       "Everyone has a few people who feel like home — and these are yours. The girls who laughed with you until it hurt, travelled with you, kept your secrets and held your hand through everything life threw your way. The way you love your people — so loyally, so fully, so forever — was one of the very first things I admired about you. I'll always be grateful to the friends who loved you, shaped you, and helped make you the incredible woman who one day walked into my life.",
     video: "",
     photos: [
-      { url: "/media/her-friends/her-friends-01-selfie.jpg", caption: "The kind of friendship that needs no occasion — just the two of you, always." },
+      { url: "/media/her-friends/her-friends-01-selfie.jpg", focus: "50% 28%", caption: "The kind of friendship that needs no occasion — just the two of you, always." },
       { url: "/media/her-friends/her-friends-02-trio.jpg", caption: "Your girls — laughter guaranteed, every single time." },
       { url: "/media/her-friends/her-friends-03-beach.jpg", caption: "Sun, sand, and your favourite people. Some days are just pure joy. ☀️" },
     ],
@@ -549,7 +521,7 @@ const MEMORIES = [
     isFinale: true,
     teaser: "A promise for the year ahead — and every year after.",
     message:
-      "My dearest Nidhi,\n\nEvery card before this one is a piece of your story — from the tiny girl who arrived and changed the world, to little you blowing out birthday candles, to the years that quietly shaped you — and then to us: that first drive in my Kwid to Cafe Yolo, our roka at the gurudwara, to the night I proposed at The Eighteen, to the day you proposed right back at Cafe Oakaz, to our wedding on 11th July when you danced in my baarat, to our honeymoon in Bali where your dolphin dream came true, to every trip, every meal, every quiet moment that made us us.\n\nWe built Snowops together. We found our flat together. And now, on your birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a computer scientist, a dreamer who chose to bet on us and build something beautiful together.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
+      "My dearest Nidhi,\n\nEvery card before this one is a piece of your story — from the tiny girl who arrived and changed the world, to little you blowing out birthday candles, to the years that quietly shaped you — and then to us: that first drive in my Kwid to Cafe Yolo, our roka at the gurudwara, to the night I proposed at The Eighteen, to the day you proposed right back at Cafe Oakaz, to our wedding on 11th July when you danced in my baarat, to our honeymoon in Bali where your dolphin dream came true, to every trip, every meal, every quiet moment that made us us.\n\nWe built Snowops together. We found our flat together. And now, on your birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a company secretary, a dreamer who chose to bet on us and build something beautiful together.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
     ps:
       "P.S. You just proved you know our story by heart. But here's a secret only I know: every single day with you has been my favourite day — right up until the next one. Now close your eyes, make a wish… and come find me. 🥂",
     birthdayNote:
@@ -614,7 +586,7 @@ const REASONS_I_LOVE_YOU = [
   { reason: "Your passion for food — and for sharing it with me", icon: "🍕" },
   { reason: "The way you make even ordinary days feel extraordinary", icon: "🌈" },
   { reason: "How safe I feel when I'm with you", icon: "🫂" },
-  { reason: "Your determination — lawyer, tech wizard, dreamer, all at once", icon: "⚡" },
+  { reason: "Your determination — lawyer, company secretary, dreamer, all at once", icon: "⚡" },
   { reason: "How you kept your proposal a secret even when I kept changing plans", icon: "🎁" },
   { reason: "The way you managed our entire wedding and still looked like a dream", icon: "👰" },
   { reason: "How you light up at temples — Khatu Shyam, Salasar Balaji, Nathdwara", icon: "🙏" },
@@ -685,7 +657,7 @@ function OccasionCards({ answered, unlocked, onOpen }) {
               <div className="oc-body">
                 <div className="oc-cover">
                   {coverPhoto ? (
-                    <img src={coverPhoto.url} alt={m.name} className="oc-cover-img" />
+                    <img src={coverPhoto.url} alt={m.name} className="oc-cover-img" style={coverPhoto.focus ? { objectPosition: coverPhoto.focus } : undefined} />
                   ) : (
                     <span className="oc-icon">{m.icon || "💛"}</span>
                   )}
@@ -889,7 +861,7 @@ function Gallery({ photos, emptyText }) {
     <div className="gallery">
       <div className="photo-frame">
         {p.url ? (
-          <img className="photo" src={p.url} alt={p.caption || ""} />
+          <img className="photo" src={p.url} alt={p.caption || ""} style={{ objectFit: p.fit || undefined, objectPosition: p.focus || undefined }} />
         ) : (
           <div className="photo placeholder">
             <div className="ph-mark">{"📷"}</div>
