@@ -1708,8 +1708,103 @@ function Intro({ onBegin }) {
   );
 }
 
+/* ───────────────────────────── LOGIN GATE ─────────────────────────────
+   A private little doorway — only she has the key.
+   >>> The one username & password live here. Change them if you like. */
+const AUTH_USER = "Nidhi";
+const AUTH_PASS = "birthdaygirl";
+
+function LoginGate({ onUnlock }) {
+  const [user, setUser] = useState("");
+  const [pass, setPass] = useState("");
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState(false);
+  const [opening, setOpening] = useState(false);
+
+  function submit(e) {
+    e.preventDefault();
+    if (opening) return;
+    const ok =
+      user.trim().toLowerCase() === AUTH_USER.toLowerCase() &&
+      pass === AUTH_PASS;
+    if (ok) {
+      setError(false);
+      setOpening(true);
+      setTimeout(onUnlock, 900);
+    } else {
+      setError(true);
+    }
+  }
+
+  return (
+    <div className={"login" + (opening ? " login-opening" : "")}>
+      <div className="login-stars" />
+      <div className="intro-bg">
+        <img src="/media/nidhi-portrait.png" alt="" className="intro-bg-img" />
+      </div>
+
+      <form className={"login-card" + (error ? " login-shake" : "")} onSubmit={submit}>
+        <div className="login-lock">{opening ? "🔓" : "🔒"}</div>
+        <div className="login-kicker">A private little world</div>
+        <h1 className="login-title">For Nidhi's eyes only</h1>
+        <div className="intro-rule"><span>{"❀"}</span></div>
+        <p className="login-line">
+          This birthday surprise is locked away just for you, my love.
+          Sign in to step inside. 💛
+        </p>
+
+        <label className="login-field">
+          <span className="login-label">Username</span>
+          <input
+            className="login-input"
+            type="text"
+            value={user}
+            autoComplete="username"
+            placeholder="Your name"
+            onChange={(e) => { setUser(e.target.value); setError(false); }}
+          />
+        </label>
+
+        <label className="login-field">
+          <span className="login-label">Password</span>
+          <div className="login-pass-wrap">
+            <input
+              className="login-input"
+              type={show ? "text" : "password"}
+              value={pass}
+              autoComplete="current-password"
+              placeholder="Your secret word"
+              onChange={(e) => { setPass(e.target.value); setError(false); }}
+            />
+            <button
+              type="button"
+              className="login-eye"
+              onClick={() => setShow((s) => !s)}
+              aria-label={show ? "Hide password" : "Show password"}
+            >
+              {show ? "🙈" : "👁️"}
+            </button>
+          </div>
+        </label>
+
+        {error && (
+          <div className="login-error">That's not quite it — try again, birthday girl. 💔</div>
+        )}
+
+        <button className="login-btn" type="submit" disabled={opening}>
+          {opening ? "Opening…" : "Unlock my surprise"}
+        </button>
+        <div className="login-hint">Hint: this is your day, birthday girl. 🎂</div>
+      </form>
+    </div>
+  );
+}
+
 /* ───────────────────────────── ROOT APP ───────────────────────────── */
 export default function App() {
+  const [authed, setAuthed] = useState(() => {
+    try { return localStorage.getItem("osm-authed") === "yes"; } catch { return false; }
+  });
   const [loading, setLoading] = useState(true);
   const [started, setStarted] = useState(false);
   const [showLetter, setShowLetter] = useState(false);
@@ -1823,6 +1918,20 @@ export default function App() {
       }));
       setToast(mem.quiz.wrong);
     }
+  }
+
+  function login() {
+    try { localStorage.setItem("osm-authed", "yes"); } catch { /* ignore */ }
+    setAuthed(true);
+  }
+
+  if (!authed) {
+    return (
+      <div className="osm-root">
+        <style>{STYLES}</style>
+        <LoginGate onUnlock={login} />
+      </div>
+    );
   }
 
   return (
@@ -2002,6 +2111,93 @@ const STYLES = `
 @keyframes twinkle { from { opacity: .55; } to { opacity: 1; } }
 
 /* ——— INTRO ——— */
+/* ——— LOGIN GATE ——— */
+.login {
+  position: absolute; inset: 0; z-index: 60;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 24px;
+  animation: fadeIn 1s ease both;
+  transition: opacity .8s ease, transform .8s ease;
+}
+.login-opening { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.login-stars { position: absolute; inset: 0; z-index: 0; }
+.login-card {
+  position: relative; z-index: 2; width: 100%; max-width: 392px;
+  padding: 34px 30px 28px; border-radius: 24px;
+  background: linear-gradient(165deg, rgba(24,28,58,.92), rgba(14,17,42,.95));
+  border: 1px solid rgba(212,175,55,.4);
+  box-shadow: 0 24px 70px rgba(0,0,0,.55), 0 0 50px rgba(212,175,55,.12),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  backdrop-filter: blur(8px);
+  animation: portraitIn 1.1s cubic-bezier(.2,1,.3,1) both;
+}
+.login-shake { animation: loginShake .45s ease both; }
+@keyframes loginShake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-9px); } 40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); } 80% { transform: translateX(4px); }
+}
+.login-lock {
+  font-size: 38px; line-height: 1; margin-bottom: 12px;
+  filter: drop-shadow(0 0 14px rgba(212,175,55,.5));
+  animation: portraitFloat 5s ease-in-out 1s infinite;
+}
+.login-kicker {
+  font-family: 'Marcellus', serif; letter-spacing: .36em; text-transform: uppercase;
+  font-size: 11px; color: #e7b9c4;
+}
+.login-title {
+  font-family: 'Cormorant Garamond', serif; font-weight: 600; font-style: italic;
+  font-size: clamp(28px, 8vw, 38px); line-height: 1.05; margin: 8px 0 4px;
+  background: linear-gradient(180deg, #fbe6b4 0%, #e8c46a 50%, #c79a36 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 40px rgba(212,175,55,.3);
+}
+.login-line {
+  font-size: 15px; line-height: 1.55; color: #efe4cb; font-style: italic;
+  margin: 4px auto 22px; max-width: 320px;
+}
+.login-field { display: block; text-align: left; margin: 0 0 14px; }
+.login-label {
+  display: block; font-family: 'Marcellus', serif; font-size: 11px;
+  letter-spacing: .16em; text-transform: uppercase; color: #d4af37; margin-bottom: 6px;
+}
+.login-input {
+  width: 100%; box-sizing: border-box; padding: 13px 15px; border-radius: 12px;
+  font-family: inherit; font-size: 15px; color: #f4ecd6;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(212,175,55,.3);
+  outline: none; transition: border-color .2s ease, box-shadow .2s ease;
+}
+.login-input::placeholder { color: rgba(244,236,214,.4); }
+.login-input:focus {
+  border-color: rgba(232,196,106,.8);
+  box-shadow: 0 0 0 3px rgba(212,175,55,.16);
+}
+.login-pass-wrap { position: relative; }
+.login-pass-wrap .login-input { padding-right: 48px; }
+.login-eye {
+  position: absolute; top: 50%; right: 8px; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; font-size: 18px;
+  padding: 6px; line-height: 1; opacity: .85;
+}
+.login-error {
+  color: #ff9bb0; font-size: 13px; margin: 2px 0 14px;
+  animation: fadeIn .3s ease both;
+}
+.login-btn {
+  width: 100%; margin-top: 6px;
+  font-family: 'Marcellus', serif; font-size: 15px; letter-spacing: .1em;
+  color: #1a1206; cursor: pointer; border: none; border-radius: 999px; padding: 14px 28px;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  box-shadow: 0 10px 30px rgba(212,175,55,.38), inset 0 1px 0 rgba(255,255,255,.6);
+  transition: transform .2s ease, filter .2s ease;
+}
+.login-btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+.login-btn:disabled { opacity: .8; cursor: default; transform: none; }
+.login-hint {
+  margin-top: 14px; font-size: 12px; color: rgba(231,185,196,.65); font-style: italic;
+}
+
 .intro {
   position: absolute; inset: 0; z-index: 30;
   display: flex; align-items: center; justify-content: center;
