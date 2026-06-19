@@ -539,7 +539,7 @@ const FEAST_PHOTOS = [
   { url: "/media/feast/feast-02-cafe-croissant.jpg", caption: "Lazy café mornings — a croissant, a cheese puff, and the coldest coffee" },
   { url: "/media/feast/feast-05-street-dessert.jpg", caption: "Street-side sweetness eaten on the move — cherries, custard, zero regrets" },
   { url: "/media/feast/feast-11-churros.jpg", caption: "Christmas-tree churros under a waterfall of warm chocolate — need I say more?" },
-  { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Wine and tiny bites — Jaipur" },
+  { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Mango mocktail and tiny bites — Jaipur" },
   { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf — Jaipur" },
   { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried — Jaipur" },
   { url: "/media/jaipur/jaipur-11-naan-curry.jpg", caption: "Naan, curry, and no regrets — Jaipur" },
