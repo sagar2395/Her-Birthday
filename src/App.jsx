@@ -525,6 +525,20 @@ const MEMORIES = [
 /* ──────────────────────────────────────────────────────────────────────────── */
 
 const FEAST_PHOTOS = [
+  { url: "/media/feast/feast-14-coconut-bowl.jpg", caption: "Breakfast served in a coconut, the ocean for company — Bali spoiled us 🥥" },
+  { url: "/media/feast/feast-12-fine-dining.jpg", caption: "Fine-dining art on a plate — almost too pretty to disturb" },
+  { url: "/media/feast/feast-13-crepes-curry.jpg", caption: "Candle-lit dinner abroad — handmade crepes and a fragrant curry, just for two" },
+  { url: "/media/feast/feast-09-tandoori-platter.jpg", caption: "A grand tandoori platter on a banana leaf — paneer tikka, kebabs and all" },
+  { url: "/media/feast/feast-01-malai-kofta.jpg", caption: "Malai kofta in velvety tomato gravy — comfort food that tastes like home" },
+  { url: "/media/feast/feast-07-rajasthani-thali.jpg", caption: "A royal Rajasthani thali — dal baati churma and a dozen little bowls of joy" },
+  { url: "/media/feast/feast-08-bao-buns.jpg", caption: "Bao buns lined up and dressed to impress — gone in minutes" },
+  { url: "/media/feast/feast-06-mocktail-stirfry.jpg", caption: "Tangy mocktails and a sizzling stir-fry — an evening, unplugged" },
+  { url: "/media/feast/feast-10-veg-pizza.jpg", caption: "A wood-fired pizza loaded with peppers and jalapeños — our kind of cheesy" },
+  { url: "/media/feast/feast-04-sandwich-fries.jpg", caption: "A loaded sandwich, a mountain of fries, and every sauce within reach" },
+  { url: "/media/feast/feast-03-purple-burger.jpg", caption: "A burger almost too pretty to eat — purple bun, crispy wedges, a dunk of sauce" },
+  { url: "/media/feast/feast-02-cafe-croissant.jpg", caption: "Lazy café mornings — a croissant, a cheese puff, and the coldest coffee" },
+  { url: "/media/feast/feast-05-street-dessert.jpg", caption: "Street-side sweetness eaten on the move — cherries, custard, zero regrets" },
+  { url: "/media/feast/feast-11-churros.jpg", caption: "Christmas-tree churros under a waterfall of warm chocolate — need I say more?" },
   { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Wine and tiny bites — Jaipur" },
   { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf — Jaipur" },
   { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried — Jaipur" },
