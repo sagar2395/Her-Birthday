@@ -227,21 +227,21 @@ const MEMORIES = [
   },
   {
     id: "roka",
-    name: "Our Roka",
-    short: "Roka",
+    name: "Our Celebrations Together",
+    short: "Celebrations",
     when: "October 2023",
     type: "occasion",
-    icon: "🪷",
-    teaser: "Making it official, with blessings and love.",
+    icon: "🎉",
+    teaser: "One of those perfect days that was simply about us.",
     message:
-      "The day we made it official. We went to the gurudwara together, heads bowed, hearts full — and then celebrated over lunch at Cafe Oakaz. It was simple, beautiful, and perfectly us. No grand gestures, just two people quietly promising to spend their lives together. That day, I looked at you across the table and thought: every road in my life was always leading here, to you.",
+      "One of those perfect days that was simply about us. We spent it together — quiet, joyful, completely ours — surrounded by a little love, a few balloons, and a whole lot of laughter. No grand gestures, just two people happy in each other's company, celebrating everything we already were to each other. I looked at you that day and thought: every road in my life was always leading here, to you.",
     video: "",
     photos: [
-      { url: "/media/roka/roka-01-celebration-wide.jpg", caption: "The room that held our promise — balloons, petals, and us" },
+      { url: "/media/roka/roka-01-celebration-wide.jpg", caption: "The room that held all our joy — balloons, petals, and us" },
       { url: "/media/roka/roka-02-holding-hands.jpg", caption: "Holding hands, holding futures" },
-      { url: "/media/roka/roka-03-together.jpg", caption: "Celebrating our roka together" },
-      { url: "/media/roka/roka-04-candid-laughs.jpg", caption: "The laughs that made it all real" },
-      { url: "/media/roka/roka-05-rose-petal-heart.jpg", caption: "Rose petals, balloons, and the start of forever" },
+      { url: "/media/roka/roka-03-together.jpg", caption: "Celebrating us, together" },
+      { url: "/media/roka/roka-04-candid-laughs.jpg", caption: "The laughs that made the day" },
+      { url: "/media/roka/roka-05-rose-petal-heart.jpg", caption: "Rose petals, balloons, and so much love" },
     ],
     food: [],
     quiz: null,
@@ -499,7 +499,7 @@ const MEMORIES = [
     isFinale: true,
     teaser: "A promise for the year ahead — and every year after.",
     message:
-      "My dearest Nidhi,\n\nEvery card before this one is a piece of your story — from the tiny girl who arrived and changed the world, to little you blowing out birthday candles, to the years that quietly shaped you — and then to us: that first drive in my Kwid to Cafe Yolo, our roka at the gurudwara, to the night I proposed at The Eighteen, to the day you proposed right back at Cafe Oakaz, to our wedding on 11th July when you danced in my baarat, to our honeymoon in Bali where your dolphin dream came true, to every trip, every meal, every quiet moment that made us us.\n\nWe built Snowops together. We found our flat together. And now, on your birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a company secretary, a dreamer who chose to bet on us and build something beautiful together.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
+      "My dearest Nidhi,\n\nEvery card before this one is a piece of your story — from the tiny girl who arrived and changed the world, to little you blowing out birthday candles, to the years that quietly shaped you — and then to us: that first drive in my Kwid to Cafe Yolo, our quiet little celebrations together, to the night I proposed at The Eighteen, to the day you proposed right back at Cafe Oakaz, to our wedding on 11th July when you danced in my baarat, to our honeymoon in Bali where your dolphin dream came true, to every trip, every meal, every quiet moment that made us us.\n\nWe built Snowops together. We found our flat together. And now, on your birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a company secretary, a dreamer who chose to bet on us and build something beautiful together.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
     ps:
       "P.S. You just proved you know our story by heart. But here's a secret only I know: every single day with you has been my favourite day — right up until the next one. Now close your eyes, make a wish… and come find me. 🥂",
     birthdayNote:
