@@ -130,6 +130,7 @@ const MEMORIES = [
       { url: "/media/family/family-07-recent-four.jpg", focus: "50% 22%", caption: "All grown up, still together — the family that made you, still right beside you." },
       { url: "/media/family/family-08-with-mom.jpg", focus: "50% 16%", caption: "Your very first home was her arms — and it still is. 💗" },
       { url: "/media/family/family-09-recent-group.jpg", focus: "50% 46%", caption: "Last year, same love, brand-new smiles — your whole world in one frame." },
+      { url: "/media/family/family-10-family-four.jpg", caption: "Four hearts, one family — together in every way that matters. 💗" },
     ],
     food: [],
     quiz: null,
@@ -196,6 +197,7 @@ const MEMORIES = [
       { url: "/media/her-friends/her-friends-03-beach.jpg", caption: "Sun, sand, and your favourite people. Some days are just pure joy. ☀️" },
       { url: "/media/her-friends/her-friends-04-deer-wall.jpg", caption: "Cheek to cheek, smiles all the way — the friends who feel like home." },
       { url: "/media/her-friends/her-friends-05-cheek.jpg", focus: "50% 38%", caption: "No reason needed, just the two of you and a camera. 💛" },
+      { url: "/media/her-friends/her-friends-06-shopping.jpg", caption: "Shopping spree with your bestie — mirrors, laughter, and the best company. 🛍️" },
     ],
     food: [],
     quiz: null,
@@ -537,6 +539,7 @@ const FEAST_PHOTOS = [
   { url: "/media/jaipur/jaipur-12-thali.jpg", caption: "The Rajasthani thali of dreams — Jaipur" },
   { url: "/media/jaipur/jaipur-13-thali-lassi.jpg", caption: "Thali round two with lassi — Jaipur" },
   { url: "/media/jaipur/jaipur-14-poori-kachori.jpg", caption: "Poori-kachori breakfast — Jaipur" },
+  { url: "/media/feast/feast-15-food-story.jpg", caption: "Our food story — cake, pizza, and everything yumm 🍰" },
 ];
 
 const QUIZ_TOTAL = MEMORIES.filter((m) => m.quiz).length;
