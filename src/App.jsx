@@ -584,6 +584,10 @@ const REASONS_I_LOVE_YOU = [
   { reason: "How you light up at temples — Khatu Shyam, Salasar Balaji, Nathdwara", icon: "🙏" },
   { reason: "Your courage to start Snowops with me — co-founder of my whole life", icon: "🚀" },
   { reason: "The way you calmed down when I touched your head at Cafe Yolo — and I knew", icon: "🤍" },
+  { reason: "Our long, aimless drives in the Kwid — windows down, just you and me", icon: "🚗" },
+  { reason: "The way you jumped into the ocean with me, even though neither of us can swim", icon: "🌊" },
+  { reason: "The fierce, tender way you love your little brother — your first baby", icon: "🧡" },
+  { reason: "How you dance like the whole world is yours — and it is", icon: "💃" },
   { reason: "Because you are my today, my tomorrow, and every day after", icon: "♾️" },
 ];
 
@@ -739,7 +743,7 @@ function ReasonsILoveYou() {
       <div className="reasons-head">
         <div className="reasons-kicker">A birthday list, just for you</div>
         <h2 className="reasons-title">Reasons I Love You</h2>
-        <p className="reasons-sub">I could write a thousand more, but let's start here.</p>
+        <p className="reasons-sub">Thirty-two reasons — one for every beautiful year of you. 💛</p>
       </div>
 
       <div className="reasons-list">
@@ -830,6 +834,7 @@ function Lightbox({ item, onClose }) {
 /* ───────────────────────────── PHOTO GALLERY ───────────────────────────── */
 function Gallery({ photos, emptyText }) {
   const [i, setI] = useState(0);
+  const touchX = useRef(null);
   useEffect(() => setI(0), [photos]);
 
   if (!photos || photos.length === 0) {
@@ -849,9 +854,18 @@ function Gallery({ photos, emptyText }) {
   const p = photos[i];
   const go = (d) => setI((x) => (x + d + photos.length) % photos.length);
 
+  const onTouchStart = (e) => { touchX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touchX.current == null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (dx > 45) go(-1);
+    else if (dx < -45) go(1);
+    touchX.current = null;
+  };
+
   return (
     <div className="gallery">
-      <div className="photo-frame">
+      <div className="photo-frame" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {p.url ? (
           <img className="photo" src={p.url} alt={p.caption || ""} style={{ objectFit: p.fit || undefined, objectPosition: p.focus || undefined }} />
         ) : (
@@ -1194,33 +1208,90 @@ function Envelope({ children, name }) {
 
 /* ───────────────────────────── PHOTO REVEAL POPUP ───────────────────────────── */
 function PhotoReveal({ mem, onClose }) {
-  const photo = (mem.photos || []).find((p) => p.url) || null;
-  const hasVideo = !!mem.video;
+  const photos = (mem.photos || []).filter((p) => p.url);
+  const count = photos.length;
+  const [i, setI] = useState(0);
+  const touchX = useRef(null);
+
+  const go = useCallback(
+    (d) => setI((x) => (count ? (x + d + count) % count : 0)),
+    [count]
+  );
+
+  // keyboard: ← → to browse, Esc to close
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "ArrowLeft") go(-1);
+      else if (e.key === "ArrowRight") go(1);
+      else if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [go, onClose]);
+
+  function onTouchStart(e) { touchX.current = e.touches[0].clientX; }
+  function onTouchEnd(e) {
+    if (touchX.current == null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (dx > 45) go(-1);
+    else if (dx < -45) go(1);
+    touchX.current = null;
+  }
+
+  const photo = photos[i] || null;
 
   return (
-    <div className="photo-reveal">
+    <div className="photo-reveal" onClick={onClose}>
       <button className="pr-close" onClick={onClose} aria-label="Close">{"×"}</button>
-      <div className="pr-inner">
-        {photo && photo.url ? (
-          <div className="pr-photo-wrap">
-            <img className="pr-photo" src={photo.url} alt={photo.caption || ""} />
-            <div className="pr-gradient" />
+      <div className="pr-inner" onClick={(e) => e.stopPropagation()}>
+        <div className="pr-banner">{"🎉 Your photos are unlocked"}</div>
+
+        <div className="pr-photo-wrap" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+          {photo ? (
+            <img
+              key={photo.url}
+              className="pr-photo"
+              src={photo.url}
+              alt={photo.caption || ""}
+              style={{ objectFit: photo.fit || undefined, objectPosition: photo.focus || undefined }}
+            />
+          ) : (
+            <div className="pr-placeholder"><span className="pr-ph-icon">{"✨"}</span></div>
+          )}
+          <div className="pr-gradient" />
+
+          {count > 1 && (
+            <>
+              <button className="pr-nav pr-nav-l" onClick={() => go(-1)} aria-label="Previous photo">{"‹"}</button>
+              <button className="pr-nav pr-nav-r" onClick={() => go(1)} aria-label="Next photo">{"›"}</button>
+            </>
+          )}
+
+          <div className="pr-overlay">
+            <div className="pr-trip-name">{mem.name}</div>
+            <div className="pr-caption" key={i}>{photo && photo.caption ? photo.caption : mem.teaser}</div>
+            {count > 1 && (
+              <div className="pr-dots">
+                {photos.map((_, idx) => (
+                  <button
+                    key={idx}
+                    className={"pr-dot" + (idx === i ? " pr-dot-on" : "")}
+                    onClick={() => setI(idx)}
+                    aria-label={"Photo " + (idx + 1)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="pr-placeholder">
-            <span className="pr-ph-icon">{"✨"}</span>
-          </div>
-        )}
-        <div className="pr-overlay">
-          <div className="pr-trip-name">{mem.name}</div>
-          <div className="pr-caption">{photo && photo.caption ? photo.caption : mem.teaser}</div>
-          <div className="pr-heart-divider">{"♥"}</div>
-          <div className="pr-unlocked-text">
-            {hasVideo ? "Your video & photos are unlocked" : "Your photos are unlocked"}
-          </div>
-          <button className="pr-continue" onClick={onClose}>
-            {hasVideo ? "Watch our video →" : "See our photos →"}
-          </button>
+        </div>
+
+        <div className="pr-footer">
+          {count > 1 ? (
+            <span className="pr-hint">{(i + 1) + " / " + count} · swipe or tap ‹ › to browse</span>
+          ) : (
+            <span className="pr-hint">A little moment, just for you 💛</span>
+          )}
+          <button className="pr-continue" onClick={onClose}>Done 💛</button>
         </div>
       </div>
     </div>
@@ -3028,6 +3099,38 @@ const STYLES = `
   animation: glowPulse 2.5s ease-in-out infinite;
 }
 .pr-continue:hover { transform: translateY(-2px) scale(1.04); }
+
+.pr-banner {
+  text-align: center; font-family: 'Marcellus', serif; font-size: 11px;
+  letter-spacing: .18em; text-transform: uppercase; color: #1a1206;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  padding: 10px 12px;
+}
+.pr-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 4;
+  width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+  background: rgba(10,14,34,.55); border: 1px solid rgba(212,175,55,.5);
+  color: #f0d98a; font-size: 26px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px); transition: background .2s ease, transform .2s ease;
+}
+.pr-nav:hover { background: rgba(10,14,34,.85); }
+.pr-nav:active { transform: translateY(-50%) scale(.9); }
+.pr-nav-l { left: 10px; }
+.pr-nav-r { right: 10px; }
+.pr-dots { display: flex; gap: 7px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+.pr-dot {
+  width: 8px; height: 8px; border-radius: 50%; cursor: pointer; padding: 0;
+  background: rgba(255,255,255,.32); border: none; transition: all .2s ease;
+}
+.pr-dot-on { background: #f0d98a; transform: scale(1.4); box-shadow: 0 0 8px rgba(212,175,55,.6); }
+.pr-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 16px 14px; background: #0c1230;
+}
+.pr-hint { font-size: 12px; color: #cdbf9a; font-style: italic; text-align: left; }
+.pr-footer .pr-continue { margin-top: 0; }
+.pr-caption { animation: prFadeUp .4s ease both; }
 
 /* ——— BIRTHDAY COUNTDOWN OVERLAY ——— */
 .cd-overlay {
