@@ -152,6 +152,7 @@ const MEMORIES = [
       { url: "/media/siblings/siblings-07-cheek-kiss.jpg", caption: "The kind of love that needs no words — just a cheek to kiss." },
       { url: "/media/siblings/siblings-08-temple.jpg", caption: "Reaching for the sky together — some hands you never stop holding." },
       { url: "/media/siblings/siblings-10-brother-grown.jpg", focus: "50% 22%", caption: "All grown up now — and still, you're the one who makes him laugh like that. 🧡" },
+      { url: "/media/siblings/siblings-11-brother-building.jpg", focus: "50% 55%", caption: "Your baby brother — taller than you now, but forever your first little one. 🧡" },
     ],
     food: [],
     quiz: null,
@@ -283,10 +284,10 @@ const MEMORIES = [
     icon: "💗",
     teaser: "My birthday, her chaos, one perfect ring.",
     message:
-      "My birthday, March 2024 — and you had a secret plan. You wanted to propose right back at Cafe Oakaz (freshly renovated and gorgeous), on the top floor. But I kept changing my birthday plans — one idea after another — and you were silently losing your mind trying to keep your surprise alive. When we finally got there, you pulled out a ring, and I understood everything. All the stress, all the sneaky planning — it was all for this moment. You proposed to me, Nidhi. And in that moment, I realised you don't just love me — you fight for us, even against my own chaotic birthday plans.",
+      "My birthday, March 2024 — and you had the sweetest secret plan. You wanted to propose somewhere truly special, somewhere grand and worthy of the moment. But I kept changing my birthday plans — one idea after another — and your perfect plan kept slipping right through your fingers. So with barely any time and your whole heart, you made a split-second decision: you pulled me up to the top floor of Cafe Oakaz (freshly renovated and gorgeous) and proposed to me right there, on the spot. It wasn't the venue you'd dreamed of — but Nidhi, it was perfect. Because in that instant I understood: you don't just love me, you adapt for us, you fight for us, even against my own chaotic, indecisive birthday self. I'd choose that messy, beautiful, instant 'yes' a thousand times over.",
     video: "",
     photos: [
-      { url: "/media/her-proposal/her-proposal-01-couch-selfie.jpg", caption: "Cafe Oakaz — renovated and ready for her surprise" },
+      { url: "/media/her-proposal/her-proposal-01-couch-selfie.jpg", caption: "Cafe Oakaz — where her backup plan turned out perfect" },
       { url: "/media/her-proposal/her-proposal-02-intimate-moment.jpg", caption: "The moment she made my heart stop" },
       { url: "/media/her-proposal/her-proposal-03-her-at-oakaz.jpg", caption: "The top floor, just the two of us" },
       { url: "/media/her-proposal/her-proposal-04-together-wide.jpg", caption: "Together at Oakaz — where she turned my birthday into forever" },
@@ -346,9 +347,11 @@ const MEMORIES = [
       { url: "/media/bali/bali-04-cafe.jpg", caption: "Café mornings in Bali" },
       { url: "/media/bali/bali-05-atv-jungle.jpg", caption: "Jungle ATV adventure" },
       { url: "/media/bali/bali-06-dolphin.jpg", caption: "Making friends with dolphins" },
+      { url: "/media/bali/bali-12-scooter-ride.jpg", caption: "Helmets on, exploring Bali two-wheeler style" },
       { url: "/media/bali/bali-07-kl-tower.jpg", caption: "Standing tall at KL Tower" },
       { url: "/media/bali/bali-08-kl-observation.jpg", caption: "Taking in the KL skyline" },
       { url: "/media/bali/bali-09-kl-dinner.jpg", caption: "Dinner dates in Kuala Lumpur" },
+      { url: "/media/bali/bali-13-kl-petronas.jpg", focus: "50% 60%", caption: "Under the Petronas Towers — Malaysia, hand in hand" },
       { url: "/media/bali/bali-10-ocean-walkway.jpg", caption: "That ocean view walkway — paradise found" },
       { url: "/media/bali/bali-11-stone-garden.jpg", caption: "Posing with the ancient stone guardians" },
     ],
@@ -362,24 +365,6 @@ const MEMORIES = [
     },
   },
   {
-    id: "pachmarhi",
-    name: "Pachmarhi",
-    short: "Pachmarhi",
-    when: "May 2025",
-    type: "trip",
-    icon: "🏔️",
-    teaser: "An unplanned escape into the hills.",
-    message:
-      "No plan, just us and a long, winding drive into the Satpura hills. We dragged ourselves up before sunrise for the safari — half asleep, fully in love — and then stood quietly together at Gupt Mahadev, as if the temple was keeping our little secrets. Some of my favourite memories are the unplanned ones, because they're just you, me and the open road.",
-    video: "",
-    photos: [
-      { url: "/media/pachmarhi/pachmarhi-01-satpura-tiger.jpg", caption: "Satpura National Park — posing with the tiger" },
-      { url: "/media/pachmarhi/pachmarhi-02-viewpoint.jpg", caption: "On top of the world at the viewpoint" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
     id: "goa",
     name: "Goa",
     short: "Goa",
@@ -388,7 +373,7 @@ const MEMORIES = [
     icon: "🌊",
     teaser: "Where we healed, together.",
     message:
-      "This one's tender. We came to Goa to heal — together. We partied on Tito's Street, took long drives all the way to Arambol with the windows down, stayed right by the beach where we could hear the waves at night. Every morning, we walked into the ocean together — not swimming, just standing, letting the sea hold us. We came carrying something heavy, and we left a little lighter. You reminded me that the right person makes even the hard chapters feel survivable. I quietly, completely fell in love with you all over again here.",
+      "This one's tender. We came to Goa to heal — together. We partied on Tito's Street, took long drives all the way to Arambol with the windows down, stayed right by the beach where we could hear the waves at night. Neither of us knows how to swim — but that never stopped us for a second. We spent hours bathing in the ocean, laughing as the waves knocked us over, splashing about like two kids without a single worry in the world. We didn't need to swim; we just needed the water, and each other. We came carrying something heavy, and we left a little lighter. You reminded me that the right person makes even the hard chapters feel survivable. I quietly, completely fell in love with you all over again here.",
     video: "",
     photos: [
       { url: "/media/goa/goa-01-flight-selfie.jpg", caption: "On the flight — couldn't stop looking at each other" },
@@ -438,7 +423,7 @@ const MEMORIES = [
     icon: "🕌",
     teaser: "Temples and forts, hand in hand.",
     message:
-      "The Pink City, hand in hand — but it was the temples that stole this trip. We visited Khatu Shyam Mandir and Salasar Balaji Mandir, and Nidhi, watching you there — the peace on your face, the devotion — I fell in love with a new side of you. You absolutely loved it. We climbed the forts, explored every corner, and ate incredible food at Johari. Walking those golden walls beside you, I kept thinking how lucky I am that I get to explore this entire life with you.",
+      "The Pink City, hand in hand — but it was the temples that stole this trip. We visited Khatu Shyam Mandir and Salasar Balaji Mandir, and Nidhi, watching you there — the peace on your face, the devotion — I fell in love with this side of you, too. You absolutely loved it. We climbed the forts, explored every corner, and ate incredible food at Johari. Walking those golden walls beside you, I kept thinking how lucky I am that I get to explore this entire life with you.",
     video: "",
     photos: [
       { url: "/media/jaipur/jaipur-01-amber-fort.jpg", caption: "Together at Amber Fort" },
@@ -496,7 +481,13 @@ const MEMORIES = [
       { url: "/media/indore/indore-08-romantic-dinner.jpg", caption: "The hand-kiss that stopped time" },
     ],
     food: [],
-    quiz: null,
+    quiz: {
+      q: "What was our absolute favourite thing to do together in Indore?",
+      options: ["Café-hopping every weekend", "Long, aimless drives in our Kwid", "Shopping at the mall", "Watching late-night movies"],
+      correct: 1,
+      right: "Long drives in our little Kwid — windows down, music up, nowhere to be. Our happy place. 🚗",
+      wrong: "Close, but think simpler — windows down, open road, just us and the Kwid. Try again, my love!",
+    },
   },
   {
     id: "finale",
