@@ -2320,8 +2320,7 @@ export default function App() {
   });
   const [burst, setBurst] = useState(0);
   const [musicOn, setMusicOn] = useState(false);
-  const [songIdx, setSongIdx] = useState(0);
-  const [showSongPicker, setShowSongPicker] = useState(false);
+  const [songIdx, setSongIdx] = useState(() => Math.floor(Math.random() * SONG_LIST.length));
   const [toast, setToast] = useState("");
   const [celebrate, setCelebrate] = useState(0);
   const [countdownDismissed, setCountdownDismissed] = useState(false);
@@ -2385,28 +2384,20 @@ export default function App() {
       return;
     }
     if (musicOn) {
+      const next = (songIdx + 1) % SONG_LIST.length;
+      setSongIdx(next);
       a.pause();
-      setMusicOn(false);
+      a.src = SONG_LIST[next].url;
+      a.load();
+      a.volume = 0.55;
+      a.play()
+        .then(() => setToast("Now playing: " + SONG_LIST[next].name + " 🎵"))
+        .catch(() => setMusicOn(false));
     } else {
       a.volume = 0.55;
       a.play()
         .then(() => setMusicOn(true))
         .catch(() => setToast("Tap again to start the music 🎵"));
-    }
-  }
-
-  function switchSong(idx) {
-    setSongIdx(idx);
-    setShowSongPicker(false);
-    const a = audioRef.current;
-    if (a) {
-      a.pause();
-      a.src = SONG_LIST[idx].url;
-      a.load();
-      a.volume = 0.55;
-      a.play()
-        .then(() => setMusicOn(true))
-        .catch(() => setMusicOn(false));
     }
   }
 
@@ -2511,36 +2502,14 @@ export default function App() {
             >
               {"▶"}
             </button>
-            <div className="music-wrap">
-              <button
-                className={"music" + (musicOn ? " music-on" : "")}
-                onClick={toggleMusic}
-                aria-label="Toggle music"
-              >
-                {musicOn ? "♫" : "♪"}
-              </button>
-              {musicOn && SONG_LIST.length > 1 && (
-                <button
-                  className="song-name-btn"
-                  onClick={() => setShowSongPicker((s) => !s)}
-                >
-                  {SONG_LIST[songIdx].name} {"▾"}
-                </button>
-              )}
-              {showSongPicker && (
-                <div className="song-picker">
-                  {SONG_LIST.map((s, i) => (
-                    <button
-                      key={i}
-                      className={"song-option" + (i === songIdx ? " song-active" : "")}
-                      onClick={() => switchSong(i)}
-                    >
-                      {i === songIdx ? "♫ " : ""}{s.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <button
+              className={"music" + (musicOn ? " music-on" : "")}
+              onClick={toggleMusic}
+              aria-label={musicOn ? "Next song" : "Play music"}
+              title={musicOn ? "Next song" : "Play music"}
+            >
+              {musicOn ? "♫" : "♪"}
+            </button>
           </header>
 
           <LoveQuotes />
@@ -2912,31 +2881,6 @@ const STYLES = `
 .music-on { background: linear-gradient(180deg, #e8c46a, #caa13c); color: #1a1206;
   box-shadow: 0 0 16px rgba(212,175,55,.5); animation: glowPulse 2.4s ease-in-out infinite, musicBounce .8s ease; }
 @keyframes musicBounce { 0% { transform: scale(1); } 30% { transform: scale(1.2); } 60% { transform: scale(.95); } 100% { transform: scale(1); } }
-
-/* ——— SONG PICKER ——— */
-.music-wrap { position: relative; display: flex; align-items: center; gap: 6px; }
-.song-name-btn {
-  background: none; border: none; cursor: pointer;
-  font-family: 'Cormorant Garamond', serif; font-size: 12px;
-  color: #e8c46a; opacity: .8; white-space: nowrap;
-  transition: opacity .2s ease;
-}
-.song-name-btn:hover { opacity: 1; }
-.song-picker {
-  position: absolute; top: 100%; right: 0; margin-top: 8px;
-  background: rgba(14,17,42,.96); border: 1px solid rgba(212,175,55,.35);
-  border-radius: 12px; padding: 6px 0; min-width: 160px;
-  box-shadow: 0 12px 32px rgba(0,0,0,.5);
-  animation: fadeIn .2s ease both; z-index: 20;
-}
-.song-option {
-  display: block; width: 100%; padding: 10px 16px; text-align: left;
-  background: none; border: none; cursor: pointer;
-  font-family: 'Cormorant Garamond', serif; font-size: 15px;
-  color: #f3ead3; transition: background .15s ease;
-}
-.song-option:hover { background: rgba(212,175,55,.1); }
-.song-active { color: #e8c46a; font-weight: 600; }
 
 /* ——— VIEW BAR (Her Story / For You / Our Feast) ——— */
 .viewbar {
