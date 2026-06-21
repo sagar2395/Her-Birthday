@@ -115,6 +115,31 @@ function playCelebrate() {
     osc.stop(ctx.currentTime + i * 0.1 + 0.6);
   });
 }
+function playFireworkSound() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  const noise = ctx.createBufferSource();
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.3;
+  noise.buffer = buf;
+  const bp = ctx.createBiquadFilter();
+  bp.type = "bandpass"; bp.frequency.value = 800; bp.Q.value = 0.8;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.15, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+  noise.connect(bp); bp.connect(gain); gain.connect(ctx.destination);
+  noise.start(); noise.stop(ctx.currentTime + 0.15);
+  const osc = ctx.createOscillator();
+  const g2 = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(400, ctx.currentTime + 0.05);
+  osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.3);
+  g2.gain.setValueAtTime(0, ctx.currentTime);
+  g2.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.06);
+  g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+  osc.connect(g2); g2.connect(ctx.destination);
+  osc.start(ctx.currentTime + 0.05); osc.stop(ctx.currentTime + 0.4);
+}
 
 /* ───────────────── SHAKE DETECTION HOOK ───────────────── */
 function useShake(callback, threshold = 25) {
@@ -803,7 +828,7 @@ function SecretSparkles() {
     setFound((s) => new Set(s).add(idx));
     setActive(idx);
     setShowHint(false);
-    setTimeout(() => setActive(null), 3500);
+    setTimeout(() => setActive(null), 2000);
   }
 
   const positions = [
@@ -1990,6 +2015,7 @@ function Fireworks({ active, duration = 6000 }) {
 
         if (r.y <= r.targetY || r.vy >= 0) {
           explode(r.x, r.y, r.color);
+          playFireworkSound();
           rockets.splice(i, 1);
         }
       }
