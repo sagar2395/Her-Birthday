@@ -161,11 +161,12 @@ function useShake(callback, threshold = 25) {
   }, [threshold]);
 }
 
-/* >>> 🎵 SONGS — she can switch between these from the music controls. */
+/* >>> 🎵 SONGS — she can cycle through these with the music button. Last entry = Off. */
 const SONG_LIST = [
   { url: "/media/hawayein.mp3", name: "Hawayein" },
   { url: "/media/tum-se-hi.mp3", name: "Tum Se Hi" },
   { url: "/media/kaise-hua.mp3", name: "Kaise Hua" },
+  { url: null, name: "Off" },
 ];
 
 /* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
@@ -1311,12 +1312,32 @@ function FinaleExperience({ mem, unlocked, onClose }) {
                   )}
                   {mem.ps && <div className="finale-ps">{mem.ps}</div>}
                   <div className="finale-sign">Happy birthday, Nidhi. {"💛"}</div>
-                  <button className="finale-continue-btn" onClick={() => setStage(5)}>
-                    See our story in photos {"→"}
+                  <button className="finale-continue-btn" onClick={() => setStage(4)}>
+                    One more thing… {"→"}
                   </button>
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {stage === 4 && (
+        <div className="finale-stage finale-handwritten-stage">
+          <div className="finale-handwritten-scroll">
+            <h2 className="finale-handwritten-title">In my own handwriting {"✍️"}</h2>
+            <p className="finale-handwritten-sub">No AI, no code — just me, a pen, and everything I feel.</p>
+            <div className="finale-handwritten-photos">
+              <img src="/media/handwritten-letter-1.jpg" alt="Handwritten letter page 1" className="finale-handwritten-img" />
+              <img src="/media/handwritten-letter-2.jpg" alt="Handwritten letter page 2" className="finale-handwritten-img" />
+            </div>
+            <div className="finale-voice-note">
+              <div className="finale-voice-label">{"🎙️"} And here's my voice, just for you</div>
+              <audio controls src="/media/sagar-happy-birthday.mp3" className="finale-voice-audio" preload="metadata" />
+            </div>
+            <button className="finale-continue-btn" onClick={() => setStage(5)}>
+              See our story in photos {"→"}
+            </button>
           </div>
         </div>
       )}
@@ -2348,7 +2369,7 @@ export default function App() {
   });
   const [burst, setBurst] = useState(0);
   const [musicOn, setMusicOn] = useState(false);
-  const [songIdx, setSongIdx] = useState(() => Math.floor(Math.random() * SONG_LIST.length));
+  const [songIdx, setSongIdx] = useState(() => Math.floor(Math.random() * (SONG_LIST.length - 1)));
   const [toast, setToast] = useState("");
   const [celebrate, setCelebrate] = useState(0);
   const [countdownDismissed, setCountdownDismissed] = useState(false);
@@ -2413,6 +2434,11 @@ export default function App() {
     const next = (songIdx + 1) % SONG_LIST.length;
     setSongIdx(next);
     a.pause();
+    if (!SONG_LIST[next].url) {
+      setMusicOn(false);
+      setToast("Music off");
+      return;
+    }
     a.src = SONG_LIST[next].url;
     a.volume = 0.55;
     a.play()
@@ -2530,7 +2556,7 @@ export default function App() {
               aria-label="Next song"
               title="Next song"
             >
-              {"♫"}
+              {musicOn ? "♫" : "♪"}
             </button>
           </header>
 
@@ -4600,6 +4626,46 @@ const STYLES = `
 .finale-promises-sign {
   color: #f0d98a; font-size: 19px;
   margin-top: 16px;
+}
+
+/* ——— HANDWRITTEN LETTER + VOICE NOTE (finale stage 4) ——— */
+.finale-handwritten-stage {
+  align-items: stretch; justify-content: flex-start; padding: 0; overflow-y: auto;
+}
+.finale-handwritten-scroll {
+  width: 100%; max-width: 500px; margin: 0 auto; padding: 48px 24px 80px;
+}
+.finale-handwritten-title {
+  font-family: 'Great Vibes', cursive; font-size: clamp(28px, 7vw, 40px);
+  color: #f0d98a; margin: 0 0 8px; text-align: center;
+}
+.finale-handwritten-sub {
+  font-family: 'Cormorant Garamond', serif; font-size: 15px;
+  font-style: italic; color: #e7b9c4; text-align: center; margin: 0 0 24px;
+}
+.finale-handwritten-photos {
+  display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px;
+}
+.finale-handwritten-img {
+  width: 100%; border-radius: 12px;
+  border: 1px solid rgba(212,175,55,.3);
+  box-shadow: 0 8px 30px rgba(0,0,0,.4);
+  animation: fadeUp .6s ease both;
+}
+.finale-handwritten-img:nth-child(2) { animation-delay: .2s; }
+.finale-voice-note {
+  background: linear-gradient(160deg, rgba(20,24,52,.9), rgba(12,15,38,.9));
+  border: 1px solid rgba(212,175,55,.3); border-radius: 16px;
+  padding: 20px; text-align: center; margin-bottom: 24px;
+  animation: fadeUp .6s ease .4s both;
+}
+.finale-voice-label {
+  font-family: 'Cormorant Garamond', serif; font-size: 16px;
+  font-style: italic; color: #f0d98a; margin-bottom: 14px;
+}
+.finale-voice-audio {
+  width: 100%; max-width: 320px; height: 40px; border-radius: 20px;
+  filter: sepia(.3) saturate(.8) brightness(.9);
 }
 
 /* ——— SHAKE CONFETTI ——— */
