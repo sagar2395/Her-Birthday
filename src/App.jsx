@@ -136,35 +136,11 @@ function useShake(callback, threshold = 25) {
   }, [threshold]);
 }
 
-/* >>> 🎵 SONGS — place .mp3 files in public/media/ and add paths here.
-   The app picks one randomly each session so she hears something fresh.
-   Only songs that exist in public/media/ will play; missing files fail silently.
-
-   RECOMMENDED SONGS (romantic Hindi, instrumental-friendly):
-   ── Romantic & Soft ──
-     "Agar Tum Saath Ho"   — Tamasha          (longing, intimate)
-     "Tum Hi Ho"           — Aashiqui 2       (devotional love)
-     "Channa Mereya"       — Ae Dil Hai Mushkil(bittersweet, beautiful)
-     "Pal Ek Pal"          — Jalebi           (gentle, dreamy)
-     "Raabta"              — Agent Vinod       (soulful connection)
-   ── Warm & Joyful ──
-     "Ilahi"               — Yeh Jawaani...    (wanderlust, happy)
-     "Tere Bina"           — Guru              (warm, timeless)
-     "Kalank Title Track"  — Kalank            (grand, emotional)
-     "Phir Bhi Tumko"      — Half Girlfriend   (devoted, tender)
-   ── Upbeat / Celebration ──
-     "Tum Se Hi"           — Jab We Met        (bright, in love)
-     "Tera Ban Jaunga"     — Kabir Singh       (promise of forever)
-     "Dil Diyan Gallan"    — Tiger Zinda Hai   (soft but uplifting)
-
-   Add whichever you download to the list below: */
+/* >>> 🎵 SONGS — the app picks one randomly each session so she hears something fresh. */
 const SONG_LIST = [
-  "/media/agar-tum-saath-ho.mp3",
-  "/media/tum-hi-ho.mp3",
-  "/media/channa-mereya.mp3",
-  "/media/ilahi.mp3",
-  "/media/tere-bina.mp3",
-  "/media/hawayein.mp3",
+  "/media/hawayein.mp3",    // Hawayein — Jab Harry Met Sejal
+  "/media/tum-se-hi.mp3",   // Tum Se Hi — Jab We Met
+  "/media/kaise-hua.mp3",   // Kaise Hua — Kabir Singh
 ];
 const SONG_URL = SONG_LIST[Math.floor(Math.random() * SONG_LIST.length)];
 
