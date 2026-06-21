@@ -724,7 +724,7 @@ function OccasionCards({ answered, unlocked, onOpen }) {
             const p = m.photos.find((p) => p.url);
             return (
               <div className="collage-img" key={m.id} style={{ animationDelay: i * 2 + "s" }}>
-                <img src={p.url} alt={m.name} />
+                <img src={p.url} alt={m.name} loading="lazy" />
               </div>
             );
           })}
@@ -761,7 +761,7 @@ function OccasionCards({ answered, unlocked, onOpen }) {
               <div className="oc-body">
                 <div className="oc-cover">
                   {coverPhoto ? (
-                    <img src={coverPhoto.url} alt={m.name} className="oc-cover-img" style={coverPhoto.focus ? { objectPosition: coverPhoto.focus } : undefined} />
+                    <img src={coverPhoto.url} alt={m.name} className="oc-cover-img" loading="lazy" style={coverPhoto.focus ? { objectPosition: coverPhoto.focus } : undefined} />
                   ) : (
                     <span className="oc-icon">{m.icon || "💛"}</span>
                   )}
@@ -980,7 +980,7 @@ function Feast({ onLightbox }) {
             onClick={() => onLightbox({ ...f, place: "Our Feast" })}
           >
             {f.url ? (
-              <img src={f.url} alt={f.caption} />
+              <img src={f.url} alt={f.caption} loading="lazy" />
             ) : (
               <span className="feast-ph">🍴</span>
             )}
@@ -1001,7 +1001,7 @@ function Lightbox({ item, onClose }) {
           {"×"}
         </button>
         {item.url ? (
-          <img src={item.url} alt={item.caption || ""} />
+          <img src={item.url} alt={item.caption || ""} loading="lazy" />
         ) : (
           <div className="lb-ph">
             {"🍴"}
@@ -1113,7 +1113,7 @@ function Gallery({ photos, emptyText }) {
               onClick={() => setI(idx)}
             >
               {ph.url ? (
-                <img src={ph.url} alt="" />
+                <img src={ph.url} alt="" loading="lazy" />
               ) : (
                 <span className="thumb-ph">{idx + 1}</span>
               )}
@@ -1742,30 +1742,36 @@ function LoveQuotes() {
    At midnight IST → explodes into "Happy Birthday" celebration + plays birthday music.
    Stays in birthday phase for 10 minutes after midnight so she can see it.          */
 function useBirthdayCountdown() {
-  const [phase, setPhase] = useState("idle"); // "idle" | "counting" | "birthday"
+  const [phase, setPhase] = useState("idle");
   const [secsLeft, setSecsLeft] = useState(0);
 
   useEffect(() => {
     function tick() {
       const now = new Date();
-      const target = BIRTHDAY_MIDNIGHT_UTC;
-      const diff = (target - now) / 1000;
+      const diff = (BIRTHDAY_MIDNIGHT_UTC - now) / 1000;
 
       if (diff <= 0 && diff > -600) {
         setPhase("birthday");
         setSecsLeft(0);
+        return 1000;
       } else if (diff > 0 && diff <= 600) {
         setPhase("counting");
         setSecsLeft(Math.ceil(diff));
+        return 1000;
       } else {
         setPhase("idle");
-        setSecsLeft(Math.max(0, Math.ceil(diff)));
+        setSecsLeft(0);
+        return diff > 600 ? Math.min((diff - 600) * 1000, 60000) : 60000;
       }
     }
 
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
+    let timer;
+    function schedule() {
+      const nextIn = tick();
+      timer = setTimeout(schedule, nextIn);
+    }
+    schedule();
+    return () => clearTimeout(timer);
   }, []);
 
   return { phase, secsLeft };
@@ -1906,9 +1912,13 @@ function Fireworks({ active, duration = 6000 }) {
       });
     }
 
+    const isMobile = window.innerWidth < 768;
+    const MAX_PARTICLES = isMobile ? 200 : 400;
+
     function explode(x, y, color) {
-      const count = 60 + Math.floor(Math.random() * 40);
+      const count = isMobile ? 30 + Math.floor(Math.random() * 20) : 60 + Math.floor(Math.random() * 40);
       for (let i = 0; i < count; i++) {
+        if (particles.length >= MAX_PARTICLES) break;
         const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
         const speed = 2 + Math.random() * 4;
         particles.push({
@@ -1922,7 +1932,9 @@ function Fireworks({ active, duration = 6000 }) {
           sparkle: Math.random() > 0.7,
         });
       }
-      for (let i = 0; i < 12; i++) {
+      const sparkleCount = isMobile ? 6 : 12;
+      for (let i = 0; i < sparkleCount; i++) {
+        if (particles.length >= MAX_PARTICLES) break;
         const angle = Math.random() * Math.PI * 2;
         const speed = 1 + Math.random() * 2;
         particles.push({
