@@ -136,8 +136,37 @@ function useShake(callback, threshold = 25) {
   }, [threshold]);
 }
 
-/* >>> 🎵 PASTE YOUR SONG'S DIRECT AUDIO URL HERE (leave '' for none) */
-const SONG_URL = "/media/hawayein.mp3";
+/* >>> 🎵 SONGS — place .mp3 files in public/media/ and add paths here.
+   The app picks one randomly each session so she hears something fresh.
+   Only songs that exist in public/media/ will play; missing files fail silently.
+
+   RECOMMENDED SONGS (romantic Hindi, instrumental-friendly):
+   ── Romantic & Soft ──
+     "Agar Tum Saath Ho"   — Tamasha          (longing, intimate)
+     "Tum Hi Ho"           — Aashiqui 2       (devotional love)
+     "Channa Mereya"       — Ae Dil Hai Mushkil(bittersweet, beautiful)
+     "Pal Ek Pal"          — Jalebi           (gentle, dreamy)
+     "Raabta"              — Agent Vinod       (soulful connection)
+   ── Warm & Joyful ──
+     "Ilahi"               — Yeh Jawaani...    (wanderlust, happy)
+     "Tere Bina"           — Guru              (warm, timeless)
+     "Kalank Title Track"  — Kalank            (grand, emotional)
+     "Phir Bhi Tumko"      — Half Girlfriend   (devoted, tender)
+   ── Upbeat / Celebration ──
+     "Tum Se Hi"           — Jab We Met        (bright, in love)
+     "Tera Ban Jaunga"     — Kabir Singh       (promise of forever)
+     "Dil Diyan Gallan"    — Tiger Zinda Hai   (soft but uplifting)
+
+   Add whichever you download to the list below: */
+const SONG_LIST = [
+  "/media/agar-tum-saath-ho.mp3",
+  "/media/tum-hi-ho.mp3",
+  "/media/channa-mereya.mp3",
+  "/media/ilahi.mp3",
+  "/media/tere-bina.mp3",
+  "/media/hawayein.mp3",
+];
+const SONG_URL = SONG_LIST[Math.floor(Math.random() * SONG_LIST.length)];
 
 /* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
 const BIRTHDAY_SONG_URL = "/media/happy-birthday.mp3";
@@ -672,7 +701,7 @@ const REASONS_I_LOVE_YOU = [
   { reason: "The way you calmed down when I touched your head at Cafe Yolo — and I knew", icon: "🤍" },
   { reason: "Our long, aimless drives in the Kwid — windows down, just you and me", icon: "🚗" },
   { reason: "The way you jumped into the ocean with me, even though neither of us can swim", icon: "🌊" },
-  { reason: "The fierce, tender way you love your little brother — your first baby", icon: "🧡" },
+  { reason: "The way you hug me tighter when you know I've had a hard day", icon: "🧡" },
   { reason: "How you dance like the whole world is yours — and it is", icon: "💃" },
   { reason: "Because you are my today, my tomorrow, and every day after", icon: "♾️" },
 ];
@@ -4197,16 +4226,17 @@ const STYLES = `
   animation: fadeUp .5s ease both;
 }
 .rf-inner {
-  position: relative; width: 100%; padding-top: 110%;
+  position: relative; width: 100%; min-height: 170px;
   transform-style: preserve-3d; transition: transform .6s ease;
 }
 .rf-flipped .rf-inner { transform: rotateY(180deg); }
 .rf-front, .rf-back {
   position: absolute; inset: 0; backface-visibility: hidden;
   border-radius: 16px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; padding: 16px;
+  align-items: center; justify-content: center; padding: 14px 10px;
   border: 1px solid rgba(212,175,55,.3);
   box-shadow: 0 4px 16px rgba(0,0,0,.2);
+  overflow: hidden; word-break: break-word;
 }
 .rf-front {
   background: linear-gradient(160deg, rgba(20,24,52,.95), rgba(12,15,38,.95));
@@ -4238,12 +4268,14 @@ const STYLES = `
   opacity: .8;
 }
 .rf-num-back {
-  font-family: 'Great Vibes', cursive; font-size: 24px; color: #e7b9c4;
+  font-family: 'Great Vibes', cursive; font-size: 18px; color: #e7b9c4;
 }
-.rf-icon-back { font-size: 32px; margin: 6px 0; }
+.rf-icon-back { font-size: 24px; margin: 4px 0; }
 .rf-text {
-  font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic;
-  line-height: 1.45; color: #f3ead3; text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-size: clamp(12px, 3.2vw, 15px); font-style: italic;
+  line-height: 1.4; color: #f3ead3; text-align: center;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;
 }
 .rf-last .rf-front { border-color: rgba(247,195,205,.5); }
 .reasons-list {
