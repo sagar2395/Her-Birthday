@@ -2375,30 +2375,21 @@ export default function App() {
         .then(() => setMusicOn(true))
         .catch(() => setMusicOn(false));
     }
+    setToast("Now playing: " + SONG_LIST[songIdx].name + " 🎵");
   }
 
-  function toggleMusic() {
+  function nextSong() {
     const a = audioRef.current;
-    if (!SONG_LIST.length || !a) {
-      setToast("Add your song's URL in the code to play music 🎵");
-      return;
-    }
-    if (musicOn) {
-      const next = (songIdx + 1) % SONG_LIST.length;
-      setSongIdx(next);
-      a.pause();
-      a.src = SONG_LIST[next].url;
-      a.load();
-      a.volume = 0.55;
-      a.play()
-        .then(() => setToast("Now playing: " + SONG_LIST[next].name + " 🎵"))
-        .catch(() => setMusicOn(false));
-    } else {
-      a.volume = 0.55;
-      a.play()
-        .then(() => setMusicOn(true))
-        .catch(() => setToast("Tap again to start the music 🎵"));
-    }
+    if (!SONG_LIST.length || !a) return;
+    const next = (songIdx + 1) % SONG_LIST.length;
+    setSongIdx(next);
+    a.pause();
+    a.src = SONG_LIST[next].url;
+    a.load();
+    a.volume = 0.55;
+    a.play()
+      .then(() => setToast("Now playing: " + SONG_LIST[next].name + " 🎵"))
+      .catch(() => {});
   }
 
   function openPin(id) {
@@ -2504,11 +2495,11 @@ export default function App() {
             </button>
             <button
               className={"music" + (musicOn ? " music-on" : "")}
-              onClick={toggleMusic}
-              aria-label={musicOn ? "Next song" : "Play music"}
-              title={musicOn ? "Next song" : "Play music"}
+              onClick={nextSong}
+              aria-label="Next song"
+              title="Next song"
             >
-              {musicOn ? "♫" : "♪"}
+              {"♫"}
             </button>
           </header>
 
