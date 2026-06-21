@@ -48,10 +48,100 @@
   ════════════════════════════════════════════════════════════════════════════
 */
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 
-/* >>> 🎵 PASTE YOUR SONG'S DIRECT AUDIO URL HERE (leave '' for none) */
-const SONG_URL = "/media/hawayein.mp3";
+/* ───────────────── SOUND EFFECTS (Web Audio API — no files needed) ───────────────── */
+const AudioCtx = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext);
+let _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx && AudioCtx) _audioCtx = new AudioCtx();
+  if (_audioCtx && _audioCtx.state === "suspended") _audioCtx.resume();
+  return _audioCtx;
+}
+function playChime() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  [523.25, 659.25, 783.99].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.12);
+    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + i * 0.12 + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.6);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + i * 0.12);
+    osc.stop(ctx.currentTime + i * 0.12 + 0.7);
+  });
+}
+function playSparkle() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(1200, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(2400, ctx.currentTime + 0.15);
+  gain.gain.setValueAtTime(0.1, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(); osc.stop(ctx.currentTime + 0.5);
+}
+function playEnvelopeSound() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  [200, 350, 500].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "triangle";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.07);
+    gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + i * 0.07 + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.07 + 0.3);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + i * 0.07);
+    osc.stop(ctx.currentTime + i * 0.07 + 0.4);
+  });
+}
+function playCelebrate() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = i % 2 === 0 ? "sine" : "triangle";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.1);
+    gain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + i * 0.1 + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.5);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + i * 0.1);
+    osc.stop(ctx.currentTime + i * 0.1 + 0.6);
+  });
+}
+
+/* ───────────────── SHAKE DETECTION HOOK ───────────────── */
+function useShake(callback, threshold = 25) {
+  const cbRef = useRef(callback);
+  cbRef.current = callback;
+  useEffect(() => {
+    let lastX = 0, lastY = 0, lastZ = 0, lastTime = 0;
+    function onMotion(e) {
+      const acc = e.accelerationIncludingGravity;
+      if (!acc || acc.x == null) return;
+      const now = Date.now();
+      if (now - lastTime < 150) return;
+      const delta = Math.abs(acc.x - lastX) + Math.abs(acc.y - lastY) + Math.abs(acc.z - lastZ);
+      if (delta > threshold && lastTime > 0) cbRef.current();
+      lastX = acc.x; lastY = acc.y; lastZ = acc.z; lastTime = now;
+    }
+    window.addEventListener("devicemotion", onMotion);
+    return () => window.removeEventListener("devicemotion", onMotion);
+  }, [threshold]);
+}
+
+/* >>> 🎵 SONGS — she can switch between these from the music controls. */
+const SONG_LIST = [
+  { url: "/media/hawayein.mp3", name: "Hawayein" },
+  { url: "/media/tum-se-hi.mp3", name: "Tum Se Hi" },
+  { url: "/media/kaise-hua.mp3", name: "Kaise Hua" },
+];
 
 /* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
 const BIRTHDAY_SONG_URL = "/media/happy-birthday.mp3";
@@ -196,6 +286,7 @@ const MEMORIES = [
       { url: "/media/her-friends/her-friends-03-beach.jpg", caption: "Sun, sand, and your favourite people. Some days are just pure joy. ☀️" },
       { url: "/media/her-friends/her-friends-04-deer-wall.jpg", caption: "Cheek to cheek, smiles all the way — the friends who feel like home." },
       { url: "/media/her-friends/her-friends-05-cheek.jpg", focus: "50% 38%", caption: "No reason needed, just the two of you and a camera. 💛" },
+      { url: "/media/her-friends/her-friends-06-shopping.jpg", focus: "50% 25%", caption: "Mirror selfies and shopping sprees — some friendships are forever in style. 🛍️" },
     ],
     food: [],
     quiz: null,
@@ -586,7 +677,7 @@ const REASONS_I_LOVE_YOU = [
   { reason: "The way you calmed down when I touched your head at Cafe Yolo — and I knew", icon: "🤍" },
   { reason: "Our long, aimless drives in the Kwid — windows down, just you and me", icon: "🚗" },
   { reason: "The way you jumped into the ocean with me, even though neither of us can swim", icon: "🌊" },
-  { reason: "The fierce, tender way you love your little brother — your first baby", icon: "🧡" },
+  { reason: "The way you hug me tighter when you know I've had a hard day", icon: "🧡" },
   { reason: "How you dance like the whole world is yours — and it is", icon: "💃" },
   { reason: "Because you are my today, my tomorrow, and every day after", icon: "♾️" },
 ];
@@ -599,6 +690,23 @@ const SECRET_MESSAGES = [
   "The day you danced in my baarat — I couldn't see anyone else. 💃",
   "From a Kwid and an Activa to our own flat and our own company. Look how far we've come. 🏠",
   "Every new day with you is still my favourite chapter. 💛",
+];
+
+const ALL_STORY_PHOTOS = MEMORIES.flatMap((m) =>
+  (m.photos || []).filter((p) => p.url).map((p) => ({ ...p, memoryName: m.name, memoryIcon: m.icon }))
+);
+
+const PROMISES = [
+  { text: "Travel somewhere new together", icon: "✈️" },
+  { text: "Cook your favourite dish from scratch", icon: "🍳" },
+  { text: "Take 100 more photos of us", icon: "📸" },
+  { text: "Go on a long, aimless Kwid drive at sunset", icon: "🚗" },
+  { text: "Watch the sunrise together at least once", icon: "🌅" },
+  { text: "Build our home into the warmest place on earth", icon: "🏠" },
+  { text: "Surprise you when you least expect it", icon: "🎁" },
+  { text: "Dance with you in the kitchen", icon: "💃" },
+  { text: "Hold your hand through every hard day", icon: "🤝" },
+  { text: "Love you louder, every single day", icon: "💛" },
 ];
 
 /* ───────────────────────────── OCCASION CARDS (replaces MapView) ───────────────────────────── */
@@ -616,7 +724,7 @@ function OccasionCards({ answered, unlocked, onOpen }) {
             const p = m.photos.find((p) => p.url);
             return (
               <div className="collage-img" key={m.id} style={{ animationDelay: i * 2 + "s" }}>
-                <img src={p.url} alt={m.name} />
+                <img src={p.url} alt={m.name} loading="lazy" />
               </div>
             );
           })}
@@ -653,7 +761,7 @@ function OccasionCards({ answered, unlocked, onOpen }) {
               <div className="oc-body">
                 <div className="oc-cover">
                   {coverPhoto ? (
-                    <img src={coverPhoto.url} alt={m.name} className="oc-cover-img" style={coverPhoto.focus ? { objectPosition: coverPhoto.focus } : undefined} />
+                    <img src={coverPhoto.url} alt={m.name} className="oc-cover-img" loading="lazy" style={coverPhoto.focus ? { objectPosition: coverPhoto.focus } : undefined} />
                   ) : (
                     <span className="oc-icon">{m.icon || "💛"}</span>
                   )}
@@ -674,15 +782,27 @@ function OccasionCards({ answered, unlocked, onOpen }) {
   );
 }
 
-/* ───────────────────────────── SECRET SPARKLES ───────────────────────────── */
+/* ───────────────────────────── SECRET SPARKLES (with hint) ───────────────────────────── */
 function SecretSparkles() {
   const [found, setFound] = useState(new Set());
   const [active, setActive] = useState(null);
+  const [showHint, setShowHint] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowHint(true), 25000);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (found.size > 0 && showHint) setShowHint(false);
+  }, [found.size, showHint]);
 
   function reveal(idx) {
     if (found.has(idx)) return;
+    playSparkle();
     setFound((s) => new Set(s).add(idx));
     setActive(idx);
+    setShowHint(false);
     setTimeout(() => setActive(null), 3500);
   }
 
@@ -701,7 +821,7 @@ function SecretSparkles() {
       {SECRET_MESSAGES.map((msg, idx) => (
         <button
           key={idx}
-          className={"secret-sparkle" + (found.has(idx) ? " ss-found" : "")}
+          className={"secret-sparkle" + (found.has(idx) ? " ss-found" : "") + (showHint && idx === 0 ? " ss-hinted" : "")}
           style={positions[idx % positions.length]}
           onClick={() => reveal(idx)}
           aria-label="Secret message"
@@ -709,6 +829,11 @@ function SecretSparkles() {
           ✦
         </button>
       ))}
+      {showHint && found.size === 0 && (
+        <div className="sparkle-hint">
+          Psst… there are secrets hidden on this page. Look for the ✦
+        </div>
+      )}
       {active !== null && (
         <div className="secret-bubble" key={active}>
           {SECRET_MESSAGES[active]}
@@ -723,48 +848,109 @@ function SecretSparkles() {
   );
 }
 
-/* ───────────────────────────── FOR YOU — REASONS I LOVE YOU ───────────────────────────── */
+/* ───────────────────────────── FOR YOU — REASONS I LOVE YOU (flip cards) ───────────────────────────── */
 function ReasonsILoveYou() {
-  const [revealed, setRevealed] = useState(3);
+  const [flipped, setFlipped] = useState(new Set());
+  const [holdProgress, setHoldProgress] = useState(0);
+  const holdTimerRef = useRef(null);
   const bottomRef = useRef(null);
+  const lastIdx = REASONS_I_LOVE_YOU.length - 1;
 
-  function showMore() {
-    setRevealed((r) => Math.min(r + 5, REASONS_I_LOVE_YOU.length));
+  const allFlipped = flipped.size >= REASONS_I_LOVE_YOU.length;
+
+  function flipCard(i) {
+    if (flipped.has(i)) return;
+    if (i === lastIdx) return;
+    playSparkle();
+    setFlipped((s) => new Set(s).add(i));
+  }
+
+  function onLastDown() {
+    if (flipped.has(lastIdx)) return;
+    setHoldProgress(0);
+    let start = Date.now();
+    holdTimerRef.current = setInterval(() => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / 2000, 1);
+      setHoldProgress(progress);
+      if (progress >= 1) {
+        clearInterval(holdTimerRef.current);
+        playCelebrate();
+        setFlipped((s) => new Set(s).add(lastIdx));
+        setHoldProgress(0);
+      }
+    }, 30);
+  }
+
+  function onLastUp() {
+    if (holdTimerRef.current) {
+      clearInterval(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+    if (!flipped.has(lastIdx)) setHoldProgress(0);
   }
 
   useEffect(() => {
-    if (revealed > 3 && bottomRef.current) {
+    if (allFlipped && bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
-  }, [revealed]);
+  }, [allFlipped]);
 
   return (
     <div className="reasons">
       <div className="reasons-head">
         <div className="reasons-kicker">A birthday list, just for you</div>
         <h2 className="reasons-title">Reasons I Love You</h2>
-        <p className="reasons-sub">Thirty-two reasons — one for every beautiful year of you. 💛</p>
+        <p className="reasons-sub">Thirty-two reasons — one for every beautiful year of you.</p>
+        <p className="reasons-instruction">Tap each card to reveal 💛</p>
       </div>
 
       <div className="reasons-list">
-        {REASONS_I_LOVE_YOU.slice(0, revealed).map((r, i) => (
-          <div
-            key={i}
-            className="reason-card"
-            style={{ animationDelay: (i % 5) * 0.12 + "s" }}
-          >
-            <span className="reason-num">{i + 1}</span>
-            <span className="reason-icon">{r.icon}</span>
-            <span className="reason-text">{r.reason}</span>
-          </div>
-        ))}
+        {REASONS_I_LOVE_YOU.map((r, i) => {
+          const isFlipped = flipped.has(i);
+          const isLast = i === lastIdx;
+          return (
+            <div
+              key={i}
+              className={"reason-flip" + (isFlipped ? " rf-flipped" : "") + (isLast ? " rf-last" : "")}
+              style={{ animationDelay: Math.min(i, 8) * 0.06 + "s" }}
+              onClick={() => isLast ? undefined : flipCard(i)}
+              onMouseDown={isLast ? onLastDown : undefined}
+              onMouseUp={isLast ? onLastUp : undefined}
+              onMouseLeave={isLast ? onLastUp : undefined}
+              onTouchStart={isLast ? onLastDown : undefined}
+              onTouchEnd={isLast ? onLastUp : undefined}
+            >
+              <div className="rf-inner">
+                <div className="rf-front">
+                  <span className="rf-num">{i + 1}</span>
+                  <span className="rf-icon-hidden">{r.icon}</span>
+                  {isLast && !isFlipped && (
+                    <>
+                      <span className="rf-hold-label">Hold to reveal</span>
+                      {holdProgress > 0 && (
+                        <div className="rf-hold-ring" style={{ "--prog": holdProgress }} />
+                      )}
+                    </>
+                  )}
+                  {!isLast && <span className="rf-tap-hint">tap</span>}
+                </div>
+                <div className="rf-back">
+                  <span className="rf-num-back">{i + 1}</span>
+                  <span className="rf-icon-back">{r.icon}</span>
+                  <span className="rf-text">{r.reason}</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {revealed < REASONS_I_LOVE_YOU.length ? (
-        <button className="reasons-more" onClick={showMore}>
-          Show me more {"💛"}
-        </button>
-      ) : (
+      <div className="reasons-progress">
+        {flipped.size} / {REASONS_I_LOVE_YOU.length} revealed
+      </div>
+
+      {allFlipped && (
         <div className="reasons-end">
           <span className="reasons-end-heart">{"💛"}</span>
           <p>…and a million reasons more.</p>
@@ -794,7 +980,7 @@ function Feast({ onLightbox }) {
             onClick={() => onLightbox({ ...f, place: "Our Feast" })}
           >
             {f.url ? (
-              <img src={f.url} alt={f.caption} />
+              <img src={f.url} alt={f.caption} loading="lazy" />
             ) : (
               <span className="feast-ph">🍴</span>
             )}
@@ -815,7 +1001,7 @@ function Lightbox({ item, onClose }) {
           {"×"}
         </button>
         {item.url ? (
-          <img src={item.url} alt={item.caption || ""} />
+          <img src={item.url} alt={item.caption || ""} loading="lazy" />
         ) : (
           <div className="lb-ph">
             {"🍴"}
@@ -831,11 +1017,28 @@ function Lightbox({ item, onClose }) {
   );
 }
 
-/* ───────────────────────────── PHOTO GALLERY ───────────────────────────── */
+/* ───────────────────────────── PHOTO GALLERY (crossfade + double-tap heart) ───────────────────────────── */
 function Gallery({ photos, emptyText }) {
   const [i, setI] = useState(0);
+  const [heartPos, setHeartPos] = useState(null);
   const touchX = useRef(null);
+  const lastTap = useRef(0);
   useEffect(() => setI(0), [photos]);
+
+  function handleDoubleTap(e) {
+    const now = Date.now();
+    if (now - lastTap.current < 350) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clientX = e.clientX ?? (e.changedTouches && e.changedTouches[0]?.clientX) ?? rect.width / 2;
+      const clientY = e.clientY ?? (e.changedTouches && e.changedTouches[0]?.clientY) ?? rect.height / 2;
+      setHeartPos({ x: clientX - rect.left, y: clientY - rect.top });
+      playSparkle();
+      setTimeout(() => setHeartPos(null), 1200);
+      lastTap.current = 0;
+    } else {
+      lastTap.current = now;
+    }
+  }
 
   if (!photos || photos.length === 0) {
     return (
@@ -858,8 +1061,11 @@ function Gallery({ photos, emptyText }) {
   const onTouchEnd = (e) => {
     if (touchX.current == null) return;
     const dx = e.changedTouches[0].clientX - touchX.current;
-    if (dx > 45) go(-1);
-    else if (dx < -45) go(1);
+    if (Math.abs(dx) > 45) {
+      if (dx > 0) go(-1); else go(1);
+    } else {
+      handleDoubleTap(e);
+    }
     touchX.current = null;
   };
 
@@ -867,7 +1073,7 @@ function Gallery({ photos, emptyText }) {
     <div className="gallery">
       <div className="photo-frame" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {p.url ? (
-          <img className="photo" src={p.url} alt={p.caption || ""} style={{ objectFit: p.fit || undefined, objectPosition: p.focus || undefined }} />
+          <img className="photo" key={p.url + "-" + i} src={p.url} alt={p.caption || ""} onClick={handleDoubleTap} style={{ objectFit: p.fit || undefined, objectPosition: p.focus || undefined }} />
         ) : (
           <div className="photo placeholder">
             <div className="ph-mark">{"📷"}</div>
@@ -875,12 +1081,18 @@ function Gallery({ photos, emptyText }) {
           </div>
         )}
 
+        {heartPos && (
+          <div className="dbl-tap-heart" key={heartPos.x + "-" + heartPos.y} style={{ left: heartPos.x, top: heartPos.y }}>
+            {"❤️"}
+          </div>
+        )}
+
         {photos.length > 1 && (
           <>
-            <button className="nav nav-l" onClick={() => go(-1)} aria-label="Previous">
+            <button className="nav nav-l" onClick={(e) => { e.stopPropagation(); go(-1); }} aria-label="Previous">
               {"‹"}
             </button>
-            <button className="nav nav-r" onClick={() => go(1)} aria-label="Next">
+            <button className="nav nav-r" onClick={(e) => { e.stopPropagation(); go(1); }} aria-label="Next">
               {"›"}
             </button>
             <div className="counter">
@@ -890,7 +1102,7 @@ function Gallery({ photos, emptyText }) {
         )}
       </div>
 
-      {p.caption && <div className="caption">{p.caption}</div>}
+      {p.caption && <div className="caption" key={"cap-" + i}>{p.caption}</div>}
 
       {photos.length > 1 && (
         <div className="thumbs">
@@ -901,7 +1113,7 @@ function Gallery({ photos, emptyText }) {
               onClick={() => setI(idx)}
             >
               {ph.url ? (
-                <img src={ph.url} alt="" />
+                <img src={ph.url} alt="" loading="lazy" />
               ) : (
                 <span className="thumb-ph">{idx + 1}</span>
               )}
@@ -984,6 +1196,205 @@ function HeartBurst({ trigger, full }) {
   );
 }
 
+/* ───────────────────────────── FINALE EXPERIENCE (full-screen takeover) ───────────────────────────── */
+function FinaleExperience({ mem, unlocked, onClose }) {
+  const [stage, setStage] = useState(0);
+  const [typewriterDone, setTypewriterDone] = useState(false);
+  const [slideshowIdx, setSlideshowIdx] = useState(0);
+  const [revealedPromises, setRevealedPromises] = useState(new Set());
+  const slideshowTimer = useRef(null);
+
+  useEffect(() => {
+    playCelebrate();
+    const t = setTimeout(() => setStage(1), 2400);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (stage === 1) {
+      const t = setTimeout(() => setStage(2), 3000);
+      return () => clearTimeout(t);
+    }
+    if (stage === 2) {
+      const t = setTimeout(() => setStage(3), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [stage]);
+
+  useEffect(() => {
+    if (stage === 5 && ALL_STORY_PHOTOS.length > 0) {
+      slideshowTimer.current = setInterval(() => {
+        setSlideshowIdx((prev) => (prev + 1) % ALL_STORY_PHOTOS.length);
+      }, 4000);
+      return () => clearInterval(slideshowTimer.current);
+    }
+  }, [stage]);
+
+  function revealPromise(i) {
+    if (revealedPromises.has(i)) return;
+    playSparkle();
+    setRevealedPromises((s) => new Set(s).add(i));
+  }
+
+  return (
+    <div className="finale-exp" onClick={(e) => e.stopPropagation()}>
+      <button className="finale-exp-close" onClick={onClose} aria-label="Close">{"×"}</button>
+      <Fireworks active duration={12000} />
+
+      {stage === 0 && (
+        <div className="finale-stage finale-entrance">
+          <div className="finale-entrance-stars" />
+        </div>
+      )}
+
+      {stage === 1 && (
+        <div className="finale-stage finale-name-stage">
+          <div className="finale-calligraphy">Nidhi</div>
+        </div>
+      )}
+
+      {stage === 2 && (
+        <div className="finale-stage finale-hbd-stage">
+          <div className="finale-crown-big">{"👑"}</div>
+          <h1 className="finale-hbd-text">Happy Birthday</h1>
+          <h2 className="finale-hbd-name">Nidhi</h2>
+          <div className="finale-hbd-sparkles">{"✨ 🎂 ✨"}</div>
+        </div>
+      )}
+
+      {stage === 3 && (
+        <div className="finale-stage finale-letter-stage">
+          <div className="finale-letter-scroll">
+            <div className="finale-letter-paper">
+              <div className="finale-letter-date">22nd June, 2026</div>
+              <h3 className="finale-letter-greeting">My dearest Nidhi,</h3>
+              <div className="finale-letter-body">
+                {mem.message.split("\n\n").map((para, idx) => (
+                  <p key={idx}>
+                    <Typewriter text={para} speed={18} onDone={idx === mem.message.split("\n\n").length - 1 ? () => setTypewriterDone(true) : undefined} />
+                  </p>
+                ))}
+              </div>
+              {typewriterDone && (
+                <div className="finale-letter-actions">
+                  {mem.birthdayNote && (
+                    <div className="finale-bday-note">
+                      <div className="finale-bday-note-label">A birthday wish, handwritten from my heart</div>
+                      <p className="finale-bday-note-text">{mem.birthdayNote}</p>
+                    </div>
+                  )}
+                  {mem.ps && <div className="finale-ps">{mem.ps}</div>}
+                  <div className="finale-sign">Happy birthday, Nidhi. {"💛"}</div>
+                  <button className="finale-continue-btn" onClick={() => setStage(5)}>
+                    See our story in photos {"→"}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {stage === 5 && (
+        <div className="finale-stage finale-slideshow-stage">
+          {ALL_STORY_PHOTOS.length > 0 && (
+            <div className="finale-slideshow">
+              <img
+                className="finale-slideshow-img"
+                key={slideshowIdx}
+                src={ALL_STORY_PHOTOS[slideshowIdx].url}
+                alt={ALL_STORY_PHOTOS[slideshowIdx].caption || ""}
+              />
+              <div className="finale-slideshow-caption" key={"sc-" + slideshowIdx}>
+                <span className="finale-slideshow-icon">{ALL_STORY_PHOTOS[slideshowIdx].memoryIcon}</span>
+                {ALL_STORY_PHOTOS[slideshowIdx].caption || ALL_STORY_PHOTOS[slideshowIdx].memoryName}
+              </div>
+              <div className="finale-slideshow-counter">
+                {slideshowIdx + 1} / {ALL_STORY_PHOTOS.length}
+              </div>
+            </div>
+          )}
+          <button className="finale-continue-btn finale-continue-bottom" onClick={() => setStage(6)}>
+            One last thing {"→"}
+          </button>
+        </div>
+      )}
+
+      {stage === 6 && (
+        <div className="finale-stage finale-promises-stage">
+          <div className="finale-promises-scroll">
+            <h2 className="finale-promises-title">My Promises to You</h2>
+            <p className="finale-promises-sub">Tap each one to seal it {"💛"}</p>
+            <div className="finale-promises-list">
+              {PROMISES.map((p, i) => (
+                <button
+                  key={i}
+                  className={"finale-promise" + (revealedPromises.has(i) ? " fp-sealed" : "")}
+                  style={{ animationDelay: i * 0.08 + "s" }}
+                  onClick={() => revealPromise(i)}
+                >
+                  <span className="fp-icon">{p.icon}</span>
+                  <span className="fp-text">{p.text}</span>
+                  {revealedPromises.has(i) && <span className="fp-seal">{"💛"}</span>}
+                </button>
+              ))}
+            </div>
+            <div className="finale-promises-progress">
+              {revealedPromises.size} / {PROMISES.length} sealed
+            </div>
+            {revealedPromises.size >= PROMISES.length && (
+              <div className="finale-promises-end">
+                <p>Every promise, sealed with love.</p>
+                <p className="finale-promises-sign">Happy birthday, my love. Always yours, Sagar. {"💛"}</p>
+                <button className="finale-continue-btn" onClick={onClose}>
+                  Back to her story
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ───────────────────────────── AUTO SLIDESHOW (montage mode) ───────────────────────────── */
+function AutoSlideshow({ onClose }) {
+  const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused || ALL_STORY_PHOTOS.length === 0) return;
+    const t = setInterval(() => {
+      setIdx((prev) => (prev + 1) % ALL_STORY_PHOTOS.length);
+    }, 4000);
+    return () => clearInterval(t);
+  }, [paused]);
+
+  if (ALL_STORY_PHOTOS.length === 0) return null;
+  const p = ALL_STORY_PHOTOS[idx];
+
+  return (
+    <div className="auto-slideshow">
+      <div className="as-bg" key={idx}>
+        <img src={p.url} alt="" className="as-bg-img" />
+      </div>
+      <img className="as-photo" key={"p-" + idx} src={p.url} alt={p.caption || ""} />
+      <div className="as-caption" key={"c-" + idx}>
+        <span className="as-icon">{p.memoryIcon}</span>
+        <span>{p.caption || p.memoryName}</span>
+      </div>
+      <div className="as-counter">{idx + 1} / {ALL_STORY_PHOTOS.length}</div>
+      <div className="as-controls">
+        <button className="as-btn" onClick={() => setIdx((x) => (x - 1 + ALL_STORY_PHOTOS.length) % ALL_STORY_PHOTOS.length)}>{"‹"}</button>
+        <button className="as-btn" onClick={() => setPaused((x) => !x)}>{paused ? "▶" : "❚❚"}</button>
+        <button className="as-btn" onClick={() => setIdx((x) => (x + 1) % ALL_STORY_PHOTOS.length)}>{"›"}</button>
+      </div>
+      <button className="as-close" onClick={onClose}>{"×"}</button>
+    </div>
+  );
+}
+
 /* ───────────────────────────── MEMORY MODAL ─────────────────────────────
    Reveal flow she'll experience:
      1) read the love note (envelope she taps open) + answer the quiz
@@ -991,7 +1402,11 @@ function HeartBurst({ trigger, full }) {
      3) the trip's VIDEO plays (if you added one)
      4) the moment the video ends → the PHOTOS (Moments / Food) are revealed
    (Already-answered memories open fully unlocked when revisited.)                */
-function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAnswer }) {
+function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAnswer, onNext }) {
+  if (mem.isFinale) {
+    return <FinaleExperience mem={mem} unlocked={unlocked} onClose={onClose} />;
+  }
+
   const alreadyDone = !mem.quiz || answered[mem.id] === "correct";
   const hasVideo = !!mem.video;
   const [stage, setStage] = useState(alreadyDone ? "full" : "quiz");
@@ -1119,17 +1534,11 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
           </div>
         )}
 
-        {mem.isFinale && mem.birthdayNote && (
-          <div className="bday-note">
-            <div className="bday-note-label">A birthday wish, handwritten from my heart</div>
-            <div className="bday-note-paper">
-              <p className="bday-note-text">{mem.birthdayNote}</p>
-            </div>
-          </div>
+        {onNext && (
+          <button className="next-chapter-btn" onClick={onNext}>
+            Next chapter {"→"}
+          </button>
         )}
-
-        {mem.isFinale && unlocked && mem.ps && <div className="ps">{mem.ps}</div>}
-        {mem.isFinale && <div className="sign">Happy birthday, Nidhi. {"💛"}</div>}
       </div>
     </div>
   );
@@ -1192,10 +1601,15 @@ function Typewriter({ text, speed = 28, onDone }) {
 function Envelope({ children, name }) {
   const [opened, setOpened] = useState(false);
 
+  function open() {
+    playEnvelopeSound();
+    setOpened(true);
+  }
+
   return opened ? (
     <div className="envelope-content" key="content">{children}</div>
   ) : (
-    <button className="envelope-sealed" onClick={() => setOpened(true)}>
+    <button className="envelope-sealed" onClick={open}>
       <div className="env-flap" />
       <div className="env-body">
         <span className="env-icon">💌</span>
@@ -1328,30 +1742,36 @@ function LoveQuotes() {
    At midnight IST → explodes into "Happy Birthday" celebration + plays birthday music.
    Stays in birthday phase for 10 minutes after midnight so she can see it.          */
 function useBirthdayCountdown() {
-  const [phase, setPhase] = useState("idle"); // "idle" | "counting" | "birthday"
+  const [phase, setPhase] = useState("idle");
   const [secsLeft, setSecsLeft] = useState(0);
 
   useEffect(() => {
     function tick() {
       const now = new Date();
-      const target = BIRTHDAY_MIDNIGHT_UTC;
-      const diff = (target - now) / 1000;
+      const diff = (BIRTHDAY_MIDNIGHT_UTC - now) / 1000;
 
       if (diff <= 0 && diff > -600) {
         setPhase("birthday");
         setSecsLeft(0);
+        return 1000;
       } else if (diff > 0 && diff <= 600) {
         setPhase("counting");
         setSecsLeft(Math.ceil(diff));
+        return 1000;
       } else {
         setPhase("idle");
-        setSecsLeft(Math.max(0, Math.ceil(diff)));
+        setSecsLeft(0);
+        return diff > 600 ? Math.min((diff - 600) * 1000, 60000) : 60000;
       }
     }
 
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
+    let timer;
+    function schedule() {
+      const nextIn = tick();
+      timer = setTimeout(schedule, nextIn);
+    }
+    schedule();
+    return () => clearTimeout(timer);
   }, []);
 
   return { phase, secsLeft };
@@ -1492,9 +1912,13 @@ function Fireworks({ active, duration = 6000 }) {
       });
     }
 
+    const isMobile = window.innerWidth < 768;
+    const MAX_PARTICLES = isMobile ? 200 : 400;
+
     function explode(x, y, color) {
-      const count = 60 + Math.floor(Math.random() * 40);
+      const count = isMobile ? 30 + Math.floor(Math.random() * 20) : 60 + Math.floor(Math.random() * 40);
       for (let i = 0; i < count; i++) {
+        if (particles.length >= MAX_PARTICLES) break;
         const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
         const speed = 2 + Math.random() * 4;
         particles.push({
@@ -1508,7 +1932,9 @@ function Fireworks({ active, duration = 6000 }) {
           sparkle: Math.random() > 0.7,
         });
       }
-      for (let i = 0; i < 12; i++) {
+      const sparkleCount = isMobile ? 6 : 12;
+      for (let i = 0; i < sparkleCount; i++) {
+        if (particles.length >= MAX_PARTICLES) break;
         const angle = Math.random() * Math.PI * 2;
         const speed = 1 + Math.random() * 2;
         particles.push({
@@ -1659,7 +2085,9 @@ function CalligraphyLoader({ onComplete }) {
 /* ───────────────────────────── BIRTHDAY LETTER (between intro & main app) ───────────────────────────── */
 function BirthdayLetter({ onContinue }) {
   const [scrolled, setScrolled] = useState(false);
+  const [revealed, setRevealed] = useState(new Set([0]));
   const contentRef = useRef(null);
+  const paraRefs = useRef([]);
 
   useEffect(() => {
     const el = contentRef.current;
@@ -1671,6 +2099,31 @@ function BirthdayLetter({ onContinue }) {
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = Number(entry.target.dataset.idx);
+            setRevealed((s) => new Set(s).add(idx));
+          }
+        });
+      },
+      { threshold: 0.3, root: contentRef.current }
+    );
+    paraRefs.current.forEach((el) => { if (el) observer.observe(el); });
+    return () => observer.disconnect();
+  }, []);
+
+  const paragraphs = [
+    "Before I show you everything I've made, I need you to know something.",
+    "From the moment we met on 7th March 2022, my world changed colour. Every day since then has been a little more beautiful, a little more full, a little more ours. And now, on your birthday, I want to pause everything — just for a moment — and tell you what you mean to me.",
+    "You are the reason I believe in forever. Not the forever in stories, but the real kind — the one made of small moments: your laugh over morning chai, your hand reaching for mine in a crowd, the way you look at a sunset like it's performing just for you.",
+    "I've built you a little world tonight — your whole story, Nidhi. Every card ahead is a piece of you: from the tiny girl in those first photos, through every birthday and every year that shaped you, all the way to the life we're building now. And at the end of it all, there's something waiting just for you.",
+    "So take your time. Explore. Remember. Smile.",
+    "This is my love letter to you, Nidhi — not in words alone, but in every place we've ever been, every plate we've shared, every moment that made us _us_.",
+  ];
+
   return (
     <div className="bday-letter">
       <div className="bday-letter-stars" />
@@ -1680,37 +2133,23 @@ function BirthdayLetter({ onContinue }) {
           <div className="bday-letter-date">22nd June, 2026</div>
           <h2 className="bday-letter-greeting">My dearest Nidhi,</h2>
           <div className="bday-letter-body">
-            <p>
-              Before I show you everything I've made, I need you to know something.
-            </p>
-            <p>
-              From the moment we met on 7th March 2022, my world changed colour.
-              Every day since then has been a little more beautiful, a little more
-              full, a little more ours. And now, on your birthday, I want to pause
-              everything — just for a moment — and tell you what you mean to me.
-            </p>
-            <p>
-              You are the reason I believe in forever. Not the forever in stories,
-              but the real kind — the one made of small moments: your laugh over
-              morning chai, your hand reaching for mine in a crowd, the way you
-              look at a sunset like it's performing just for you.
-            </p>
-            <p>
-              I've built you a little world tonight — your whole story, Nidhi.
-              Every card ahead is a piece of you: from the tiny girl in those
-              first photos, through every birthday and every year that shaped
-              you, all the way to the life we're building now. And at the end of
-              it all, there's something waiting just for you.
-            </p>
-            <p>
-              So take your time. Explore. Remember. Smile.
-            </p>
-            <p>
-              This is my love letter to you, Nidhi — not in words alone,
-              but in every place we've ever been, every plate we've shared,
-              every moment that made us <em>us</em>.
-            </p>
-            <p className="bday-letter-closing">
+            {paragraphs.map((text, idx) => (
+              <p
+                key={idx}
+                ref={(el) => (paraRefs.current[idx] = el)}
+                data-idx={idx}
+                className={"letter-para" + (revealed.has(idx) ? " letter-para-visible" : "")}
+              >
+                {text.includes("_us_") ? (
+                  <>{text.replace("_us_", "")}<em>us</em>.</>
+                ) : text}
+              </p>
+            ))}
+            <p
+              ref={(el) => (paraRefs.current[paragraphs.length] = el)}
+              data-idx={paragraphs.length}
+              className={"bday-letter-closing letter-para" + (revealed.has(paragraphs.length) ? " letter-para-visible" : "")}
+            >
               Happy birthday, my love.
               <br />
               — Always yours, Sagar
@@ -1882,9 +2321,12 @@ export default function App() {
   });
   const [burst, setBurst] = useState(0);
   const [musicOn, setMusicOn] = useState(false);
+  const [songIdx, setSongIdx] = useState(() => Math.floor(Math.random() * SONG_LIST.length));
   const [toast, setToast] = useState("");
   const [celebrate, setCelebrate] = useState(0);
   const [countdownDismissed, setCountdownDismissed] = useState(false);
+  const [showSlideshow, setShowSlideshow] = useState(false);
+  const [shakeConfetti, setShakeConfetti] = useState(0);
 
   const audioRef = useRef(null);
   const unlockFired = useRef(false);
@@ -1927,30 +2369,31 @@ export default function App() {
   function enterApp() {
     setShowLetter(false);
     setStarted(true);
-    if (SONG_URL && audioRef.current) {
-      audioRef.current.volume = 0.55;
-      audioRef.current
-        .play()
-        .then(() => setMusicOn(true))
-        .catch(() => setMusicOn(false));
-    }
-  }
-
-  function toggleMusic() {
     const a = audioRef.current;
-    if (!SONG_URL || !a) {
-      setToast("Add your song's URL in the code to play music 🎵");
-      return;
-    }
-    if (musicOn) {
-      a.pause();
-      setMusicOn(false);
-    } else {
+    if (SONG_LIST.length > 0 && a) {
+      a.src = SONG_LIST[songIdx].url;
       a.volume = 0.55;
       a.play()
         .then(() => setMusicOn(true))
-        .catch(() => setToast("Tap again to start the music 🎵"));
+        .catch(() => setMusicOn(false));
     }
+    setToast("Now playing: " + SONG_LIST[songIdx].name + " 🎵");
+  }
+
+  function nextSong() {
+    const a = audioRef.current;
+    if (!SONG_LIST.length || !a) return;
+    const next = (songIdx + 1) % SONG_LIST.length;
+    setSongIdx(next);
+    a.pause();
+    a.src = SONG_LIST[next].url;
+    a.volume = 0.55;
+    a.play()
+      .then(() => {
+        setMusicOn(true);
+        setToast("Now playing: " + SONG_LIST[next].name + " 🎵");
+      })
+      .catch(() => {});
   }
 
   function openPin(id) {
@@ -1971,6 +2414,7 @@ export default function App() {
   function answerQuiz(mem, idx) {
     if (answered[mem.id] === "correct") return;
     if (idx === mem.quiz.correct) {
+      playChime();
       setAnswered((a) => ({ ...a, [mem.id]: "correct" }));
       setBurst((b) => b + 1);
       setToast(mem.quiz.right);
@@ -1982,6 +2426,23 @@ export default function App() {
       setToast(mem.quiz.wrong);
     }
   }
+
+  function handleNextChapter() {
+    const currentIdx = MEMORIES.findIndex((m) => m.id === openId);
+    if (currentIdx < 0 || currentIdx >= MEMORIES.length - 1) return;
+    const next = MEMORIES[currentIdx + 1];
+    if (next.isFinale && !unlocked) {
+      setToast("Almost there — answer every quiz to unlock the finale. (" + hearts + "/" + QUIZ_TOTAL + ")");
+      return;
+    }
+    setOpenId(next.id);
+  }
+
+  useShake(() => {
+    setShakeConfetti((c) => c + 1);
+    playSparkle();
+    setTimeout(() => setShakeConfetti(0), 4000);
+  });
 
   function login() {
     try { localStorage.setItem("osm-authed", "yes"); } catch { /* ignore */ }
@@ -2001,8 +2462,8 @@ export default function App() {
     <div className="osm-root">
       <style>{STYLES}</style>
 
-      {/* 🎵 ambient music — set SONG_URL at the top of the file */}
-      <audio ref={audioRef} src={SONG_URL || undefined} loop preload="none" />
+      {/* 🎵 ambient music — songs configured in SONG_LIST at the top */}
+      <audio ref={audioRef} loop preload="none" />
 
       {/* ✍️ calligraphy loading screen */}
       {loading && <CalligraphyLoader onComplete={onCalliDone} />}
@@ -2029,12 +2490,20 @@ export default function App() {
               <span className="brand-text">Happy birthday Kukku</span>
             </div>
             <button
-              className={"music" + (musicOn ? " music-on" : "")}
-              onClick={toggleMusic}
-              aria-label="Toggle music"
-              title={SONG_URL ? "Toggle music" : "Add a song URL in the code"}
+              className="slideshow-btn"
+              onClick={() => setShowSlideshow(true)}
+              aria-label="Photo slideshow"
+              title="Watch our photo montage"
             >
-              {musicOn ? "♫" : "♪"}
+              {"▶"}
+            </button>
+            <button
+              className={"music" + (musicOn ? " music-on" : "")}
+              onClick={nextSong}
+              aria-label="Next song"
+              title="Next song"
+            >
+              {"♫"}
             </button>
           </header>
 
@@ -2109,10 +2578,19 @@ export default function App() {
               unlocked={unlocked}
               onClose={() => setOpenId(null)}
               onAnswer={answerQuiz}
+              onNext={openMem.isFinale ? undefined : handleNextChapter}
             />
           )}
 
           {lightbox && <Lightbox item={lightbox} onClose={() => setLightbox(null)} />}
+
+          {showSlideshow && <AutoSlideshow onClose={() => setShowSlideshow(false)} />}
+
+          {shakeConfetti > 0 && (
+            <div className="shake-confetti-layer">
+              <HeartBurst trigger={shakeConfetti} full />
+            </div>
+          )}
 
           {celebrate > 0 && (
             <div className="celebrate">
@@ -3706,5 +4184,400 @@ const STYLES = `
 @keyframes finalePulse {
   0%, 100% { opacity: .7; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* ——— NEXT CHAPTER BUTTON ——— */
+.next-chapter-btn {
+  display: block; width: 100%; margin: 28px 0 0; padding: 16px 24px;
+  font-family: 'Marcellus', serif; font-size: 15px; letter-spacing: .08em;
+  color: #1a1206; cursor: pointer; border: none; border-radius: 999px;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  box-shadow: 0 8px 24px rgba(212,175,55,.3), inset 0 1px 0 rgba(255,255,255,.5);
+  transition: transform .2s ease, filter .2s ease;
+  animation: fadeUp .6s ease both;
+}
+.next-chapter-btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
+
+/* ——— DOUBLE-TAP HEART ——— */
+.dbl-tap-heart {
+  position: absolute; transform: translate(-50%, -50%) scale(0);
+  font-size: 48px; pointer-events: none; z-index: 10;
+  animation: dblTapHeart 1.2s ease-out forwards;
+}
+@keyframes dblTapHeart {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  30% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+  100% { transform: translate(-50%, -80%) scale(1); opacity: 0; }
+}
+
+/* ——— FLIP CARDS (Reasons I Love You) ——— */
+.reason-flip {
+  perspective: 800px; cursor: pointer;
+  animation: fadeUp .5s ease both;
+}
+.rf-inner {
+  position: relative; width: 100%; min-height: 170px;
+  transform-style: preserve-3d; transition: transform .6s ease;
+}
+.rf-flipped .rf-inner { transform: rotateY(180deg); }
+.rf-front, .rf-back {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  border-radius: 16px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 14px 10px;
+  border: 1px solid rgba(212,175,55,.3);
+  box-shadow: 0 4px 16px rgba(0,0,0,.2);
+  overflow: hidden; word-break: break-word;
+}
+.rf-front {
+  background: linear-gradient(160deg, rgba(20,24,52,.95), rgba(12,15,38,.95));
+}
+.rf-back {
+  background: linear-gradient(160deg, rgba(30,18,40,.95), rgba(20,12,32,.95));
+  transform: rotateY(180deg);
+}
+.rf-num {
+  font-family: 'Great Vibes', cursive; font-size: 42px;
+  background: linear-gradient(180deg, #fbe6b4, #c79a36);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.rf-icon-hidden { font-size: 28px; margin-top: 8px; filter: blur(6px); opacity: .4; }
+.rf-tap-hint {
+  font-family: 'Marcellus', serif; font-size: 10px; letter-spacing: .2em;
+  text-transform: uppercase; color: rgba(212,175,55,.5); margin-top: 12px;
+}
+.rf-hold-label {
+  font-family: 'Marcellus', serif; font-size: 11px; letter-spacing: .15em;
+  text-transform: uppercase; color: #e7b9c4; margin-top: 12px;
+}
+.rf-hold-ring {
+  position: absolute; inset: 8px; border-radius: 16px; pointer-events: none;
+  border: 3px solid transparent;
+  border-top-color: #d4af37;
+  transform: rotate(calc(var(--prog) * 360deg));
+  transition: transform .03s linear;
+  opacity: .8;
+}
+.rf-num-back {
+  font-family: 'Great Vibes', cursive; font-size: 18px; color: #e7b9c4;
+}
+.rf-icon-back { font-size: 24px; margin: 4px 0; }
+.rf-text {
+  font-family: 'Cormorant Garamond', serif; font-size: clamp(12px, 3.2vw, 15px); font-style: italic;
+  line-height: 1.4; color: #f3ead3; text-align: center;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;
+}
+.rf-last .rf-front { border-color: rgba(247,195,205,.5); }
+.reasons-list {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px; padding: 0 16px;
+}
+.reasons-progress {
+  text-align: center; margin-top: 18px; font-family: 'Marcellus', serif;
+  font-size: 13px; letter-spacing: .12em; color: rgba(212,175,55,.6);
+}
+
+/* ——— SPARKLE HINTS ——— */
+.ss-hinted {
+  animation: sparkleHintPulse 1.2s ease-in-out infinite !important;
+}
+@keyframes sparkleHintPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(212,175,55,.4)); }
+  50% { transform: scale(1.6); filter: drop-shadow(0 0 12px rgba(212,175,55,.8)); }
+}
+.sparkle-hint {
+  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+  background: rgba(20,15,40,.9); color: #f0d98a;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 14px; padding: 10px 20px; border-radius: 999px;
+  border: 1px solid rgba(212,175,55,.3);
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  animation: fadeUp .6s ease both;
+  z-index: 20; pointer-events: none;
+}
+
+/* ——— SCROLL-REVEAL LETTER PARAGRAPHS ——— */
+.letter-para {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity .8s ease, transform .8s ease;
+}
+.letter-para-visible {
+  opacity: 1; transform: translateY(0);
+}
+
+/* ——— SLIDESHOW BUTTON ——— */
+.slideshow-btn {
+  background: none; border: 1px solid rgba(212,175,55,.35);
+  color: #f0d98a; font-size: 14px; width: 36px; height: 36px;
+  border-radius: 50%; cursor: pointer; margin-right: 8px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s ease;
+}
+.slideshow-btn:hover { border-color: rgba(212,175,55,.7); background: rgba(212,175,55,.1); }
+
+/* ——— AUTO SLIDESHOW (full-screen montage) ——— */
+.auto-slideshow {
+  position: fixed; inset: 0; z-index: 100;
+  background: #0a0e22; display: flex; align-items: center; justify-content: center;
+  animation: fadeIn .5s ease both;
+}
+.as-bg {
+  position: absolute; inset: 0; z-index: 0;
+  animation: fadeIn .8s ease both;
+}
+.as-bg-img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: blur(40px) brightness(.2) saturate(.5);
+  transform: scale(1.2);
+}
+.as-photo {
+  position: relative; z-index: 1; max-width: 85vw; max-height: 75vh;
+  object-fit: contain; border-radius: 8px;
+  box-shadow: 0 16px 60px rgba(0,0,0,.6);
+  animation: kenBurns 4s ease-in-out both;
+}
+@keyframes kenBurns {
+  0% { transform: scale(1.08); opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { transform: scale(1); opacity: .7; }
+}
+.as-caption {
+  position: absolute; bottom: 90px; left: 0; right: 0; text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 16px; color: #f3ead3; padding: 0 24px;
+  animation: fadeUp .6s ease .3s both; z-index: 2;
+}
+.as-icon { margin-right: 8px; }
+.as-counter {
+  position: absolute; top: 20px; right: 20px;
+  font-family: 'Marcellus', serif; font-size: 12px;
+  letter-spacing: .1em; color: rgba(212,175,55,.5); z-index: 2;
+}
+.as-controls {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 16px; z-index: 2;
+}
+.as-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(212,175,55,.3);
+  color: #f0d98a; font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s ease;
+}
+.as-btn:hover { background: rgba(212,175,55,.15); }
+.as-close {
+  position: absolute; top: 16px; left: 16px; z-index: 3;
+  background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.15);
+  color: #f3ead3; font-size: 24px; width: 40px; height: 40px;
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ——— FINALE EXPERIENCE (full-screen takeover) ——— */
+.finale-exp {
+  position: fixed; inset: 0; z-index: 80;
+  background: #0a0e22; overflow-y: auto;
+  animation: fadeIn .8s ease both;
+}
+.finale-exp-close {
+  position: fixed; top: 16px; right: 16px; z-index: 90;
+  background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.15);
+  color: #f3ead3; font-size: 26px; width: 42px; height: 42px;
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.finale-stage {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  animation: fadeIn .8s ease both;
+  text-align: center; padding: 24px;
+}
+.finale-entrance {
+  background: radial-gradient(ellipse at 50% 50%, #1b2a5e 0%, #0a0e22 70%);
+}
+.finale-entrance-stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255,245,210,.9), transparent),
+    radial-gradient(2px 2px at 75% 20%, rgba(255,245,210,.8), transparent),
+    radial-gradient(1.5px 1.5px at 50% 65%, rgba(255,245,210,.7), transparent),
+    radial-gradient(2px 2px at 85% 75%, rgba(255,245,210,.85), transparent);
+  animation: twinkle 3s ease-in-out infinite alternate;
+}
+.finale-calligraphy {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(72px, 20vw, 140px);
+  background: linear-gradient(180deg, #fbe6b4, #e8c46a 50%, #c79a36);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none;
+  animation: finaleCalliIn 2.5s cubic-bezier(.2,1,.3,1) both;
+}
+@keyframes finaleCalliIn {
+  0% { opacity: 0; transform: scale(.5) translateY(30px); letter-spacing: .3em; }
+  60% { opacity: 1; }
+  100% { transform: scale(1) translateY(0); letter-spacing: 0; }
+}
+
+.finale-name-stage { background: radial-gradient(ellipse at 50% 50%, rgba(58,20,48,.4) 0%, #0a0e22 70%); }
+.finale-hbd-stage { background: radial-gradient(ellipse at 50% 50%, rgba(27,42,94,.3) 0%, #0a0e22 70%); }
+.finale-crown-big { font-size: 64px; animation: finaleCrownBounce 2s ease-in-out infinite; margin-bottom: 16px; }
+.finale-hbd-text {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(42px, 12vw, 72px);
+  background: linear-gradient(135deg, #fbe6b4, #e8c46a 30%, #f7c3cd 60%, #fbe6b4);
+  background-size: 200% 200%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: finaleShimmer 3s ease-in-out infinite;
+  margin: 0; line-height: 1.2;
+}
+.finale-hbd-name {
+  font-family: 'Great Vibes', cursive; font-size: clamp(32px, 9vw, 52px);
+  color: #f7c3cd; margin: 8px 0 0;
+  text-shadow: 0 0 24px rgba(247,195,205,.4);
+}
+.finale-hbd-sparkles { font-size: 26px; margin-top: 16px; letter-spacing: 10px; animation: finalePulse 2s ease-in-out infinite; }
+
+/* finale letter */
+.finale-letter-stage {
+  align-items: stretch; justify-content: flex-start; padding: 0;
+  overflow-y: auto;
+}
+.finale-letter-scroll {
+  width: 100%; max-width: 600px; margin: 0 auto; padding: 48px 24px 80px;
+}
+.finale-letter-paper {
+  background: linear-gradient(170deg, rgba(255,248,220,.06), rgba(255,248,220,.02));
+  border: 1px solid rgba(212,175,55,.3);
+  border-radius: 16px; padding: 32px 24px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.3);
+}
+.finale-letter-date {
+  font-family: 'Marcellus', serif; font-size: 12px; letter-spacing: .15em;
+  color: rgba(212,175,55,.6); margin-bottom: 16px;
+}
+.finale-letter-greeting {
+  font-family: 'Great Vibes', cursive; font-size: clamp(28px, 7vw, 40px);
+  color: #f0d98a; margin: 0 0 20px;
+}
+.finale-letter-body p {
+  font-family: 'Cormorant Garamond', serif; font-size: 16.5px;
+  line-height: 1.7; color: #efe4cb; margin: 0 0 16px; font-style: italic;
+}
+.finale-letter-actions { animation: fadeUp .8s ease both; margin-top: 24px; }
+.finale-bday-note {
+  margin: 20px 0; padding: 20px; border-radius: 12px;
+  background: linear-gradient(170deg, rgba(255,248,220,.05), rgba(255,248,220,.02));
+  border: 1px solid rgba(212,175,55,.2);
+}
+.finale-bday-note-label {
+  font-family: 'Marcellus', serif; font-size: 11px; letter-spacing: .15em;
+  text-transform: uppercase; color: #e7b9c4; margin-bottom: 12px;
+}
+.finale-bday-note-text {
+  font-family: 'Great Vibes', cursive; font-size: clamp(20px, 5vw, 26px);
+  line-height: 1.8; color: #f0d98a; margin: 0;
+}
+.finale-ps {
+  font-family: 'Cormorant Garamond', serif; font-size: 15px;
+  font-style: italic; color: #e7b9c4; margin: 16px 0;
+}
+.finale-sign {
+  font-family: 'Cormorant Garamond', serif; font-size: 18px;
+  font-style: italic; color: #f0d98a; margin: 16px 0;
+  text-align: center;
+}
+.finale-continue-btn {
+  display: block; width: 100%; margin-top: 24px; padding: 16px 24px;
+  font-family: 'Marcellus', serif; font-size: 15px; letter-spacing: .08em;
+  color: #1a1206; cursor: pointer; border: none; border-radius: 999px;
+  background: linear-gradient(180deg, #fbe6b4, #e0b955 60%, #caa13c);
+  box-shadow: 0 8px 24px rgba(212,175,55,.3), inset 0 1px 0 rgba(255,255,255,.5);
+  transition: transform .2s ease, filter .2s ease;
+  animation: fadeUp .6s ease both;
+}
+.finale-continue-btn:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.finale-continue-bottom { position: absolute; bottom: 24px; left: 24px; right: 24px; width: auto; }
+
+/* finale slideshow */
+.finale-slideshow-stage { padding: 0; }
+.finale-slideshow {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+}
+.finale-slideshow-img {
+  max-width: 88vw; max-height: 72vh; object-fit: contain;
+  border-radius: 8px; box-shadow: 0 12px 50px rgba(0,0,0,.5);
+  animation: kenBurns 4s ease-in-out both;
+}
+.finale-slideshow-caption {
+  position: absolute; bottom: 100px; left: 0; right: 0; text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 15px; color: #f3ead3; padding: 0 24px;
+  animation: fadeUp .5s ease .2s both;
+}
+.finale-slideshow-icon { margin-right: 8px; }
+.finale-slideshow-counter {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  font-family: 'Marcellus', serif; font-size: 12px;
+  letter-spacing: .1em; color: rgba(212,175,55,.5);
+}
+
+/* finale promises */
+.finale-promises-stage { align-items: stretch; justify-content: flex-start; padding: 0; overflow-y: auto; }
+.finale-promises-scroll {
+  width: 100%; max-width: 500px; margin: 0 auto; padding: 60px 24px 80px;
+}
+.finale-promises-title {
+  font-family: 'Great Vibes', cursive; font-size: clamp(32px, 8vw, 48px);
+  color: #f0d98a; margin: 0 0 8px; text-align: center;
+}
+.finale-promises-sub {
+  font-family: 'Cormorant Garamond', serif; font-size: 15px;
+  font-style: italic; color: #e7b9c4; text-align: center; margin: 0 0 28px;
+}
+.finale-promises-list { display: flex; flex-direction: column; gap: 10px; }
+.finale-promise {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 18px; border-radius: 14px; cursor: pointer;
+  background: linear-gradient(160deg, rgba(20,24,52,.9), rgba(12,15,38,.9));
+  border: 1px solid rgba(212,175,55,.2);
+  transition: all .3s ease;
+  animation: fadeUp .5s ease both;
+  text-align: left;
+}
+.finale-promise:hover { border-color: rgba(212,175,55,.5); }
+.fp-sealed {
+  background: linear-gradient(160deg, rgba(40,30,55,.9), rgba(25,18,42,.9));
+  border-color: rgba(212,175,55,.4);
+}
+.fp-icon { font-size: 28px; flex-shrink: 0; }
+.fp-text {
+  font-family: 'Cormorant Garamond', serif; font-size: 16px;
+  font-style: italic; color: #f3ead3; flex: 1;
+}
+.fp-seal {
+  font-size: 20px; animation: fadeIn .3s ease both;
+}
+.finale-promises-progress {
+  text-align: center; margin-top: 16px;
+  font-family: 'Marcellus', serif; font-size: 12px;
+  letter-spacing: .12em; color: rgba(212,175,55,.5);
+}
+.finale-promises-end {
+  text-align: center; margin-top: 28px; animation: fadeUp .6s ease both;
+}
+.finale-promises-end p {
+  font-family: 'Cormorant Garamond', serif; font-size: 17px;
+  font-style: italic; color: #f3ead3; margin: 0 0 8px;
+}
+.finale-promises-sign {
+  color: #f0d98a; font-size: 19px;
+  margin-top: 16px;
+}
+
+/* ——— SHAKE CONFETTI ——— */
+.shake-confetti-layer {
+  position: fixed; inset: 0; pointer-events: none; z-index: 50;
+  animation: fadeIn .2s ease both;
 }
 `;
