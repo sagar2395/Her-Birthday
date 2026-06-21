@@ -814,8 +814,9 @@ function SecretSparkles() {
   const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowHint(true), 25000);
-    return () => clearTimeout(t);
+    const show = setTimeout(() => setShowHint(true), 25000);
+    const hide = setTimeout(() => setShowHint(false), 33000);
+    return () => { clearTimeout(show); clearTimeout(hide); };
   }, []);
 
   useEffect(() => {
