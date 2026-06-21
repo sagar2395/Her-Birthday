@@ -54,12 +54,21 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 const AudioCtx = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext);
 let _audioCtx = null;
 let _musicEl = null;
+let _duckEnd = 0;
 let _duckTimer = null;
 function duckMusic(ms) {
   if (!_musicEl || _musicEl.paused) return;
   _musicEl.volume = 0.08;
-  clearTimeout(_duckTimer);
-  _duckTimer = setTimeout(() => { if (_musicEl) _musicEl.volume = 0.55; }, ms);
+  const now = Date.now();
+  const newEnd = now + ms;
+  if (newEnd > _duckEnd) {
+    _duckEnd = newEnd;
+    clearTimeout(_duckTimer);
+    _duckTimer = setTimeout(() => {
+      if (_musicEl) _musicEl.volume = 0.55;
+      _duckEnd = 0;
+    }, ms);
+  }
 }
 function getAudioCtx() {
   if (!_audioCtx && AudioCtx) _audioCtx = new AudioCtx();
