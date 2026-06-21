@@ -2371,6 +2371,7 @@ export default function App() {
     setStarted(true);
     const a = audioRef.current;
     if (SONG_LIST.length > 0 && a) {
+      a.src = SONG_LIST[songIdx].url;
       a.volume = 0.55;
       a.play()
         .then(() => setMusicOn(true))
@@ -2386,10 +2387,12 @@ export default function App() {
     setSongIdx(next);
     a.pause();
     a.src = SONG_LIST[next].url;
-    a.load();
     a.volume = 0.55;
     a.play()
-      .then(() => setToast("Now playing: " + SONG_LIST[next].name + " 🎵"))
+      .then(() => {
+        setMusicOn(true);
+        setToast("Now playing: " + SONG_LIST[next].name + " 🎵");
+      })
       .catch(() => {});
   }
 
@@ -2460,7 +2463,7 @@ export default function App() {
       <style>{STYLES}</style>
 
       {/* 🎵 ambient music — songs configured in SONG_LIST at the top */}
-      <audio ref={audioRef} src={SONG_LIST[songIdx]?.url || undefined} loop preload="none" />
+      <audio ref={audioRef} loop preload="none" />
 
       {/* ✍️ calligraphy loading screen */}
       {loading && <CalligraphyLoader onComplete={onCalliDone} />}
