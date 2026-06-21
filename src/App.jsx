@@ -286,6 +286,7 @@ const MEMORIES = [
       { url: "/media/her-friends/her-friends-03-beach.jpg", caption: "Sun, sand, and your favourite people. Some days are just pure joy. ☀️" },
       { url: "/media/her-friends/her-friends-04-deer-wall.jpg", caption: "Cheek to cheek, smiles all the way — the friends who feel like home." },
       { url: "/media/her-friends/her-friends-05-cheek.jpg", focus: "50% 38%", caption: "No reason needed, just the two of you and a camera. 💛" },
+      { url: "/media/her-friends/her-friends-06-shopping.jpg", focus: "50% 25%", caption: "Mirror selfies and shopping sprees — some friendships are forever in style. 🛍️" },
     ],
     food: [],
     quiz: null,
