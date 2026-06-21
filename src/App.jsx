@@ -53,6 +53,23 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 /* ───────────────── SOUND EFFECTS (Web Audio API — no files needed) ───────────────── */
 const AudioCtx = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext);
 let _audioCtx = null;
+let _musicEl = null;
+let _duckEnd = 0;
+let _duckTimer = null;
+function duckMusic(ms) {
+  if (!_musicEl || _musicEl.paused) return;
+  _musicEl.volume = 0.08;
+  const now = Date.now();
+  const newEnd = now + ms;
+  if (newEnd > _duckEnd) {
+    _duckEnd = newEnd;
+    clearTimeout(_duckTimer);
+    _duckTimer = setTimeout(() => {
+      if (_musicEl) _musicEl.volume = 0.55;
+      _duckEnd = 0;
+    }, ms);
+  }
+}
 function getAudioCtx() {
   if (!_audioCtx && AudioCtx) _audioCtx = new AudioCtx();
   if (_audioCtx && _audioCtx.state === "suspended") _audioCtx.resume();
@@ -60,6 +77,7 @@ function getAudioCtx() {
 }
 function playChime() {
   const ctx = getAudioCtx(); if (!ctx) return;
+  duckMusic(1000);
   [523.25, 659.25, 783.99].forEach((freq, i) => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -87,6 +105,7 @@ function playSparkle() {
 }
 function playEnvelopeSound() {
   const ctx = getAudioCtx(); if (!ctx) return;
+  duckMusic(800);
   [200, 350, 500].forEach((freq, i) => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -102,6 +121,7 @@ function playEnvelopeSound() {
 }
 function playCelebrate() {
   const ctx = getAudioCtx(); if (!ctx) return;
+  duckMusic(3000);
   [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50].forEach((freq, i) => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -114,6 +134,32 @@ function playCelebrate() {
     osc.start(ctx.currentTime + i * 0.1);
     osc.stop(ctx.currentTime + i * 0.1 + 0.6);
   });
+}
+function playFireworkSound() {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  duckMusic(500);
+  const noise = ctx.createBufferSource();
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.3;
+  noise.buffer = buf;
+  const bp = ctx.createBiquadFilter();
+  bp.type = "bandpass"; bp.frequency.value = 800; bp.Q.value = 0.8;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.15, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+  noise.connect(bp); bp.connect(gain); gain.connect(ctx.destination);
+  noise.start(); noise.stop(ctx.currentTime + 0.15);
+  const osc = ctx.createOscillator();
+  const g2 = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(400, ctx.currentTime + 0.05);
+  osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.3);
+  g2.gain.setValueAtTime(0, ctx.currentTime);
+  g2.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.06);
+  g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+  osc.connect(g2); g2.connect(ctx.destination);
+  osc.start(ctx.currentTime + 0.05); osc.stop(ctx.currentTime + 0.4);
 }
 
 /* ───────────────── SHAKE DETECTION HOOK ───────────────── */
@@ -136,11 +182,12 @@ function useShake(callback, threshold = 25) {
   }, [threshold]);
 }
 
-/* >>> 🎵 SONGS — she can switch between these from the music controls. */
+/* >>> 🎵 SONGS — she can cycle through these with the music button. Last entry = Off. */
 const SONG_LIST = [
   { url: "/media/hawayein.mp3", name: "Hawayein" },
   { url: "/media/tum-se-hi.mp3", name: "Tum Se Hi" },
   { url: "/media/kaise-hua.mp3", name: "Kaise Hua" },
+  { url: null, name: "Off" },
 ];
 
 /* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
@@ -789,8 +836,9 @@ function SecretSparkles() {
   const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowHint(true), 25000);
-    return () => clearTimeout(t);
+    const show = setTimeout(() => setShowHint(true), 25000);
+    const hide = setTimeout(() => setShowHint(false), 33000);
+    return () => { clearTimeout(show); clearTimeout(hide); };
   }, []);
 
   useEffect(() => {
@@ -803,7 +851,7 @@ function SecretSparkles() {
     setFound((s) => new Set(s).add(idx));
     setActive(idx);
     setShowHint(false);
-    setTimeout(() => setActive(null), 3500);
+    setTimeout(() => setActive(null), 2000);
   }
 
   const positions = [
@@ -1285,12 +1333,32 @@ function FinaleExperience({ mem, unlocked, onClose }) {
                   )}
                   {mem.ps && <div className="finale-ps">{mem.ps}</div>}
                   <div className="finale-sign">Happy birthday, Nidhi. {"💛"}</div>
-                  <button className="finale-continue-btn" onClick={() => setStage(5)}>
-                    See our story in photos {"→"}
+                  <button className="finale-continue-btn" onClick={() => setStage(4)}>
+                    One more thing… {"→"}
                   </button>
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {stage === 4 && (
+        <div className="finale-stage finale-handwritten-stage">
+          <div className="finale-handwritten-scroll">
+            <h2 className="finale-handwritten-title">In my own handwriting {"✍️"}</h2>
+            <p className="finale-handwritten-sub">No AI, no code — just me, a pen, and everything I feel.</p>
+            <div className="finale-handwritten-photos">
+              <img src="/media/handwritten-letter-1.jpg" alt="Handwritten letter page 1" className="finale-handwritten-img" />
+              <img src="/media/handwritten-letter-2.jpg" alt="Handwritten letter page 2" className="finale-handwritten-img" />
+            </div>
+            <div className="finale-voice-note">
+              <div className="finale-voice-label">{"🎙️"} And here's my voice, just for you</div>
+              <audio controls src="/media/sagar-happy-birthday.mp3" className="finale-voice-audio" preload="metadata" />
+            </div>
+            <button className="finale-continue-btn" onClick={() => setStage(5)}>
+              See our story in photos {"→"}
+            </button>
           </div>
         </div>
       )}
@@ -1990,6 +2058,7 @@ function Fireworks({ active, duration = 6000 }) {
 
         if (r.y <= r.targetY || r.vy >= 0) {
           explode(r.x, r.y, r.color);
+          playFireworkSound();
           rockets.splice(i, 1);
         }
       }
@@ -2321,7 +2390,7 @@ export default function App() {
   });
   const [burst, setBurst] = useState(0);
   const [musicOn, setMusicOn] = useState(false);
-  const [songIdx, setSongIdx] = useState(() => Math.floor(Math.random() * SONG_LIST.length));
+  const [songIdx, setSongIdx] = useState(() => Math.floor(Math.random() * (SONG_LIST.length - 1)));
   const [toast, setToast] = useState("");
   const [celebrate, setCelebrate] = useState(0);
   const [countdownDismissed, setCountdownDismissed] = useState(false);
@@ -2329,6 +2398,7 @@ export default function App() {
   const [shakeConfetti, setShakeConfetti] = useState(0);
 
   const audioRef = useRef(null);
+  useEffect(() => { _musicEl = audioRef.current; }, []);
   const unlockFired = useRef(false);
   const onCalliDone = useCallback(() => setLoading(false), []);
 
@@ -2386,6 +2456,11 @@ export default function App() {
     const next = (songIdx + 1) % SONG_LIST.length;
     setSongIdx(next);
     a.pause();
+    if (!SONG_LIST[next].url) {
+      setMusicOn(false);
+      setToast("Music off");
+      return;
+    }
     a.src = SONG_LIST[next].url;
     a.volume = 0.55;
     a.play()
@@ -2503,7 +2578,7 @@ export default function App() {
               aria-label="Next song"
               title="Next song"
             >
-              {"♫"}
+              {musicOn ? "♫" : "♪"}
             </button>
           </header>
 
@@ -2594,7 +2669,6 @@ export default function App() {
 
           {celebrate > 0 && (
             <div className="celebrate">
-              <Fireworks active={celebrate > 0} duration={7000} />
               <HeartBurst trigger={celebrate} full />
               <div className="celebrate-msg">
                 You know us by heart {"💛"}
@@ -4573,6 +4647,46 @@ const STYLES = `
 .finale-promises-sign {
   color: #f0d98a; font-size: 19px;
   margin-top: 16px;
+}
+
+/* ——— HANDWRITTEN LETTER + VOICE NOTE (finale stage 4) ——— */
+.finale-handwritten-stage {
+  align-items: stretch; justify-content: flex-start; padding: 0; overflow-y: auto;
+}
+.finale-handwritten-scroll {
+  width: 100%; max-width: 500px; margin: 0 auto; padding: 48px 24px 80px;
+}
+.finale-handwritten-title {
+  font-family: 'Great Vibes', cursive; font-size: clamp(28px, 7vw, 40px);
+  color: #f0d98a; margin: 0 0 8px; text-align: center;
+}
+.finale-handwritten-sub {
+  font-family: 'Cormorant Garamond', serif; font-size: 15px;
+  font-style: italic; color: #e7b9c4; text-align: center; margin: 0 0 24px;
+}
+.finale-handwritten-photos {
+  display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px;
+}
+.finale-handwritten-img {
+  width: 100%; border-radius: 12px;
+  border: 1px solid rgba(212,175,55,.3);
+  box-shadow: 0 8px 30px rgba(0,0,0,.4);
+  animation: fadeUp .6s ease both;
+}
+.finale-handwritten-img:nth-child(2) { animation-delay: .2s; }
+.finale-voice-note {
+  background: linear-gradient(160deg, rgba(20,24,52,.9), rgba(12,15,38,.9));
+  border: 1px solid rgba(212,175,55,.3); border-radius: 16px;
+  padding: 20px; text-align: center; margin-bottom: 24px;
+  animation: fadeUp .6s ease .4s both;
+}
+.finale-voice-label {
+  font-family: 'Cormorant Garamond', serif; font-size: 16px;
+  font-style: italic; color: #f0d98a; margin-bottom: 14px;
+}
+.finale-voice-audio {
+  width: 100%; max-width: 320px; height: 40px; border-radius: 20px;
+  filter: sepia(.3) saturate(.8) brightness(.9);
 }
 
 /* ——— SHAKE CONFETTI ——— */
