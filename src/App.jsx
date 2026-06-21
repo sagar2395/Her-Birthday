@@ -1071,9 +1071,9 @@ function Gallery({ photos, emptyText }) {
 
   return (
     <div className="gallery">
-      <div className="photo-frame" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onClick={handleDoubleTap}>
+      <div className="photo-frame" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {p.url ? (
-          <img className="photo" key={p.url + "-" + i} src={p.url} alt={p.caption || ""} style={{ objectFit: p.fit || undefined, objectPosition: p.focus || undefined }} />
+          <img className="photo" key={p.url + "-" + i} src={p.url} alt={p.caption || ""} onClick={handleDoubleTap} style={{ objectFit: p.fit || undefined, objectPosition: p.focus || undefined }} />
         ) : (
           <div className="photo placeholder">
             <div className="ph-mark">{"📷"}</div>
@@ -1089,10 +1089,10 @@ function Gallery({ photos, emptyText }) {
 
         {photos.length > 1 && (
           <>
-            <button className="nav nav-l" onClick={() => go(-1)} aria-label="Previous">
+            <button className="nav nav-l" onClick={(e) => { e.stopPropagation(); go(-1); }} aria-label="Previous">
               {"‹"}
             </button>
-            <button className="nav nav-r" onClick={() => go(1)} aria-label="Next">
+            <button className="nav nav-r" onClick={(e) => { e.stopPropagation(); go(1); }} aria-label="Next">
               {"›"}
             </button>
             <div className="counter">
