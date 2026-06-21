@@ -53,6 +53,14 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 /* ───────────────── SOUND EFFECTS (Web Audio API — no files needed) ───────────────── */
 const AudioCtx = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext);
 let _audioCtx = null;
+let _musicEl = null;
+let _duckTimer = null;
+function duckMusic(ms) {
+  if (!_musicEl || _musicEl.paused) return;
+  _musicEl.volume = 0.08;
+  clearTimeout(_duckTimer);
+  _duckTimer = setTimeout(() => { if (_musicEl) _musicEl.volume = 0.55; }, ms);
+}
 function getAudioCtx() {
   if (!_audioCtx && AudioCtx) _audioCtx = new AudioCtx();
   if (_audioCtx && _audioCtx.state === "suspended") _audioCtx.resume();
@@ -60,6 +68,7 @@ function getAudioCtx() {
 }
 function playChime() {
   const ctx = getAudioCtx(); if (!ctx) return;
+  duckMusic(1000);
   [523.25, 659.25, 783.99].forEach((freq, i) => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -87,6 +96,7 @@ function playSparkle() {
 }
 function playEnvelopeSound() {
   const ctx = getAudioCtx(); if (!ctx) return;
+  duckMusic(800);
   [200, 350, 500].forEach((freq, i) => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -102,6 +112,7 @@ function playEnvelopeSound() {
 }
 function playCelebrate() {
   const ctx = getAudioCtx(); if (!ctx) return;
+  duckMusic(3000);
   [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50].forEach((freq, i) => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -117,6 +128,7 @@ function playCelebrate() {
 }
 function playFireworkSound() {
   const ctx = getAudioCtx(); if (!ctx) return;
+  duckMusic(500);
   const noise = ctx.createBufferSource();
   const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
   const data = buf.getChannelData(0);
@@ -2377,6 +2389,7 @@ export default function App() {
   const [shakeConfetti, setShakeConfetti] = useState(0);
 
   const audioRef = useRef(null);
+  useEffect(() => { _musicEl = audioRef.current; }, []);
   const unlockFired = useRef(false);
   const onCalliDone = useCallback(() => setLoading(false), []);
 
@@ -2647,7 +2660,6 @@ export default function App() {
 
           {celebrate > 0 && (
             <div className="celebrate">
-              <Fireworks active={celebrate > 0} duration={7000} />
               <HeartBurst trigger={celebrate} full />
               <div className="celebrate-msg">
                 You know us by heart {"💛"}
