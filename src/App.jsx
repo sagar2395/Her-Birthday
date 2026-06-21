@@ -136,13 +136,12 @@ function useShake(callback, threshold = 25) {
   }, [threshold]);
 }
 
-/* >>> 🎵 SONGS — the app picks one randomly each session so she hears something fresh. */
+/* >>> 🎵 SONGS — she can switch between these from the music controls. */
 const SONG_LIST = [
-  "/media/hawayein.mp3",    // Hawayein — Jab Harry Met Sejal
-  "/media/tum-se-hi.mp3",   // Tum Se Hi — Jab We Met
-  "/media/kaise-hua.mp3",   // Kaise Hua — Kabir Singh
+  { url: "/media/hawayein.mp3", name: "Hawayein" },
+  { url: "/media/tum-se-hi.mp3", name: "Tum Se Hi" },
+  { url: "/media/kaise-hua.mp3", name: "Kaise Hua" },
 ];
-const SONG_URL = SONG_LIST[Math.floor(Math.random() * SONG_LIST.length)];
 
 /* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
 const BIRTHDAY_SONG_URL = "/media/happy-birthday.mp3";
@@ -2321,6 +2320,8 @@ export default function App() {
   });
   const [burst, setBurst] = useState(0);
   const [musicOn, setMusicOn] = useState(false);
+  const [songIdx, setSongIdx] = useState(0);
+  const [showSongPicker, setShowSongPicker] = useState(false);
   const [toast, setToast] = useState("");
   const [celebrate, setCelebrate] = useState(0);
   const [countdownDismissed, setCountdownDismissed] = useState(false);
@@ -2368,10 +2369,10 @@ export default function App() {
   function enterApp() {
     setShowLetter(false);
     setStarted(true);
-    if (SONG_URL && audioRef.current) {
-      audioRef.current.volume = 0.55;
-      audioRef.current
-        .play()
+    const a = audioRef.current;
+    if (SONG_LIST.length > 0 && a) {
+      a.volume = 0.55;
+      a.play()
         .then(() => setMusicOn(true))
         .catch(() => setMusicOn(false));
     }
@@ -2379,7 +2380,7 @@ export default function App() {
 
   function toggleMusic() {
     const a = audioRef.current;
-    if (!SONG_URL || !a) {
+    if (!SONG_LIST.length || !a) {
       setToast("Add your song's URL in the code to play music 🎵");
       return;
     }
@@ -2391,6 +2392,21 @@ export default function App() {
       a.play()
         .then(() => setMusicOn(true))
         .catch(() => setToast("Tap again to start the music 🎵"));
+    }
+  }
+
+  function switchSong(idx) {
+    setSongIdx(idx);
+    setShowSongPicker(false);
+    const a = audioRef.current;
+    if (a) {
+      a.pause();
+      a.src = SONG_LIST[idx].url;
+      a.load();
+      a.volume = 0.55;
+      a.play()
+        .then(() => setMusicOn(true))
+        .catch(() => setMusicOn(false));
     }
   }
 
@@ -2460,8 +2476,8 @@ export default function App() {
     <div className="osm-root">
       <style>{STYLES}</style>
 
-      {/* 🎵 ambient music — set SONG_URL at the top of the file */}
-      <audio ref={audioRef} src={SONG_URL || undefined} loop preload="none" />
+      {/* 🎵 ambient music — songs configured in SONG_LIST at the top */}
+      <audio ref={audioRef} src={SONG_LIST[songIdx]?.url || undefined} loop preload="none" />
 
       {/* ✍️ calligraphy loading screen */}
       {loading && <CalligraphyLoader onComplete={onCalliDone} />}
@@ -2495,14 +2511,36 @@ export default function App() {
             >
               {"▶"}
             </button>
-            <button
-              className={"music" + (musicOn ? " music-on" : "")}
-              onClick={toggleMusic}
-              aria-label="Toggle music"
-              title={SONG_URL ? "Toggle music" : "Add a song URL in the code"}
-            >
-              {musicOn ? "♫" : "♪"}
-            </button>
+            <div className="music-wrap">
+              <button
+                className={"music" + (musicOn ? " music-on" : "")}
+                onClick={toggleMusic}
+                aria-label="Toggle music"
+              >
+                {musicOn ? "♫" : "♪"}
+              </button>
+              {musicOn && SONG_LIST.length > 1 && (
+                <button
+                  className="song-name-btn"
+                  onClick={() => setShowSongPicker((s) => !s)}
+                >
+                  {SONG_LIST[songIdx].name} {"▾"}
+                </button>
+              )}
+              {showSongPicker && (
+                <div className="song-picker">
+                  {SONG_LIST.map((s, i) => (
+                    <button
+                      key={i}
+                      className={"song-option" + (i === songIdx ? " song-active" : "")}
+                      onClick={() => switchSong(i)}
+                    >
+                      {i === songIdx ? "♫ " : ""}{s.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </header>
 
           <LoveQuotes />
@@ -2874,6 +2912,31 @@ const STYLES = `
 .music-on { background: linear-gradient(180deg, #e8c46a, #caa13c); color: #1a1206;
   box-shadow: 0 0 16px rgba(212,175,55,.5); animation: glowPulse 2.4s ease-in-out infinite, musicBounce .8s ease; }
 @keyframes musicBounce { 0% { transform: scale(1); } 30% { transform: scale(1.2); } 60% { transform: scale(.95); } 100% { transform: scale(1); } }
+
+/* ——— SONG PICKER ——— */
+.music-wrap { position: relative; display: flex; align-items: center; gap: 6px; }
+.song-name-btn {
+  background: none; border: none; cursor: pointer;
+  font-family: 'Cormorant Garamond', serif; font-size: 12px;
+  color: #e8c46a; opacity: .8; white-space: nowrap;
+  transition: opacity .2s ease;
+}
+.song-name-btn:hover { opacity: 1; }
+.song-picker {
+  position: absolute; top: 100%; right: 0; margin-top: 8px;
+  background: rgba(14,17,42,.96); border: 1px solid rgba(212,175,55,.35);
+  border-radius: 12px; padding: 6px 0; min-width: 160px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.5);
+  animation: fadeIn .2s ease both; z-index: 20;
+}
+.song-option {
+  display: block; width: 100%; padding: 10px 16px; text-align: left;
+  background: none; border: none; cursor: pointer;
+  font-family: 'Cormorant Garamond', serif; font-size: 15px;
+  color: #f3ead3; transition: background .15s ease;
+}
+.song-option:hover { background: rgba(212,175,55,.1); }
+.song-active { color: #e8c46a; font-weight: 600; }
 
 /* ——— VIEW BAR (Her Story / For You / Our Feast) ——— */
 .viewbar {
