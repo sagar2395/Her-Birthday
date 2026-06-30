@@ -1,54 +1,37 @@
 /*
   ════════════════════════════════════════════════════════════════════════════
-   HER STORY  —  A birthday gift for Nidhi Arjariya Chhabra
-   Her whole life, told with love: from the little girl in her very first
-   photos, through every birthday and every year that made her, all the way
-   to the life we're building together — and every plate we've loved along it.
+   HER STORY  —  a personalized memory app (the original gift was for Nidhi).
+   A whole life told with love: from the very first photos, through every year
+   that shaped the person, all the way to the life being built — and every
+   plate, place and moment along the way.
   ════════════════════════════════════════════════════════════════════════════
 
-  HOW TO MAKE THIS YOURS  (everything you need to edit is marked with  >>> )
+  HOW TO MAKE THIS YOURS  →  edit ONE file:  src/siteConfig.json
 
-  ── WHERE TO PUT YOUR PHOTOS & VIDEOS ──────────────────────────────────────
-  Because this is a real project (not just a chat artifact), the EASIEST and
-  most private option is the built-in `public/` folder:
+  This component is now a PURE RENDERER. It holds no personal content — every
+  name, photo, caption, quiz, love note, song and date is read from the
+  JSON-serializable config in `src/siteConfig.json`. Point it at a different
+  config and you get a different person's site, with zero code changes.
 
-      public/media/bali-1.jpg
-      public/media/goa-clip.mp4
+  Config shape (see src/siteConfig.json for the full data):
+    recipient      { name, fullName, portrait }      — who the gift is for
+    author         { name }                          — who it's from
+    auth           { user, pass }                    — the private login gate
+    dates          { birthdayMonth, birthdayDay, birthdayMidnightUTC, firstMetDate }
+    songs          { list:[{url,name}], birthdaySongUrl }
+    copy           { intro, openingLetter, login, ... } — the UI prose
+    memories       [ { id, name, when, icon, teaser, message, photos[], food[],
+                       quiz, video, ps?, birthdayNote? } ]   — the story chapters
+    feastPhotos    [ { url, caption } ]              — the unified food gallery
+    loveQuotes / reasons / secretMessages / promises — the little extras
 
-  …then reference them with a leading slash:  url: "/media/bali-1.jpg"
-  (No uploading, no accounts, works offline. See SETUP.md for cloud options
-   like Cloudinary if you'd rather host them online.)
-
-  ── 1) 📸  TRIP / "MOMENTS" PHOTOS ──────────────────────────────────────────
-        Each trip has a `photos: [ ... ]` list (the candid + place pics).
-        Paste a URL into `url:` and a sweet `caption:`. Leave `url: ""` for an
-        elegant placeholder. Add as many as you like.
-
-  ── 2) 🍲  FOOD PHOTOS ──────────────────────────────────────────────────────
-        All food photos live in the `FEAST_PHOTOS` array (below MEMORIES).
-        They show up in the dedicated "Feast Together" view — one unified
-        gallery of every dish from every trip.
-
-  ── 3) 🎬  VIDEOS (optional, feasible!) ─────────────────────────────────────
-        Each trip has a `video: ""`. Paste a DIRECT video file URL (.mp4) or a
-        /public path like "/media/goa-clip.mp4". When she answers that trip's
-        quiz, the video plays — and the moment it ends, the photos are revealed.
-        (A YouTube *page* link won't work for the auto-advance; use an .mp4.)
-
-  ── 4) 🎵  SONG ─────────────────────────────────────────────────────────────
-        Set SONG_URL below to a DIRECT audio file (.mp3 / .m4a).
-        Vibe: "Ilahi" (Yeh Jawaani Hai Deewani) or "Patakha Guddi" (Highway).
-
-  ── 5) 📍  YOUR NEW FLAT'S LOCATION ─────────────────────────────────────────
-        In the `flat` entry, replace lat/lng with your new home's coordinates
-        (right-click the spot in Google Maps → first numbers are lat, lng).
-
-  All the love notes, quiz questions and captions are already written for you
-  in a husband's voice — but make them even more *you*.
+  Media: drop files in `public/media/…` and reference them with a leading slash
+  (e.g. "/media/bali-1.jpg"); or paste a direct cloud URL. See SETUP.md.
   ════════════════════════════════════════════════════════════════════════════
 */
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, Fragment } from "react";
+import siteConfig from "./siteConfig.json";
 
 /* ───────────────── SOUND EFFECTS (Web Audio API — no files needed) ───────────────── */
 const AudioCtx = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext);
@@ -182,579 +165,48 @@ function useShake(callback, threshold = 25) {
   }, [threshold]);
 }
 
-/* >>> 🎵 SONGS — she can cycle through these with the music button. Last entry = Off. */
-const SONG_LIST = [
-  { url: "/media/hawayein.mp3", name: "Hawayein" },
-  { url: "/media/tum-se-hi.mp3", name: "Tum Se Hi" },
-  { url: "/media/kaise-hua.mp3", name: "Kaise Hua" },
-  { url: null, name: "Off" },
-];
+/* ════════════════════════════════════════════════════════════════════════════
+   SITE CONTENT — everything personal now lives in src/siteConfig.json, a single
+   JSON-serializable config. App.jsx is a pure renderer: point it at a different
+   config and you get a different person's site, with zero code changes. (This is
+   the Phase-1 keystone for the productized version — the config is exactly what
+   the questionnaire will produce and a tenant row will store.)
+   ════════════════════════════════════════════════════════════════════════════ */
+const RECIPIENT = siteConfig.recipient;
+const RECIPIENT_NAME = RECIPIENT.name;
+const COPY = siteConfig.copy;
 
-/* >>> 🎂 HAPPY BIRTHDAY MUSIC — plays automatically at midnight on her birthday */
-const BIRTHDAY_SONG_URL = "/media/happy-birthday.mp3";
-
-/* >>> 🎂 HER BIRTHDAY — month is 0-indexed (5 = June) */
-const BIRTHDAY_MONTH = 5; // June
-const BIRTHDAY_DAY = 22;
-
-/* 🎂 Midnight IST on her birthday = 18:30 UTC the day before (IST = UTC+5:30) */
-const BIRTHDAY_MIDNIGHT_UTC = new Date("2026-06-21T18:30:00Z");
+const SONG_LIST = siteConfig.songs.list;
+const BIRTHDAY_SONG_URL = siteConfig.songs.birthdaySongUrl;
+const BIRTHDAY_MONTH = siteConfig.dates.birthdayMonth;
+const BIRTHDAY_DAY = siteConfig.dates.birthdayDay;
+const BIRTHDAY_MIDNIGHT_UTC = new Date(siteConfig.dates.birthdayMidnightUTC);
 
 /* ────────────────────────────────────────────────────────────────────────────
    THE MEMORIES  —  placed by real latitude / longitude, in the order we lived them.
    Each one has:  photos (moments)  •  food (everything we ate)  •  video (optional)
    ──────────────────────────────────────────────────────────────────────────── */
-const MEMORIES = [
-  {
-    id: "born",
-    name: "The Day You Arrived",
-    short: "Hello, World",
-    when: "Once upon a beginning",
-    type: "occasion",
-    icon: "🍼",
-    teaser: "Before us, before everything — there was you.",
-    message:
-      "Before me, before us, before a single page of our story was written — there was you. A tiny, perfect girl who arrived and quietly changed the world for everyone who would ever love you. I wasn't there yet, Nidhi, but when I look at these photos I feel something fierce and overwhelming: gratitude. Gratitude that you were born, that you made it here, that somewhere in the world a little girl was beginning a life that would one day become my whole world. This is where your story truly begins. Happy birthday, my love. 🤍",
-    video: "",
-    photos: [
-      { url: "/media/born/born-01-newborn.jpg", focus: "74% 32%", caption: "The very first you — brand new to a world that had no idea how lucky it had just become." },
-      { url: "/media/born/born-02-lifted-to-the-sky.jpg", caption: "Lifted to the sky, already reaching for everything. Some things never change. 🤍" },
-      { url: "/media/born/born-03-flower-garden.jpg", caption: "A little flower among the flowers — you fit right in. 🌸" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "little-you",
-    name: "Little You",
-    short: "Little You",
-    when: "A childhood full of light",
-    type: "occasion",
-    icon: "🌸",
-    teaser: "Tiny hands, big eyes, a heart already too big for the frame.",
-    message:
-      "Look at you. Tiny hands, enormous eyes, and a personality already far too big for any photograph to hold. Dressed like royalty, fed sweets like a little princess, blowing out candles with your eyes squeezed shut — you've been the centre of everyone's love, the birthday girl, since the very beginning. I love that I get to see these little pieces of you, the years long before I knew you existed. Every one of them was quietly building the woman I would fall completely, hopelessly in love with.",
-    video: "",
-    photos: [
-      { url: "/media/little-you/little-you-01-rajasthani-portrait.jpg", caption: "Dressed like a little queen — and already looking at the world like she owned it. 👑" },
-      { url: "/media/little-you/little-you-02-being-fed.jpg", fit: "contain", caption: "Sweet tooth from the very start — being fed by hands that adored you. 🍬" },
-      { url: "/media/childhood-birthdays/childhood-bday-01-cake.jpg", caption: "Eyes closed, wish ready, cake in front of you — you've always known how to make a wish count. 🎂" },
-      { url: "/media/childhood-birthdays/childhood-bday-02-party-horn.jpg", caption: "Party hat on, horn blowing — the original birthday girl. Today is no different. 🎉" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "family",
-    name: "Where You Come From",
-    short: "Family",
-    when: "The roots that made you",
-    type: "occasion",
-    icon: "🏡",
-    teaser: "The love you were raised in.",
-    message:
-      "Every bit of warmth you carry, every way you turn a house into a home, every ounce of the fierce love you give so freely — it all started here, with these people. Your family. The ones who raised you, fed you, lifted you to the sky and caught you every single time. When I married you, Nidhi, I didn't just fall in love with you — I fell in love with where you come from, and with all the love that quietly shaped you into the woman I adore. And the best part? They're still right here — at every celebration, every hug, every photo. Some things only grow stronger with time. 💗",
-    video: "",
-    photos: [
-      { url: "/media/family/family-01-beach.jpg", focus: "50% 24%", caption: "Toes in the water, your whole family laughing — the kind of day a childhood is made of. 🌊" },
-      { url: "/media/family/family-02-grandmother.jpg", caption: "Generations in a single frame — the love you were raised in." },
-      { url: "/media/family/family-05-with-grandmother.jpg", caption: "In your grandmother's lap — wrapped in the oldest, softest kind of love." },
-      { url: "/media/family/family-03-with-dad.jpg", caption: "Safe in the arms that held you first." },
-      { url: "/media/family/family-06-home.jpg", caption: "Everyday home, everyday love — the little moments that quietly built you." },
-      { url: "/media/family/family-04-temple.jpg", caption: "Your first adventures — the whole family, exploring the world together. 🛕" },
-      { url: "/media/siblings/siblings-04-joyful-hug.jpg", focus: "50% 24%", caption: "Caught mid-laugh, holding on tight — the joy you've carried your whole life." },
-      { url: "/media/siblings/siblings-05-school.jpg", caption: "Years pass, you grow up — but some arms always feel like home." },
-      { url: "/media/family/family-07-recent-four.jpg", focus: "50% 22%", caption: "All grown up, still together — the family that made you, still right beside you." },
-      { url: "/media/family/family-08-with-mom.jpg", focus: "50% 16%", caption: "Your very first home was her arms — and it still is. 💗" },
-      { url: "/media/family/family-09-recent-group.jpg", focus: "50% 46%", caption: "Last year, same love, brand-new smiles — your whole world in one frame." },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "her-first-baby",
-    name: "Her First Baby",
-    short: "Her First Baby",
-    when: "Her little brother, always",
-    type: "occasion",
-    icon: "🧡",
-    teaser: "The first little one she ever loved like her own.",
-    message:
-      "He was the very first baby you ever loved like your own. Long before you were anyone's wife, you were his big sister — the one who mothered him, kissed his cheeks, carried him on your back, and decided early on that he was yours to protect. Watching how fiercely and tenderly you loved your little brother told me everything I needed to know about the heart you have. He was your first baby. And look at him now — all grown up, still laughing in your arms. Some bonds only grow stronger with time. 🧡",
-    video: "",
-    photos: [
-      { url: "/media/siblings/siblings-01-little-brother-kiss.jpg", focus: "50% 20%", caption: "A kiss on the cheek and a bond for life." },
-      { url: "/media/siblings/siblings-02-porch.jpg", caption: "Two against the world, right from the very start." },
-      { url: "/media/siblings/siblings-09-piggyback-hug.jpg", caption: "Carrying him everywhere — you never once put him down. 🧡" },
-      { url: "/media/siblings/siblings-07-cheek-kiss.jpg", caption: "The kind of love that needs no words — just a cheek to kiss." },
-      { url: "/media/siblings/siblings-08-temple.jpg", caption: "Reaching for the sky together — some hands you never stop holding." },
-      { url: "/media/siblings/siblings-10-brother-grown.jpg", focus: "50% 22%", caption: "All grown up now — and still, you're the one who makes him laugh like that. 🧡" },
-      { url: "/media/siblings/siblings-11-brother-building.jpg", focus: "50% 55%", caption: "Your baby brother — taller than you now, but forever your first little one. 🧡" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "becoming-you",
-    name: "Becoming You",
-    short: "Becoming You",
-    when: "Every phase that made her",
-    type: "occasion",
-    icon: "✨",
-    teaser: "A little girl becoming the woman I'd adore.",
-    message:
-      "Watch a little girl become a young woman, frame by frame. That same smile, those same shining eyes — they were always there, just growing into the person you were meant to be. Dancing like no one was watching, chasing the sea, laughing at something just out of frame: independent, fearless, completely your own. You never needed anyone to complete you, Nidhi — you were already whole, already brilliant, already everything. And every single one of these years, every version of you, was quietly leading you straight to the day our roads would finally cross.",
-    video: "",
-    photos: [
-      { url: "/media/growing-up/growing-up-01-smile.jpg", focus: "50% 6%", caption: "That smile. Even then, it could light up an entire room." },
-      { url: "/media/growing-up/growing-up-03-portrait.jpg", caption: "A little older now — the same light in your eyes." },
-      { url: "/media/growing-up/growing-up-02-portrait.jpg", caption: "Somewhere in this face is the woman I'd fall for — I just didn't know it yet. ✨" },
-      { url: "/media/her-spirit/her-spirit-01-dancing.jpg", caption: "Dancing like the whole world was yours — because it was. 💃" },
-      { url: "/media/her-spirit/her-spirit-02-beach.jpg", caption: "Just you and the sea — free, fearless, completely yourself. 🌊" },
-      { url: "/media/her-spirit/her-spirit-03-candid.jpg", caption: "That quiet little smile — the one I'd fall for without even knowing it yet." },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "her-friends",
-    name: "The Friends Who Became Family",
-    short: "Her Girls",
-    when: "The ones who walked beside her",
-    type: "occasion",
-    icon: "👭",
-    teaser: "Laughter, road trips, and friendships that became family.",
-    message:
-      "Everyone has a few people who feel like home — and these are yours. The girls who laughed with you until it hurt, travelled with you, kept your secrets and held your hand through everything life threw your way. The way you love your people — so loyally, so fully, so forever — was one of the very first things I admired about you. I'll always be grateful to the friends who loved you, shaped you, and helped make you the incredible woman who one day walked into my life.",
-    video: "",
-    photos: [
-      { url: "/media/her-friends/her-friends-01-selfie.jpg", focus: "50% 28%", caption: "The kind of friendship that needs no occasion — just the two of you, always." },
-      { url: "/media/her-friends/her-friends-02-trio.jpg", caption: "Your girls — laughter guaranteed, every single time." },
-      { url: "/media/her-friends/her-friends-03-beach.jpg", caption: "Sun, sand, and your favourite people. Some days are just pure joy. ☀️" },
-      { url: "/media/her-friends/her-friends-04-deer-wall.jpg", caption: "Cheek to cheek, smiles all the way — the friends who feel like home." },
-      { url: "/media/her-friends/her-friends-05-cheek.jpg", focus: "50% 38%", caption: "No reason needed, just the two of you and a camera. 💛" },
-      { url: "/media/her-friends/her-friends-06-shopping.jpg", focus: "50% 25%", caption: "Mirror selfies and shopping sprees — some friendships are forever in style. 🛍️" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "first-met",
-    name: "Where It All Began",
-    short: "First Meet",
-    when: "March 2022",
-    type: "occasion",
-    icon: "💕",
-    teaser: "A Kwid, a terrible coffee, and the start of everything.",
-    message:
-      "March 2022. I drove my little Renault Kwid to Bada Ganpati to pick you up — you'd just finished office and parked your Activa. We went on a long drive through the Super Corridor, windows down, talking like we'd known each other forever. At Cafe Yolo, I tried to impress you by ordering something called 'Cafe Anaconda' — easily the worst coffee either of us has ever tasted. But you laughed, and I knew. Later, when I had a short work call, I gently caressed your head — and you went completely calm. That was the moment I realised: I never want to stop being the person who makes your world feel quieter. Every single day since has been proof that I was right.",
-    video: "",
-    photos: [
-      { url: "/media/first-met/first-met-01-bada-ganpati.jpg", caption: "Bada Ganpati — where I picked you up that evening" },
-      { url: "/media/first-met/first-met-02-kwid.jpg", caption: "The Kwid — our ride that started it all" },
-      { url: "/media/first-met/first-met-03-cafe-yolo.jpg", caption: "Cafe Yolo — and the legendary Cafe Anaconda" },
-    ],
-    food: [],
-    quiz: {
-      q: "What terrible coffee did I order at Cafe Yolo to impress you on our first meet?",
-      options: ["Cafe Tornado", "Cafe Anaconda", "Cafe Monsoon", "Cafe Everest"],
-      correct: 1,
-      right: "Cafe Anaconda! Terrible coffee, perfect evening. The beginning of us. 💛",
-      wrong: "Not quite — the name was dramatic, the taste was awful, and the company was everything. Try again, my love.",
-    },
-  },
-  {
-    id: "roka",
-    name: "Our Roka",
-    short: "Roka",
-    when: "October 2023",
-    type: "occasion",
-    icon: "🪷",
-    teaser: "Making it official, with blessings and love.",
-    message:
-      "The day we made it official. We went to the gurudwara together, heads bowed, hearts full — and then celebrated over lunch at Cafe Oakaz. It was simple, beautiful, and perfectly us. No grand gestures, just two people quietly promising to spend their lives together. That day, I looked at you across the table and thought: every road in my life was always leading here, to you.",
-    video: "",
-    photos: [
-      { url: "/media/roka/roka-01-celebration-wide.jpg", caption: "The room that held our promise — balloons, petals, and us" },
-      { url: "/media/roka/roka-02-holding-hands.jpg", caption: "Holding hands, holding futures" },
-      { url: "/media/roka/roka-03-together.jpg", caption: "Celebrating our roka together" },
-      { url: "/media/roka/roka-04-candid-laughs.jpg", caption: "The laughs that made it all real" },
-      { url: "/media/roka/roka-05-rose-petal-heart.jpg", caption: "Rose petals, balloons, and the start of forever" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "his-proposal",
-    name: "The Night I Proposed",
-    short: "His Proposal",
-    when: "January 2024",
-    type: "occasion",
-    icon: "💍",
-    teaser: "One knee, one slideshow, one chocolate box.",
-    message:
-      "I'd been planning this for weeks. The Eighteen restaurant, a custom slideshow playing on the big screen — every photo of us, every moment, building up to the question I already knew the answer to. When I got down on one knee and held out that chocolate box that said 'Will you marry me?' — Nidhi, the look on your face is burned into my heart forever. You said yes, and in that moment, I became the luckiest man alive. I still am.",
-    video: "",
-    photos: [
-      { url: "/media/his-proposal/his-proposal-01-rooftop-selfie.jpg", caption: "The evening that changed everything — rooftop under fairy lights" },
-      { url: "/media/his-proposal/his-proposal-02-her-smile.jpg", caption: "That smile — she had no idea what was coming" },
-      { url: "/media/his-proposal/his-proposal-03-heart-hands.jpg", caption: "Heart hands — if only she knew what I had planned" },
-      { url: "/media/his-proposal/his-proposal-04-forehead-kiss.jpg", caption: "The moment right before I asked the most important question" },
-      { url: "/media/his-proposal/his-proposal-05-the-eighteen-inside.jpg", caption: "The Eighteen — where I asked her to be mine forever" },
-      { url: "/media/his-proposal/his-proposal-06-the-eighteen-entrance.jpg", caption: "Together at The Eighteen — the night she said yes" },
-      { url: "/media/his-proposal/his-proposal-07-chocolate-box.jpg", caption: "Will U Marry Me — the chocolate box that sealed the deal" },
-    ],
-    food: [],
-    quiz: {
-      q: "What was written on the chocolate box I gave you when I proposed?",
-      options: ["I Love You Forever", "Be Mine", "Will you marry me?", "You + Me = Always"],
-      correct: 2,
-      right: "'Will you marry me?' — and you said yes. The best answer I've ever heard. 💍",
-      wrong: "Close but not quite — think chocolate, think a very specific question on the box. Try again, my love.",
-    },
-  },
-  {
-    id: "her-proposal",
-    name: "The Day She Proposed Back",
-    short: "Her Proposal",
-    when: "March 2024",
-    type: "occasion",
-    icon: "💗",
-    teaser: "My birthday, her chaos, one perfect ring.",
-    message:
-      "My birthday, March 2024 — and you had the sweetest secret plan. You wanted to propose somewhere truly special, somewhere grand and worthy of the moment. But I kept changing my birthday plans — one idea after another — and your perfect plan kept slipping right through your fingers. So with barely any time and your whole heart, you made a split-second decision: you pulled me up to the top floor of Cafe Oakaz (freshly renovated and gorgeous) and proposed to me right there, on the spot. It wasn't the venue you'd dreamed of — but Nidhi, it was perfect. Because in that instant I understood: you don't just love me, you adapt for us, you fight for us, even against my own chaotic, indecisive birthday self. I'd choose that messy, beautiful, instant 'yes' a thousand times over.",
-    video: "",
-    photos: [
-      { url: "/media/her-proposal/her-proposal-01-couch-selfie.jpg", caption: "Cafe Oakaz — where her backup plan turned out perfect" },
-      { url: "/media/her-proposal/her-proposal-02-intimate-moment.jpg", caption: "The moment she made my heart stop" },
-      { url: "/media/her-proposal/her-proposal-03-her-at-oakaz.jpg", caption: "The top floor, just the two of us" },
-      { url: "/media/her-proposal/her-proposal-04-together-wide.jpg", caption: "Together at Oakaz — where she turned my birthday into forever" },
-      { url: "/media/her-proposal/her-proposal-05-holding-hands.jpg", caption: "Holding hands, holding on to this moment" },
-    ],
-    food: [],
-    quiz: {
-      q: "Why was it so chaotic for Nidhi to plan her proposal on my birthday?",
-      options: ["The restaurant was closed", "I kept changing my birthday plans", "It was raining", "She forgot the ring at home"],
-      correct: 1,
-      right: "I kept changing plans! Poor Nidhi was silently going mad trying to keep her surprise alive. Worth it. 💗",
-      wrong: "Not this one — think about whose birthday it was and how unpredictable the birthday boy was being. Try again!",
-    },
-  },
-  {
-    id: "wedding",
-    name: "The Day We Said Forever",
-    short: "Wedding",
-    when: "July 2024",
-    type: "occasion",
-    icon: "💒",
-    teaser: "11th July — the day everything began.",
-    message:
-      "11th July 2024. The day I married the most beautiful woman in the world. Nidhi, you managed everything — every detail, every flower, every moment — and still looked absolutely breathtaking. You danced in my baarat, just for me, and I couldn't look anywhere else. Your mother, your mausi, and your cousins gave the most beautiful dance performances to welcome me, and I felt so loved by your whole family. And then, during the mala exchange, I couldn't help myself — I had a short little dance on stage to 'Tu Hai To Dil Dhadakta Hai.' Because my heart really was doing exactly that. It still does. Every single day.",
-    video: "",
-    photos: [
-      { url: "/media/wedding/wedding-01-grand-entry.jpg", caption: "Walking into forever — our grand entry with sparklers" },
-      { url: "/media/wedding/wedding-02-on-stage.jpg", caption: "On stage, jaimala done — the moment it all became real" },
-      { url: "/media/wedding/wedding-03-stage-together.jpg", caption: "The most beautiful bride I've ever seen — and my little dance" },
-      { url: "/media/wedding/wedding-04-havan.jpg", caption: "Seven rounds, one promise — by the sacred fire" },
-      { url: "/media/wedding/wedding-05-temple-visit.jpg", caption: "First temple visit as Mr. and Mrs. — blessings for the road ahead" },
-    ],
-    food: [],
-    quiz: {
-      q: "What song did I dance to on stage during the mala exchange at our wedding?",
-      options: ["Gallan Goodiyan", "Tu Hai To Dil Dhadakta Hai", "Tum Hi Ho", "London Thumakda"],
-      correct: 1,
-      right: "'Tu Hai To Dil Dhadakta Hai' — because with you, it really does. Every day. 💒",
-      wrong: "Not that one — think about what my heart was doing the moment I put the mala around your neck. Try again!",
-    },
-  },
-  {
-    id: "bali",
-    name: "Bali & Malaysia",
-    short: "Bali",
-    when: "July 2024",
-    type: "trip",
-    icon: "✈️",
-    teaser: "Where our forever began.",
-    message:
-      "Malaysia AND Bali — our honeymoon was an epic double feature. We ate thepla in the airport like proper Indori newlyweds, then spent the next days chasing every thrill we could find. The ATV ride through the Balinese jungle was wild, snorkeling made us feel like we'd discovered a secret ocean, and the dolphin centre — Nidhi, seeing your face when your childhood dream came true — I'll carry that forever. We lived on acai bowls, mango acai bowls, and drank from coconuts bigger than our heads by the beach. And somehow, in between all the adventure, we found the most incredible Indian food abroad. Two newlyweds, sandy feet, impossibly full hearts. This is where our forever really began.",
-    video: "",
-    photos: [
-      { url: "/media/bali/bali-01-passport-selfie.jpg", caption: "Passports out — the adventure begins" },
-      { url: "/media/bali/bali-02-boarding.jpg", caption: "Boarding our honeymoon flight" },
-      { url: "/media/bali/bali-03-beach.jpg", caption: "That beach, that sunset, you" },
-      { url: "/media/bali/bali-04-cafe.jpg", caption: "Café mornings in Bali" },
-      { url: "/media/bali/bali-05-atv-jungle.jpg", caption: "Jungle ATV adventure" },
-      { url: "/media/bali/bali-06-dolphin.jpg", caption: "Making friends with dolphins" },
-      { url: "/media/bali/bali-12-scooter-ride.jpg", caption: "Helmets on, exploring Bali two-wheeler style" },
-      { url: "/media/bali/bali-07-kl-tower.jpg", caption: "Standing tall at KL Tower" },
-      { url: "/media/bali/bali-08-kl-observation.jpg", caption: "Taking in the KL skyline" },
-      { url: "/media/bali/bali-09-kl-dinner.jpg", caption: "Dinner dates in Kuala Lumpur" },
-      { url: "/media/bali/bali-13-kl-petronas.jpg", focus: "50% 60%", caption: "Under the Petronas Towers — Malaysia, hand in hand" },
-      { url: "/media/bali/bali-10-ocean-walkway.jpg", caption: "That ocean view walkway — paradise found" },
-      { url: "/media/bali/bali-11-stone-garden.jpg", caption: "Posing with the ancient stone guardians" },
-    ],
-    food: [],
-    quiz: {
-      q: "What was Nidhi's childhood dream that came true on our honeymoon?",
-      options: ["Seeing the Eiffel Tower", "Visiting a dolphin centre", "Climbing a volcano", "Riding a hot air balloon"],
-      correct: 1,
-      right: "The dolphin centre! Seeing your face light up was the best part of the whole trip. 🐬",
-      wrong: "Not this one — think about something Nidhi had dreamed about since she was little. Try again, my love.",
-    },
-  },
-  {
-    id: "goa",
-    name: "Goa",
-    short: "Goa",
-    when: "January 2026",
-    type: "trip",
-    icon: "🌊",
-    teaser: "Where we healed, together.",
-    message:
-      "This one's tender. We came to Goa to heal — together. We partied on Tito's Street, took long drives all the way to Arambol with the windows down, stayed right by the beach where we could hear the waves at night. Neither of us knows how to swim — but that never stopped us for a second. We spent hours bathing in the ocean, laughing as the waves knocked us over, splashing about like two kids without a single worry in the world. We didn't need to swim; we just needed the water, and each other. We came carrying something heavy, and we left a little lighter. You reminded me that the right person makes even the hard chapters feel survivable. I quietly, completely fell in love with you all over again here.",
-    video: "",
-    photos: [
-      { url: "/media/goa/goa-01-flight-selfie.jpg", caption: "On the flight — couldn't stop looking at each other" },
-      { url: "/media/goa/goa-02-beach-hug.jpg", caption: "The sea that healed us" },
-      { url: "/media/goa/goa-03-waves.jpg", focus: "50% 26%", caption: "Ocean bath — just us and the waves" },
-      { url: "/media/goa/goa-04-sunset-together.jpg", caption: "Watching the sunset, side by side" },
-      { url: "/media/goa/goa-05-sunset-kiss.jpg", caption: "A kiss as the sun went down" },
-      { url: "/media/goa/goa-06-her-at-sunset.jpg", caption: "Her, the sunset, and my whole world in one frame" },
-      { url: "/media/goa/goa-07-hotel-selfie.jpg", caption: "Our beachside stay" },
-      { url: "/media/goa/goa-08-night-dance.jpg", caption: "Dancing on the beach at night" },
-      { url: "/media/goa/goa-09-night-beach.jpg", caption: "She owns the night" },
-      { url: "/media/goa/goa-10-butterfly-wall.jpg", caption: "The butterfly wall — our spot" },
-    ],
-    food: [],
-    quiz: {
-      q: "Goa wasn't just a holiday — what did we really do there?",
-      options: ["Healed and found our way back to each other", "Ran a marathon", "Opened a café", "Learned to surf"],
-      correct: 0,
-      right: "We healed there, side by side. I'll never forget what that meant. 🩵",
-      wrong: "Gently no — it was something far more important than any activity. 🩵",
-    },
-  },
-  {
-    id: "snowops",
-    name: "Snowops — Our Company",
-    short: "Snowops",
-    when: "March 2026",
-    type: "occasion",
-    icon: "🚀",
-    teaser: "Building something beautiful, together.",
-    message:
-      "Most couples share a Netflix account. We started a company. Snowops — built from late-night conversations, shared ambitions, and the wild belief that we could create something real, together. You are my co-founder in every sense: in business, in life, in dreaming bigger than either of us could alone. Building Snowops with you isn't just work — it's proof that when two people trust each other completely, there's nothing they can't build.",
-    video: "",
-    photos: [
-      { url: "/media/snowops/snowops-01-company.jpg", caption: "The beginning of Snowops" },
-      { url: "/media/snowops/snowops-02-luxury.jpg", caption: "Co-founders in life and everything else" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "jaipur",
-    name: "Jaipur",
-    short: "Jaipur",
-    when: "April 2026",
-    type: "trip",
-    icon: "🕌",
-    teaser: "Temples and forts, hand in hand.",
-    message:
-      "The Pink City, hand in hand — but it was the temples that stole this trip. We visited Khatu Shyam Mandir and Salasar Balaji Mandir, and Nidhi, watching you there — the peace on your face, the devotion — I fell in love with this side of you, too. You absolutely loved it. We climbed the forts, explored every corner, and ate incredible food at Johari. Walking those golden walls beside you, I kept thinking how lucky I am that I get to explore this entire life with you.",
-    video: "",
-    photos: [
-      { url: "/media/jaipur/jaipur-01-amber-fort.jpg", caption: "Together at Amber Fort" },
-      { url: "/media/jaipur/jaipur-02-hawa-mahal.jpg", caption: "Hawa Mahal lit up at night" },
-      { url: "/media/jaipur/jaipur-03-jal-mahal.jpg", caption: "Dreaming by Jal Mahal" },
-      { url: "/media/jaipur/jaipur-04-night-view.jpg", caption: "The Pink City sparkling below" },
-      { url: "/media/jaipur/jaipur-05-palace-throne.jpg", caption: "Our royal palace moment" },
-      { url: "/media/jaipur/jaipur-06-hotel-mirror.jpg", caption: "Mirror selfie at our Rajasthani haveli" },
-    ],
-    food: [],
-    quiz: {
-      q: "Which two temples did we visit on our Jaipur trip that Nidhi absolutely loved?",
-      options: ["Birla Mandir and ISKCON", "Khatu Shyam Mandir and Salasar Balaji Mandir", "Govind Dev Ji and Galtaji", "Moti Dungri and Garh Ganesh"],
-      correct: 1,
-      right: "Khatu Shyam and Salasar Balaji! The peace on your face there is something I'll never forget. 🙏",
-      wrong: "Not those — think about the two temples where Nidhi felt the most at home. Try again!",
-    },
-  },
-  {
-    id: "flat-purchased",
-    name: "Our Home",
-    short: "Our Home",
-    when: "June 2026",
-    type: "occasion",
-    icon: "🏠",
-    teaser: "We explored every corner of the city — and found home.",
-    message:
-      "We walked through so many areas, debated so many floor plans, imagined so many futures — and finally, we found it. Our flat. Our first real home, just for us. No more temporary, no more 'someday.' This is where we'll cook our first meal together, where we'll argue about wall colours, where we'll build the life we've been dreaming about since that first drive down the Super Corridor. Every room in this flat is a promise. And I can't wait to fill it with us.",
-    video: "",
-    photos: [
-      { url: "/media/home/home-01-coming-soon.jpg", caption: "Coming soon — the next chapter of us" },
-    ],
-    food: [],
-    quiz: null,
-  },
-  {
-    id: "indore",
-    name: "Indore — Home",
-    short: "Indore",
-    when: "Every ordinary, perfect day",
-    type: "trip",
-    icon: "☕",
-    teaser: "Home — our everyday love, one long drive at a time.",
-    message:
-      "Not every love story needs a passport. Our own city holds our smallest, sweetest moments — and the truth is, our favourite thing was never a café or a fancy table. It was the open road: long, aimless drives in our little Kwid, windows down, music up, talking about everything and nothing. Yes, we ate together at plenty of places — but we were never the crazy-about-cafés kind. No restaurant in Indore knows us by name, none of them remember 'our order.' We were always more about the drive than the destination. Home isn't a place, Nidhi — it's the passenger seat right next to me.",
-    video: "",
-    photos: [
-      { url: "/media/indore/indore-01-event-night.jpg", focus: "50% 22%", caption: "Dressed up, showing up — always together" },
-      { url: "/media/indore/indore-02-holi-family.jpg", caption: "Holi with family — colours, chaos, and us" },
-      { url: "/media/indore/indore-03-burger-king-queen.jpg", caption: "My Burger King queen" },
-      { url: "/media/indore/indore-04-cafe-hug.jpg", caption: "Our favourite corner of every café" },
-      { url: "/media/indore/indore-05-coffee-outdoors.jpg", caption: "Coffee and sunshine — her happy place" },
-      { url: "/media/indore/indore-06-cafe-smile.jpg", caption: "That smile across the table" },
-      { url: "/media/indore/indore-07-railway-track.jpg", caption: "Free spirit on the tracks" },
-      { url: "/media/indore/indore-08-romantic-dinner.jpg", caption: "The hand-kiss that stopped time" },
-    ],
-    food: [],
-    quiz: {
-      q: "What was our absolute favourite thing to do together in Indore?",
-      options: ["Café-hopping every weekend", "Long, aimless drives in our Kwid", "Shopping at the mall", "Watching late-night movies"],
-      correct: 1,
-      right: "Long drives in our little Kwid — windows down, music up, nowhere to be. Our happy place. 🚗",
-      wrong: "Close, but think simpler — windows down, open road, just us and the Kwid. Try again, my love!",
-    },
-  },
-  {
-    id: "finale",
-    name: "A Birthday Promise",
-    short: "Forever ★",
-    when: "Happy Birthday, my love",
-    type: "occasion",
-    icon: "💛",
-    isFinale: true,
-    teaser: "A promise for the year ahead — and every year after.",
-    message:
-      "My dearest Nidhi,\n\nEvery card before this one is a piece of your story — from the tiny girl who arrived and changed the world, to little you blowing out birthday candles, to the years that quietly shaped you — and then to us: that first drive in my Kwid to Cafe Yolo, our roka at the gurudwara, to the night I proposed at The Eighteen, to the day you proposed right back at Cafe Oakaz, to our wedding on 11th July when you danced in my baarat, to our honeymoon in Bali where your dolphin dream came true, to every trip, every meal, every quiet moment that made us us.\n\nWe built Snowops together. We found our flat together. And now, on your birthday, I want you to know: you are the bravest, most brilliant person I've ever met. A lawyer, a company secretary, a dreamer who chose to bet on us and build something beautiful together.\n\nSo here's my promise for this year and every year after:\n\nI promise to be your safest place when the world feels loud. I promise to cook with you, travel with you, laugh with you until our cheeks hurt. I promise to celebrate you — not just today, but on every ordinary Tuesday, every tired evening, every quiet morning.\n\nYou are not just my wife. You are my favourite person, my best adventure, my home.\n\nHappy birthday, Nidhi. This is just the beginning.\n— Forever and always yours.",
-    ps:
-      "P.S. You just proved you know our story by heart. But here's a secret only I know: every single day with you has been my favourite day — right up until the next one. Now close your eyes, make a wish… and come find me. 🥂",
-    birthdayNote:
-      "This year, I wish for you: a thousand more sunsets together, every flavour you've ever craved, and the kind of happiness that makes your heart feel too full to hold.\n\nAnd here's what I see when I dream about our future:\n\nTravelling the world together — every continent, every culture, every sunset we haven't seen yet. Buying great cars — because you deserve to arrive in style (and I deserve a co-pilot who controls the playlist). Enjoying life — really, truly, deeply. Building Snowops into something we're both proud of. And most of all: growing old together, still laughing, still adventuring, still falling in love with you every morning.\n\nYou deserve the whole world, Nidhi — and I'm going to spend my life making sure you feel it. Happy birthday, my love. 💛",
-    video: "",
-    photos: [
-      { url: "/media/finale/finale-01-queen.jpg", caption: "Live life, queen size" },
-    ],
-    food: [],
-    quiz: null,
-  },
-];
+const MEMORIES = siteConfig.memories;
 
 /* ──────────────────────────────────────────────────────────────────────────── */
 
-const FEAST_PHOTOS = [
-  { url: "/media/feast/feast-14-coconut-bowl.jpg", caption: "Breakfast served in a coconut, the ocean for company — Bali spoiled us 🥥" },
-  { url: "/media/feast/feast-12-fine-dining.jpg", caption: "Fine-dining art on a plate — almost too pretty to disturb" },
-  { url: "/media/feast/feast-13-crepes-curry.jpg", caption: "Candle-lit dinner abroad — handmade crepes and a fragrant curry, just for two" },
-  { url: "/media/feast/feast-09-tandoori-platter.jpg", caption: "A grand tandoori platter on a banana leaf — paneer tikka, kebabs and all" },
-  { url: "/media/feast/feast-01-malai-kofta.jpg", caption: "Malai kofta in velvety tomato gravy — comfort food that tastes like home" },
-  { url: "/media/feast/feast-07-rajasthani-thali.jpg", caption: "A royal Rajasthani thali — dal baati churma and a dozen little bowls of joy" },
-  { url: "/media/feast/feast-08-bao-buns.jpg", caption: "Bao buns lined up and dressed to impress — gone in minutes" },
-  { url: "/media/feast/feast-06-mocktail-stirfry.jpg", caption: "Tangy mocktails and a sizzling stir-fry — an evening, unplugged" },
-  { url: "/media/feast/feast-10-veg-pizza.jpg", caption: "A wood-fired pizza loaded with peppers and jalapeños — our kind of cheesy" },
-  { url: "/media/feast/feast-04-sandwich-fries.jpg", caption: "A loaded sandwich, a mountain of fries, and every sauce within reach" },
-  { url: "/media/feast/feast-03-purple-burger.jpg", caption: "A burger almost too pretty to eat — purple bun, crispy wedges, a dunk of sauce" },
-  { url: "/media/feast/feast-02-cafe-croissant.jpg", caption: "Lazy café mornings — a croissant, a cheese puff, and the coldest coffee" },
-  { url: "/media/feast/feast-05-street-dessert.jpg", caption: "Street-side sweetness eaten on the move — cherries, custard, zero regrets" },
-  { url: "/media/feast/feast-11-churros.jpg", caption: "Christmas-tree churros under a waterfall of warm chocolate — need I say more?" },
-  { url: "/media/jaipur/jaipur-08-wine-appetizers.jpg", caption: "Mango mocktail and tiny bites — Jaipur" },
-  { url: "/media/jaipur/jaipur-09-dessert.jpg", caption: "Desserts on a banana leaf — Jaipur" },
-  { url: "/media/jaipur/jaipur-10-chaat.jpg", caption: "Chaat so good we almost cried — Jaipur" },
-  { url: "/media/jaipur/jaipur-11-naan-curry.jpg", caption: "Naan, curry, and no regrets — Jaipur" },
-  { url: "/media/jaipur/jaipur-12-thali.jpg", caption: "The Rajasthani thali of dreams — Jaipur" },
-  { url: "/media/jaipur/jaipur-13-thali-lassi.jpg", caption: "Thali round two with lassi — Jaipur" },
-  { url: "/media/jaipur/jaipur-14-poori-kachori.jpg", caption: "Poori-kachori breakfast — Jaipur" },
-];
+const FEAST_PHOTOS = siteConfig.feastPhotos;
 
 const QUIZ_TOTAL = MEMORIES.filter((m) => m.quiz).length;
 
-const FIRST_MET_DATE = new Date("2022-03-07");
+const FIRST_MET_DATE = new Date(siteConfig.dates.firstMetDate);
 
-const LOVE_QUOTES = [
-  "In all the world, there is no heart for me like yours.",
-  "Every love story is beautiful, but ours is my favourite.",
-  "I choose you. And I'll choose you over and over.",
-  "You are my today and all of my tomorrows.",
-  "Wherever you are is my home.",
-  "I loved you yesterday. I love you still. I always have, I always will.",
-  "You are my sun, my moon, and all my stars.",
-  "From Cafe Yolo to forever — I'd choose this story every time.",
-  "You danced in my baarat. I'll dance for you every day.",
-  "Co-founders in love, in life, in everything.",
-];
+const LOVE_QUOTES = siteConfig.loveQuotes;
 
-const REASONS_I_LOVE_YOU = [
-  { reason: "The way you laugh — really laugh — with your whole heart", icon: "😂" },
-  { reason: "How you make every meal feel like a celebration", icon: "🍽️" },
-  { reason: "Your courage to chase every dream, no matter how big", icon: "🦋" },
-  { reason: "The way you light up when you talk about something you love", icon: "✨" },
-  { reason: "How you always know exactly what to say to make everything okay", icon: "💬" },
-  { reason: "Your strength — you are the bravest person I know", icon: "💪" },
-  { reason: "The way you look at me like I'm your favourite person in any room", icon: "👀" },
-  { reason: "How you turn every trip into the best adventure of my life", icon: "🗺️" },
-  { reason: "Your kindness — the way you treat everyone with so much warmth", icon: "🤗" },
-  { reason: "The little notes, the little touches, the little ways you love me", icon: "💌" },
-  { reason: "How you challenge me to be a better version of myself every day", icon: "🌟" },
-  { reason: "The fact that you chose me — and keep choosing me", icon: "💍" },
-  { reason: "Your smile first thing in the morning", icon: "🌅" },
-  { reason: "The way you make our house feel like home", icon: "🏠" },
-  { reason: "How you never give up on anything — especially us", icon: "💛" },
-  { reason: "Your voice when you call my name", icon: "🎵" },
-  { reason: "The way you steal all the blankets and I don't even mind", icon: "🛏️" },
-  { reason: "How every photo of us is my new favourite photo", icon: "📸" },
-  { reason: "Your passion for food — and for sharing it with me", icon: "🍕" },
-  { reason: "The way you make even ordinary days feel extraordinary", icon: "🌈" },
-  { reason: "How safe I feel when I'm with you", icon: "🫂" },
-  { reason: "Your determination — lawyer, company secretary, dreamer, all at once", icon: "⚡" },
-  { reason: "How you kept your proposal a secret even when I kept changing plans", icon: "🎁" },
-  { reason: "The way you managed our entire wedding and still looked like a dream", icon: "👰" },
-  { reason: "How you light up at temples — Khatu Shyam, Salasar Balaji, Nathdwara", icon: "🙏" },
-  { reason: "Your courage to start Snowops with me — co-founder of my whole life", icon: "🚀" },
-  { reason: "The way you calmed down when I touched your head at Cafe Yolo — and I knew", icon: "🤍" },
-  { reason: "Our long, aimless drives in the Kwid — windows down, just you and me", icon: "🚗" },
-  { reason: "The way you jumped into the ocean with me, even though neither of us can swim", icon: "🌊" },
-  { reason: "The way you hug me tighter when you know I've had a hard day", icon: "🧡" },
-  { reason: "How you dance like the whole world is yours — and it is", icon: "💃" },
-  { reason: "Because you are my today, my tomorrow, and every day after", icon: "♾️" },
-];
+const REASONS_I_LOVE_YOU = siteConfig.reasons;
 
-const SECRET_MESSAGES = [
-  "The first coffee I ever ordered for you was 'Cafe Anaconda.' Still embarrassed. ☕",
-  "Remember how you calmed down when I touched your head at Cafe Yolo? That's when I knew. 🤍",
-  "You kept your proposal secret while I kept changing plans. You're incredible. 💍",
-  "We ate thepla in the airport on our honeymoon. Most Indori thing ever. 🫓",
-  "The day you danced in my baarat — I couldn't see anyone else. 💃",
-  "From a Kwid and an Activa to our own flat and our own company. Look how far we've come. 🏠",
-  "Every new day with you is still my favourite chapter. 💛",
-];
+const SECRET_MESSAGES = siteConfig.secretMessages;
 
 const ALL_STORY_PHOTOS = MEMORIES.flatMap((m) =>
   (m.photos || []).filter((p) => p.url).map((p) => ({ ...p, memoryName: m.name, memoryIcon: m.icon }))
 );
 
-const PROMISES = [
-  { text: "Travel somewhere new together", icon: "✈️" },
-  { text: "Cook your favourite dish from scratch", icon: "🍳" },
-  { text: "Take 100 more photos of us", icon: "📸" },
-  { text: "Go on a long, aimless Kwid drive at sunset", icon: "🚗" },
-  { text: "Watch the sunrise together at least once", icon: "🌅" },
-  { text: "Build our home into the warmest place on earth", icon: "🏠" },
-  { text: "Surprise you when you least expect it", icon: "🎁" },
-  { text: "Dance with you in the kitchen", icon: "💃" },
-  { text: "Hold your hand through every hard day", icon: "🤝" },
-  { text: "Love you louder, every single day", icon: "💛" },
-];
+const PROMISES = siteConfig.promises;
 
 /* ───────────────────────────── OCCASION CARDS (replaces MapView) ───────────────────────────── */
 function OccasionCards({ answered, unlocked, onOpen }) {
@@ -1001,8 +453,8 @@ function ReasonsILoveYou() {
       {allFlipped && (
         <div className="reasons-end">
           <span className="reasons-end-heart">{"💛"}</span>
-          <p>…and a million reasons more.</p>
-          <p className="reasons-end-sign">Happy Birthday, Nidhi.</p>
+          <p>{COPY.reasonsEnd}</p>
+          <p className="reasons-end-sign">Happy Birthday, {RECIPIENT_NAME}.</p>
         </div>
       )}
       <div ref={bottomRef} />
@@ -1297,7 +749,7 @@ function FinaleExperience({ mem, unlocked, onClose }) {
 
       {stage === 1 && (
         <div className="finale-stage finale-name-stage">
-          <div className="finale-calligraphy">Nidhi</div>
+          <div className="finale-calligraphy">{RECIPIENT_NAME}</div>
         </div>
       )}
 
@@ -1305,7 +757,7 @@ function FinaleExperience({ mem, unlocked, onClose }) {
         <div className="finale-stage finale-hbd-stage">
           <div className="finale-crown-big">{"👑"}</div>
           <h1 className="finale-hbd-text">Happy Birthday</h1>
-          <h2 className="finale-hbd-name">Nidhi</h2>
+          <h2 className="finale-hbd-name">{RECIPIENT_NAME}</h2>
           <div className="finale-hbd-sparkles">{"✨ 🎂 ✨"}</div>
         </div>
       )}
@@ -1314,8 +766,8 @@ function FinaleExperience({ mem, unlocked, onClose }) {
         <div className="finale-stage finale-letter-stage">
           <div className="finale-letter-scroll">
             <div className="finale-letter-paper">
-              <div className="finale-letter-date">22nd June, 2026</div>
-              <h3 className="finale-letter-greeting">My dearest Nidhi,</h3>
+              <div className="finale-letter-date">{COPY.letterDate}</div>
+              <h3 className="finale-letter-greeting">My dearest {RECIPIENT_NAME},</h3>
               <div className="finale-letter-body">
                 {mem.message.split("\n\n").map((para, idx) => (
                   <p key={idx}>
@@ -1327,12 +779,12 @@ function FinaleExperience({ mem, unlocked, onClose }) {
                 <div className="finale-letter-actions">
                   {mem.birthdayNote && (
                     <div className="finale-bday-note">
-                      <div className="finale-bday-note-label">A birthday wish, handwritten from my heart</div>
+                      <div className="finale-bday-note-label">{COPY.finale.bdayNoteLabel}</div>
                       <p className="finale-bday-note-text">{mem.birthdayNote}</p>
                     </div>
                   )}
                   {mem.ps && <div className="finale-ps">{mem.ps}</div>}
-                  <div className="finale-sign">Happy birthday, Nidhi. {"💛"}</div>
+                  <div className="finale-sign">Happy birthday, {RECIPIENT_NAME}. {"💛"}</div>
                   <button className="finale-continue-btn" onClick={() => setStage(4)}>
                     One more thing… {"→"}
                   </button>
@@ -1535,7 +987,7 @@ function MemoryModal({ mem, answered, wrongPicks, burst, unlocked, onClose, onAn
             </div>
             <div className="finale-crown">👑</div>
             <h1 className="finale-bday-title">Happy Birthday</h1>
-            <h2 className="finale-bday-name">Nidhi</h2>
+            <h2 className="finale-bday-name">{RECIPIENT_NAME}</h2>
             <div className="finale-sparkle-row">
               {"✨ 🎂 ✨"}
             </div>
@@ -1888,14 +1340,17 @@ function BirthdayCountdown({ phase, secsLeft, onDismiss }) {
           })}
         </div>
         <div className="cd-inner cd-inner-bday">
-          <div className="cd-bday-kicker">It's here</div>
+          <div className="cd-bday-kicker">{COPY.countdownKicker}</div>
           <h1 className="cd-bday-title">Happy Birthday</h1>
-          <h2 className="cd-bday-name">Nidhi</h2>
+          <h2 className="cd-bday-name">{RECIPIENT_NAME}</h2>
           <div className="cd-bday-heart">{"💛"}</div>
           <p className="cd-bday-msg">
-            Another year of loving you begins right now.
-            <br />
-            You make every single day feel like magic.
+            {COPY.countdownMessage.split("\n").map((line, i, arr) => (
+              <Fragment key={i}>
+                {line}
+                {i < arr.length - 1 && <br />}
+              </Fragment>
+            ))}
           </p>
           <div className="cd-bday-cake">{"🎂"}</div>
           <button className="cd-bday-continue" onClick={onDismiss}>
@@ -2121,9 +1576,9 @@ function CalligraphyLoader({ onComplete }) {
     <div className={"calli-loader" + (phase === "done" ? " calli-fadeout" : "")}>
       <div className="calli-stars" />
       <div className="calli-inner">
-        <div className="calli-kicker">for the one who makes everything beautiful</div>
+        <div className="calli-kicker">{COPY.calligraphyKicker}</div>
         <div className={"calli-name-wrap" + (phase === "glowing" ? " calli-glow-on" : "")}>
-          <span className="calli-name">Nidhi</span>
+          <span className="calli-name">{RECIPIENT_NAME}</span>
           <span className="calli-mask" />
         </div>
         <div className="calli-swirl-wrap">
@@ -2184,14 +1639,7 @@ function BirthdayLetter({ onContinue }) {
     return () => observer.disconnect();
   }, []);
 
-  const paragraphs = [
-    "Before I show you everything I've made, I need you to know something.",
-    "From the moment we met on 7th March 2022, my world changed colour. Every day since then has been a little more beautiful, a little more full, a little more ours. And now, on your birthday, I want to pause everything — just for a moment — and tell you what you mean to me.",
-    "You are the reason I believe in forever. Not the forever in stories, but the real kind — the one made of small moments: your laugh over morning chai, your hand reaching for mine in a crowd, the way you look at a sunset like it's performing just for you.",
-    "I've built you a little world tonight — your whole story, Nidhi. Every card ahead is a piece of you: from the tiny girl in those first photos, through every birthday and every year that shaped you, all the way to the life we're building now. And at the end of it all, there's something waiting just for you.",
-    "So take your time. Explore. Remember. Smile.",
-    "This is my love letter to you, Nidhi — not in words alone, but in every place we've ever been, every plate we've shared, every moment that made us _us_.",
-  ];
+  const paragraphs = COPY.openingLetter.paragraphs;
 
   return (
     <div className="bday-letter">
@@ -2199,8 +1647,8 @@ function BirthdayLetter({ onContinue }) {
       <div className="bday-letter-content" ref={contentRef}>
         <div className="bday-letter-inner">
           <div className="bday-letter-seal">{"💌"}</div>
-          <div className="bday-letter-date">22nd June, 2026</div>
-          <h2 className="bday-letter-greeting">My dearest Nidhi,</h2>
+          <div className="bday-letter-date">{COPY.letterDate}</div>
+          <h2 className="bday-letter-greeting">My dearest {RECIPIENT_NAME},</h2>
           <div className="bday-letter-body">
             {paragraphs.map((text, idx) => (
               <p
@@ -2219,9 +1667,9 @@ function BirthdayLetter({ onContinue }) {
               data-idx={paragraphs.length}
               className={"bday-letter-closing letter-para" + (revealed.has(paragraphs.length) ? " letter-para-visible" : "")}
             >
-              Happy birthday, my love.
+              {COPY.openingLetter.closing}
               <br />
-              — Always yours, Sagar
+              — {COPY.openingLetter.signer}
             </p>
           </div>
           <div className="bday-letter-hearts">
@@ -2247,7 +1695,7 @@ function Intro({ onBegin }) {
 
       {/* portrait background — fills the screen with a cinematic blur */}
       <div className="intro-bg">
-        <img src="/media/nidhi-portrait.png" alt="" className="intro-bg-img" />
+        <img src={RECIPIENT.portrait} alt="" className="intro-bg-img" />
       </div>
 
       <div className="intro-inner">
@@ -2255,25 +1703,20 @@ function Intro({ onBegin }) {
         <div className="intro-portrait">
           <div className="intro-portrait-ring" />
           <div className="intro-portrait-ring intro-portrait-ring2" />
-          <img src="/media/nidhi-portrait.png" alt="Nidhi" className="intro-portrait-img" />
+          <img src={RECIPIENT.portrait} alt={RECIPIENT_NAME} className="intro-portrait-img" />
           <div className="intro-portrait-shine" />
         </div>
 
-        <div className="intro-kicker">Happy Birthday, my love</div>
-        <h1 className="intro-name">Nidhi</h1>
+        <div className="intro-kicker">{COPY.intro.kicker}</div>
+        <h1 className="intro-name">{RECIPIENT_NAME}</h1>
         <div className="intro-rule">
           <span>{"❀"}</span>
         </div>
-        <p className="intro-line">
-          Before you open anything else, let me take you all the way back to the
-          beginning — to the little girl in these photos, through every birthday
-          and every year that made you, all the way to the day our roads crossed
-          and forever began.
-        </p>
+        <p className="intro-line">{COPY.intro.line}</p>
         <button className="begin" onClick={onBegin}>
           Begin her story
         </button>
-        <div className="intro-sub">Nidhi Arjariya Chhabra</div>
+        <div className="intro-sub">{RECIPIENT.fullName}</div>
       </div>
     </div>
   );
@@ -2282,8 +1725,8 @@ function Intro({ onBegin }) {
 /* ───────────────────────────── LOGIN GATE ─────────────────────────────
    A private little doorway — only she has the key.
    >>> The one username & password live here. Change them if you like. */
-const AUTH_USER = "Nidhi";
-const AUTH_PASS = "birthdaygirl";
+const AUTH_USER = siteConfig.auth.user;
+const AUTH_PASS = siteConfig.auth.pass;
 
 function LoginGate({ onUnlock }) {
   const [user, setUser] = useState("");
@@ -2311,18 +1754,15 @@ function LoginGate({ onUnlock }) {
     <div className={"login" + (opening ? " login-opening" : "")}>
       <div className="login-stars" />
       <div className="intro-bg">
-        <img src="/media/nidhi-portrait.png" alt="" className="intro-bg-img" />
+        <img src={RECIPIENT.portrait} alt="" className="intro-bg-img" />
       </div>
 
       <form className={"login-card" + (error ? " login-shake" : "")} onSubmit={submit}>
         <div className="login-lock">{opening ? "🔓" : "🔒"}</div>
-        <div className="login-kicker">A private little world</div>
-        <h1 className="login-title">For Nidhi's eyes only</h1>
+        <div className="login-kicker">{COPY.login.kicker}</div>
+        <h1 className="login-title">For {RECIPIENT_NAME}'s eyes only</h1>
         <div className="intro-rule"><span>{"❀"}</span></div>
-        <p className="login-line">
-          This birthday surprise is locked away just for you, my love.
-          Sign in to step inside. 💛
-        </p>
+        <p className="login-line">{COPY.login.line}</p>
 
         <label className="login-field">
           <span className="login-label">Username</span>

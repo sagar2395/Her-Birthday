@@ -16,13 +16,15 @@ the content schema unblocks everything else, so it goes first.
 
 **Done when:** new repo builds and deploys a "hello" page on `*.ourdomain.com`.
 
-## Phase 1 — Content-schema extraction *(the keystone)* (1–1.5 weeks)
+## Phase 1 — Content-schema extraction *(the keystone)* ✅ DONE
 - Define the JSON config schema ([02-architecture.md](./02-architecture.md#content-schema-the-heart-of-the-refactor)).
 - Refactor the renderer so `MEMORIES`/`FEAST_PHOTOS`/`SONG_LIST`/finale/dates come
   from a config object/props instead of hardcoded constants.
 - Prove it: render the *existing Nidhi site* purely from a config file — pixel-faithful.
 
 **Done when:** the original app renders from a JSON config with zero hardcoded content.
+**→ Completed.** Content lives in `src/siteConfig.json`; `src/App.jsx` is a pure
+renderer; build passes with no new lint regressions. Details: [PHASE-1-DONE.md](./PHASE-1-DONE.md).
 
 ## Phase 2 — Multi-tenant rendering (1 week)
 - Subdomain middleware → resolve tenant → load config + media manifest → render.
