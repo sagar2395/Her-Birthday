@@ -76,30 +76,22 @@ full-stack dev; faster with two.
 
 ---
 
-## Pricing & cost model
+## Pricing & cost model (summary)
 
-**Cost drivers (per published app):** storage + bandwidth dominate; AI drafting and
-Stripe fees are small and one-time.
+Base price is **$30 one-time** (your call), with a **$59 Forever** upsell, **$12/yr**
+renewal, and **+$20/yr** custom domain. You keep **~$28 of every $30** — a ~93% gross
+margin, because Cloudflare R2 has **zero egress fees** (media bandwidth, the usual
+killer, is free) and Haiku-tier AI copywriting is **pennies per app**.
 
-- A typical app: ~30–80 photos + 1–3 short videos. With WebP images and compressed
-  video (or Stream), call it tens to low-hundreds of MB. On **R2 (zero egress)** the
-  ongoing cost is mostly *storage*, measured in **cents/month per app** — bandwidth,
-  the usual killer, is free to serve.
-- AI copywriting: a handful of Claude calls per build — pennies.
-- Stripe: ~2.9% + 30¢ per transaction.
-
-**Suggested pricing:**
-
-| Tier | Price | Includes |
+| Scenario | Sales/mo | ≈ Monthly profit |
 |---|---|---|
-| **Keepsake** | **$24 one-time** | 1 app, 1 yr hosting, up to N photos + 1 video, "Made with ❤️" footer |
-| **Forever** | **$49 one-time** | More media, longer/HD video, remove footer, custom song |
-| **Renewal** | **$12 / yr** | Keep it live after year one |
-| **Custom domain** | **+$20 / yr** | `theirname.com` instead of a subdomain |
+| Hobby / soft launch | 20 | ~$460 |
+| Side income | 100 | ~$2,700 |
+| Real business | 500 | ~$13,900 |
 
-At ~$24–49 against single-digit-dollar lifetime media cost, **gross margin is
-healthy** even before optimization. The renewal stream covers ongoing storage for
-the long tail of sites people want to keep.
+**Break-even is ~3–4 sales/month.** The full bottom-up model — unit economics, fixed
+costs, seasonality, the renewal flywheel, and customer-acquisition math — is in
+**[05-earnings-model.md](./05-earnings-model.md)**.
 
 > Validate willingness-to-pay early: a simple landing page + the existing demo +
 > a waitlist/pre-order before building Phases 3–5.

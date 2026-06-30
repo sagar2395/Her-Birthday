@@ -14,7 +14,24 @@ Read in order:
 3. **[02-architecture.md](./02-architecture.md)** — The recommended technical
    design: stack, multi-tenancy, content schema, media pipeline, subdomains.
 4. **[03-roadmap.md](./03-roadmap.md)** — Phased build plan, MVP scope, milestones,
-   and a rough cost/pricing model.
+   and a pricing summary.
+5. **[04-ai-personalization.md](./04-ai-personalization.md)** — The provider-agnostic
+   AI adapter (swap any model behind one interface), cheap-by-default model choice,
+   and the always-editable copy flow.
+6. **[05-earnings-model.md](./05-earnings-model.md)** — How much you can earn: unit
+   economics, monthly profit scenarios, the renewal flywheel, and acquisition math.
+
+## Decisions locked in (from our discussion)
+
+- **Launch with 3 templates** (the ★ starred ones in
+  [01-requirements.md](./01-requirements.md#b-the-8-occasion-templates)): *Our Story Map*
+  (anniversary), *The Birthday Atlas*, *Two Become One* (wedding). The other 5 occasions
+  come after revenue.
+- **Deeply personalized & emotional** is the whole point — AI drafts warm, on-tone copy
+  from the questionnaire, but the buyer can **always edit** every word.
+- **AI behind an adapter** so Claude (default) or any other provider plugs in without
+  product changes; **cheaper models** (Haiku-tier) do the text writing — pennies per app.
+- **$30 base price.** You keep **~$28 per sale** (~93% margin). Break-even ~3–4 sales/mo.
 
 > **TL;DR feasibility:** Highly feasible. The hard part — a genuinely moving,
 > polished, emotional experience — is already built and proven. What remains is
