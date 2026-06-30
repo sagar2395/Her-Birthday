@@ -20,6 +20,11 @@ Read in order:
    and the always-editable copy flow.
 6. **[05-earnings-model.md](./05-earnings-model.md)** — How much you can earn: unit
    economics, monthly profit scenarios, the renewal flywheel, and acquisition math.
+7. **[06-first-customers.md](./06-first-customers.md)** — How much and where to invest to
+   get your first customers (~$300–500, mostly reaction video + a small paid test).
+
+**Build progress:** [PHASE-1-DONE.md](./PHASE-1-DONE.md) — content-schema extraction is
+complete; `src/App.jsx` now renders entirely from `src/siteConfig.json`.
 
 ## Decisions locked in (from our discussion)
 
