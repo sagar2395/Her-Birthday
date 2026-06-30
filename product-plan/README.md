@@ -24,6 +24,10 @@ Read in order:
    get your first customers (~$300–500, mostly reaction video + a small paid test).
 8. **[07-launch-strategy.md](./07-launch-strategy.md)** — Free vs. $15 launch: why I'd lead
    with a $15 "founding price" and use *free* only as targeted seeding for reaction videos.
+9. **[08-feature-additions.md](./08-feature-additions.md)** — Seven added capabilities:
+   aesthetic social sharing, UPI/Razorpay (India-first) payments, interactive landing +
+   support, multi-tenant DNS best practices, security layer, multiple apps per account, and
+   **non-tech buying channels** (WhatsApp/Instagram/Google Forms — dashboard optional).
 
 **Build progress:**
 - [PHASE-1-DONE.md](./PHASE-1-DONE.md) — content-schema extraction; `App.jsx` is a pure

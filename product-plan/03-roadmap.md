@@ -47,14 +47,23 @@ renderer; build passes with no new lint regressions. Details: [PHASE-1-DONE.md](
 
 ## Phase 4 — Payments & provisioning (1 week)
 - Subdomain picker + availability check.
-- Stripe Checkout (one-time) → webhook → publish tenant → email live link.
+- **Razorpay/UPI as the default gateway** (India-first — UPI intent/QR/links), Stripe
+  second for international. Webhook (signature-verified) → publish tenant → deliver link.
+  See [08-feature-additions.md §2](./08-feature-additions.md#2-upi--india-first-payments).
+- **Per-app checkout + renewals** so one account can buy many gifts
+  ([§6](./08-feature-additions.md#6-multiple-apps-per-account)).
 - Basic admin: tenant list, manual unpublish/refund.
 
-**Done when:** a stranger can pay and get a live `name.ourdomain.com` gift. **← MVP**
+**Done when:** a stranger can pay by UPI and get a live `name.ourdomain.com` gift. **← MVP**
 
 ## Phase 5 — Trust, safety & polish (1–1.5 weeks)
+- **Security hardening pass** — RLS tenant isolation, server-side recipient gate (hashed),
+  CSP/HSTS/CSRF, rate limiting, WAF/DDoS, signed media URLs. See
+  [08-feature-additions.md §5](./08-feature-additions.md#5-security-layer).
 - Moderation scan on upload + report/takedown flow.
-- ToS, Privacy, Acceptable-Use, refund policy.
+- **Aesthetic social-share cards + dynamic OG images** (acquisition fuel —
+  [§1](./08-feature-additions.md#1-aesthetic-social-sharing-instagram--whatsapp)).
+- ToS, Privacy, Acceptable-Use, refund policy (incl. India DPDP).
 - Transactional emails (receipt, renewal reminder, expiry).
 - Sentry, uptime monitoring, storage-usage metering.
 
@@ -64,8 +73,27 @@ renderer; build passes with no new lint regressions. Details: [PHASE-1-DONE.md](
 - Add templates 3→8 (one shared engine; new palette/tone/section-mix each).
 - New section types as needed: RSVP (wedding), messages-wall (graduation),
   guestbook (memorial).
-- Marketing site with live per-template demos, SEO, example gallery.
-- Renewals/expiry lifecycle, custom-domain (premium) support.
+- **Interactive marketing site + customer support** (live demos, WhatsApp support, AI
+  FAQ bot — [§3](./08-feature-additions.md#3-interactive-landing-page--customer-support)).
+- **Share teaser reels** ([§1](./08-feature-additions.md#1-aesthetic-social-sharing-instagram--whatsapp)).
+- Renewals/expiry lifecycle, **custom-domain (premium) via Cloudflare for SaaS**
+  ([§4](./08-feature-additions.md#4-multi-tenant--best-practice-dns-routing)).
+
+## Phase 7 — Non-tech buying channels (after the core SaaS works)
+- One **normalized intake API** behind every channel → the same questionnaire→config→pay
+  →provision pipeline; the dashboard is **emailed only if wanted**, never required.
+- Build order: **WhatsApp chatbot first** (highest leverage in India), then Instagram DM,
+  then Google Forms, plus an optional concierge flow.
+- See [08-feature-additions.md §7](./08-feature-additions.md#7-non-tech-buying-channels-whatsapp--instagram--google-forms--dashboard-optional).
+
+**Done when:** a non-technical buyer can create, pay for (UPI), and receive a gift entirely
+inside WhatsApp — no dashboard, no app install.
+
+---
+
+> **New features added in [08-feature-additions.md](./08-feature-additions.md):** social
+> share, UPI/Razorpay, interactive landing + support, DNS best practices, security layer,
+> multiple apps per account, and non-tech ingestion channels.
 
 ---
 
