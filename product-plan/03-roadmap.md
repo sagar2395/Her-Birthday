@@ -67,6 +67,10 @@ Backend pieces (accounts/dashboard, R2 upload, real AI key) are scoped to the re
 - Moderation scan on upload + report/takedown flow.
 - **Aesthetic social-share cards + dynamic OG images** (acquisition fuel —
   [§1](./08-feature-additions.md#1-aesthetic-social-sharing-instagram--whatsapp)).
+- **PWA** (installable, offline app shell) — prerequisite for smooth reaction capture
+  ([09 §8](./09-pwa-and-reaction-capture.md#8-progressive-web-app-installable-on-mobile)).
+- **Reaction-capture MVP** (camera-only record + save) once PWA lands
+  ([09 §9](./09-pwa-and-reaction-capture.md#9-reaction-capture--record-the-gift-and-the-recipients-face-then-share)).
 - ToS, Privacy, Acceptable-Use, refund policy (incl. India DPDP).
 - Transactional emails (receipt, renewal reminder, expiry).
 - Sentry, uptime monitoring, storage-usage metering.
@@ -80,6 +84,8 @@ Backend pieces (accounts/dashboard, R2 upload, real AI key) are scoped to the re
 - **Interactive marketing site + customer support** (live demos, WhatsApp support, AI
   FAQ bot — [§3](./08-feature-additions.md#3-interactive-landing-page--customer-support)).
 - **Share teaser reels** ([§1](./08-feature-additions.md#1-aesthetic-social-sharing-instagram--whatsapp)).
+- **Full reaction capture** — record the recipient's face + stitch with the gift reel
+  server-side into a share-ready video ([09 §9](./09-pwa-and-reaction-capture.md#9-reaction-capture--record-the-gift-and-the-recipients-face-then-share)).
 - Renewals/expiry lifecycle, **custom-domain (premium) via Cloudflare for SaaS**
   ([§4](./08-feature-additions.md#4-multi-tenant--best-practice-dns-routing)).
 

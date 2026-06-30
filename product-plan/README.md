@@ -28,6 +28,9 @@ Read in order:
    aesthetic social sharing, UPI/Razorpay (India-first) payments, interactive landing +
    support, multi-tenant DNS best practices, security layer, multiple apps per account, and
    **non-tech buying channels** (WhatsApp/Instagram/Google Forms — dashboard optional).
+10. **[09-pwa-and-reaction-capture.md](./09-pwa-and-reaction-capture.md)** — Installable
+    **PWA**, and **reaction capture**: record the gift + the recipient's face, then share
+    to social or save to the phone (the reaction-video engine, automated).
 
 **Build progress:**
 - [PHASE-1-DONE.md](./PHASE-1-DONE.md) — content-schema extraction; `App.jsx` is a pure

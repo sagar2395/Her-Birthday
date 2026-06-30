@@ -1,16 +1,57 @@
-# React + Vite
+# Personalized Gift App — a config-driven, multi-tenant keepsake builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Started life as a one-off birthday gift; now a **productized, sellable platform**: people
+> answer a questionnaire, pick an occasion design, add their media, pay, and get a private,
+> beautiful personal app hosted on their own subdomain.
 
-Currently, two official plugins are available:
+This repo is the seed for that product. The full strategy, architecture, financials, and
+phased build plan live in **[`product-plan/`](./product-plan/README.md)** — start there.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What works today (in this repo)
 
-## React Compiler
+| Capability | How to see it |
+|---|---|
+| **The gift renderer** — a cinematic, emotional keepsake app | `npm run dev` → open the site |
+| **Config-driven** — zero hardcoded content; the whole app renders from one JSON config | `src/tenants/nidhi.json` is the content; `src/App.jsx` is a pure renderer |
+| **Multi-tenant** — different config per subdomain | `nidhi.localhost:5173` vs `demo.localhost:5173`, or `/?tenant=demo` |
+| **The builder** — a wizard that *writes* a config, with live preview + AI drafting | open **`/?builder=1`** |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev      # then open the printed localhost URL
+npm run build    # production build → dist/
+npm run lint
+```
 
-## Expanding the ESLint configuration
+- **Build a gift:** `/?builder=1` → fill the wizard → "✨ Draft with AI" → preview live →
+  download `config.json`.
+- **Preview a draft full-screen:** the builder's review step opens `/?preview=1` in the
+  real renderer.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Structure
+
+```
+src/
+  App.jsx              the gift renderer (pure — reads one config)
+  siteConfig.js        tenant resolver: subdomain → config (+ /?preview= override)
+  tenants/             one JSON config per tenant (nidhi.json, demo.json)
+  builder/             the questionnaire/builder that writes a config
+  ai/textProvider.js   provider-agnostic AI adapter (mock default; Claude/Haiku ready)
+public/media/          photos, videos, audio
+product-plan/          feasibility, architecture, roadmap, pricing, feature specs
+```
+
+## Build status (see [`product-plan/`](./product-plan/README.md))
+
+- ✅ **Phase 1** — content-schema extraction (pure renderer)
+- ✅ **Phase 2** — multi-tenant rendering by subdomain
+- ✅ **Phase 3 (front-end core)** — the builder + live preview + AI adapter
+- ⏭️ **Phase 4+** — UPI/Razorpay checkout, accounts/dashboard, media upload, security,
+  social share, PWA + reaction capture, non-tech channels (WhatsApp/IG/Forms)
+
+> Splitting this into its own product repo? See **[`SPLIT-GUIDE.md`](./SPLIT-GUIDE.md)**.
+
+## Environment
+
+Copy `.env.example` → `.env.local` and set values as you add backend services. Today the
+only knob is `VITE_AI_PROVIDER` (defaults to `mock`).
