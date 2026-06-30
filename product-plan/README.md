@@ -34,6 +34,8 @@ Read in order:
   renderer reading one JSON config.
 - [PHASE-2-DONE.md](./PHASE-2-DONE.md) — multi-tenant rendering; `src/siteConfig.js`
   resolves the tenant by subdomain (`tenants/nidhi.json` + `tenants/demo.json`).
+- [PHASE-3-DONE.md](./PHASE-3-DONE.md) — the builder: `/?builder=1` opens a wizard that
+  writes a config, previews it live, drafts copy via the AI adapter, and exports JSON.
 
 ## Decisions locked in (from our discussion)
 

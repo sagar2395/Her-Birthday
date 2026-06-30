@@ -58,6 +58,24 @@ export function resolveTenantKey(hostname = "", search = "") {
   return DEFAULT_TENANT;
 }
 
+/**
+ * Builder preview: when opened as `/?preview=1`, render the real app from the
+ * draft config the builder stashed in localStorage (instead of a tenant). This
+ * is how the Phase-3 builder shows full-fidelity previews through this same
+ * renderer. Returns null when not in preview mode or no draft is present.
+ */
+function previewConfig() {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("preview") !== "1") return null;
+  try {
+    const raw = window.localStorage.getItem("previewConfig");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 const key =
   typeof window !== "undefined"
     ? resolveTenantKey(window.location.hostname, window.location.search)
@@ -65,5 +83,5 @@ const key =
 
 export const activeTenant = key;
 
-const siteConfig = TENANTS[key] || TENANTS[DEFAULT_TENANT];
+const siteConfig = previewConfig() || TENANTS[key] || TENANTS[DEFAULT_TENANT];
 export default siteConfig;

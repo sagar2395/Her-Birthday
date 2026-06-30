@@ -36,14 +36,18 @@ renderer; build passes with no new lint regressions. Details: [PHASE-1-DONE.md](
 + `tenants/demo.json` render at their own subdomains. Details: [PHASE-2-DONE.md](./PHASE-2-DONE.md).
 (Server-side per-tenant config loading + real wildcard DNS land when the app moves to its own repo/stack.)
 
-## Phase 3 — Accounts, builder & media upload (2 weeks)
-- Auth + dashboard ("My apps").
-- Questionnaire/builder wizard for the **first template**, writing the config.
-- Live preview. R2 uploads with validation + image processing.
-- **AI copywriting** pass (Claude API) on the story fields — editable drafts.
+## Phase 3 — Accounts, builder & media upload (2 weeks) ✅ front-end core built
+- Auth + dashboard ("My apps"). *(deferred — needs backend, lands at repo split)*
+- Questionnaire/builder wizard for the **first template**, writing the config. **✓ done**
+- Live preview (instant inline + full-fidelity via the real renderer). **✓ done**
+- R2 uploads with validation + image processing. *(deferred — needs backend)*
+- **AI copywriting** pass on story fields — editable drafts, via the provider-agnostic
+  adapter (mock default; real model behind a proxy at repo split). **✓ done**
 
-**Done when:** a logged-in user builds a complete site from scratch via the wizard
-(no payment yet) and previews it.
+**Done when:** a user builds a complete config via the wizard and previews it.
+**→ Core complete.** `/?builder=1` opens the wizard; it produces a valid config, previews
+live, drafts copy with AI, and exports JSON. Details: [PHASE-3-DONE.md](./PHASE-3-DONE.md).
+Backend pieces (accounts/dashboard, R2 upload, real AI key) are scoped to the repo split.
 
 ## Phase 4 — Payments & provisioning (1 week)
 - Subdomain picker + availability check.
