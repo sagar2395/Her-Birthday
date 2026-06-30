@@ -6,14 +6,15 @@
    plate, place and moment along the way.
   ════════════════════════════════════════════════════════════════════════════
 
-  HOW TO MAKE THIS YOURS  →  edit ONE file:  src/siteConfig.json
+  HOW TO MAKE THIS YOURS  →  edit ONE file:  src/tenants/<name>.json
 
   This component is now a PURE RENDERER. It holds no personal content — every
-  name, photo, caption, quiz, love note, song and date is read from the
-  JSON-serializable config in `src/siteConfig.json`. Point it at a different
-  config and you get a different person's site, with zero code changes.
+  name, photo, caption, quiz, love note, song and date is read from a single
+  JSON-serializable config. `src/siteConfig.js` picks WHICH tenant config to
+  render based on the subdomain (Phase 2); point it at a different config and
+  you get a different person's site, with zero code changes.
 
-  Config shape (see src/siteConfig.json for the full data):
+  Config shape (see src/tenants/nidhi.json for the full data):
     recipient      { name, fullName, portrait }      — who the gift is for
     author         { name }                          — who it's from
     auth           { user, pass }                    — the private login gate
@@ -31,7 +32,7 @@
 */
 
 import { useState, useEffect, useRef, useCallback, useMemo, Fragment } from "react";
-import siteConfig from "./siteConfig.json";
+import siteConfig from "./siteConfig.js";
 
 /* ───────────────── SOUND EFFECTS (Web Audio API — no files needed) ───────────────── */
 const AudioCtx = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext);

@@ -1,0 +1,124 @@
+{
+  "recipient": {
+    "name": "Aarav",
+    "fullName": "Aarav Mehta",
+    "portrait": "/media/finale/finale-01-queen.jpg"
+  },
+  "author": { "name": "The Crew" },
+  "auth": { "user": "Aarav", "pass": "demo" },
+  "dates": {
+    "birthdayMonth": 8,
+    "birthdayDay": 15,
+    "birthdayMidnightUTC": "2026-09-14T18:30:00Z",
+    "firstMetDate": "2015-01-10"
+  },
+  "songs": {
+    "list": [{ "url": null, "name": "Off" }],
+    "birthdaySongUrl": ""
+  },
+  "copy": {
+    "letterDate": "15th September, 2026",
+    "intro": {
+      "kicker": "Happy Birthday, legend",
+      "line": "This is a little world we built for you — every chapter ahead is a piece of your story. Take your time, and enjoy it."
+    },
+    "calligraphyKicker": "for the one who makes the room brighter",
+    "countdownKicker": "It's here",
+    "countdownMessage": "Another year of you begins right now.\nLet's make it the best one yet.",
+    "reasonsEnd": "…and a hundred reasons more.",
+    "openingLetter": {
+      "paragraphs": [
+        "Before you scroll through everything we made, we wanted to say something.",
+        "From the day we met, life got a lot more fun. This is our way of saying thank you — and happy birthday.",
+        "Every card ahead is a memory. Take your time. Smile."
+      ],
+      "closing": "Happy birthday, legend.",
+      "signer": "Always, The Crew"
+    },
+    "finale": { "bdayNoteLabel": "A birthday wish, from all of us" },
+    "login": {
+      "kicker": "A private little world",
+      "line": "This birthday surprise is just for you. Sign in to step inside. 🎉"
+    }
+  },
+  "memories": [
+    {
+      "id": "start",
+      "name": "Where It Began",
+      "short": "The Start",
+      "when": "A long time ago",
+      "type": "occasion",
+      "icon": "🌟",
+      "teaser": "Before all the chaos — there was day one.",
+      "message": "This is a second tenant, rendered from its own config at its own subdomain. Same renderer, completely different story — that's the whole point of Phase 2.",
+      "video": "",
+      "photos": [
+        { "url": "/media/born/born-01-newborn.jpg", "caption": "Where the story starts." }
+      ],
+      "food": [],
+      "quiz": null
+    },
+    {
+      "id": "adventures",
+      "name": "The Adventures",
+      "short": "Adventures",
+      "when": "Every year since",
+      "type": "occasion",
+      "icon": "🗺️",
+      "teaser": "All the places, all the trouble.",
+      "message": "Trips, late nights, inside jokes — a whole life of them.",
+      "video": "",
+      "photos": [
+        { "url": "/media/family/family-01-beach.jpg", "focus": "50% 24%", "caption": "One of a hundred adventures." }
+      ],
+      "food": [],
+      "quiz": {
+        "q": "What's the best part of any trip with this crew?",
+        "options": ["The food", "The chaos", "All of it"],
+        "correct": 2,
+        "right": "All of it. Obviously. 🎉",
+        "wrong": "Close — but it's everything. Try again!"
+      }
+    },
+    {
+      "id": "now",
+      "name": "Right Now",
+      "short": "Now",
+      "when": "Today",
+      "type": "occasion",
+      "icon": "🎂",
+      "isFinale": true,
+      "teaser": "Another trip around the sun.",
+      "message": "Happy birthday from all of us. Here's to the next chapter — and to every ridiculous adventure still ahead.",
+      "ps": "P.S. This is the demo finale — your real one would say something only your people know. 🎈",
+      "birthdayNote": "Wishing you a year full of good food, big laughs, and zero regrets. 🎉",
+      "video": "",
+      "photos": [
+        { "url": "/media/finale/finale-01-queen.jpg", "caption": "Live it big." }
+      ],
+      "food": [],
+      "quiz": null
+    }
+  ],
+  "feastPhotos": [
+    { "url": "/media/feast/feast-14-coconut-bowl.jpg", "caption": "Demo dish one 🥥" },
+    { "url": "/media/feast/feast-12-fine-dining.jpg", "caption": "Demo dish two" }
+  ],
+  "loveQuotes": [
+    "Good friends are the family we choose.",
+    "Here's to another year of trouble."
+  ],
+  "reasons": [
+    { "reason": "The way you make everyone laugh", "icon": "😂" },
+    { "reason": "Always down for an adventure", "icon": "🗺️" },
+    { "reason": "The most loyal of the crew", "icon": "🤝" }
+  ],
+  "secretMessages": [
+    "Remember that one trip? Legendary. 🎉",
+    "Best decision we made was keeping you around. 💛"
+  ],
+  "promises": [
+    { "text": "Plan the next big trip", "icon": "✈️" },
+    { "text": "Show up, always", "icon": "🤝" }
+  ]
+}

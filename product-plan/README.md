@@ -22,9 +22,14 @@ Read in order:
    economics, monthly profit scenarios, the renewal flywheel, and acquisition math.
 7. **[06-first-customers.md](./06-first-customers.md)** — How much and where to invest to
    get your first customers (~$300–500, mostly reaction video + a small paid test).
+8. **[07-launch-strategy.md](./07-launch-strategy.md)** — Free vs. $15 launch: why I'd lead
+   with a $15 "founding price" and use *free* only as targeted seeding for reaction videos.
 
-**Build progress:** [PHASE-1-DONE.md](./PHASE-1-DONE.md) — content-schema extraction is
-complete; `src/App.jsx` now renders entirely from `src/siteConfig.json`.
+**Build progress:**
+- [PHASE-1-DONE.md](./PHASE-1-DONE.md) — content-schema extraction; `App.jsx` is a pure
+  renderer reading one JSON config.
+- [PHASE-2-DONE.md](./PHASE-2-DONE.md) — multi-tenant rendering; `src/siteConfig.js`
+  resolves the tenant by subdomain (`tenants/nidhi.json` + `tenants/demo.json`).
 
 ## Decisions locked in (from our discussion)
 

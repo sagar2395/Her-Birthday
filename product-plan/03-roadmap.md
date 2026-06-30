@@ -26,12 +26,15 @@ the content schema unblocks everything else, so it goes first.
 **→ Completed.** Content lives in `src/siteConfig.json`; `src/App.jsx` is a pure
 renderer; build passes with no new lint regressions. Details: [PHASE-1-DONE.md](./PHASE-1-DONE.md).
 
-## Phase 2 — Multi-tenant rendering (1 week)
+## Phase 2 — Multi-tenant rendering ✅ DONE
 - Subdomain middleware → resolve tenant → load config + media manifest → render.
 - Wildcard DNS + TLS; reserved-subdomain list.
 - Seed 2 tenants from JSON to prove isolation.
 
 **Done when:** two different configs render at two different subdomains.
+**→ Completed.** `src/siteConfig.js` resolves the tenant from the subdomain; `tenants/nidhi.json`
++ `tenants/demo.json` render at their own subdomains. Details: [PHASE-2-DONE.md](./PHASE-2-DONE.md).
+(Server-side per-tenant config loading + real wildcard DNS land when the app moves to its own repo/stack.)
 
 ## Phase 3 — Accounts, builder & media upload (2 weeks)
 - Auth + dashboard ("My apps").
